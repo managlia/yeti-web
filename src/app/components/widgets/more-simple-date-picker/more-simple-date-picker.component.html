@@ -1,0 +1,17 @@
+<b>Add a  followup reminder for
+<mat-form-field style="width:120px;padding-left:5px;padding-right:5px;">
+  <input type="number" matInput placeholder="Days from now" value="0" min="1" max="365"
+         [(ngModel)]="daysFromToday"
+         (click)="daysChanged($event, daysFromToday)"
+         (keyup)="daysChanged($event, daysFromToday)">
+</mat-form-field>
+  days from today.</b> &nbsp; (On:
+
+
+
+  <mat-form-field style="width:160px;padding-left:5px;padding-right:0px;">
+    <input matInput [matDatepicker]="datepicker" placeholder="{{keyPhrase}} date" [(ngModel)]="theDate" (dateInput)="dateChanged($event)">
+    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <mat-datepicker #datepicker></mat-datepicker>
+  </mat-form-field>
+).

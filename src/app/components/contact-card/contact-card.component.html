@@ -1,0 +1,35 @@
+<div *ngIf="contacts" class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Contacts</strong>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">* Change saved *</span>
+    </div>
+    <div class="card-body">
+      <div *ngFor="let aContact of contacts">
+        <div class="row">
+          <div class="col-md-8">
+            <p
+              [style.color]="fontColor"
+              (mouseover)="onConsideringContact(event,this)"
+              (mouseout)="onUnconsideringContact(event,this)"
+              (click)="onSelectedContact(event,aContact.contactId)"
+              [innerHtml]="aContact | contactSummary">
+            </p>
+          </div>
+          <div class="col-md-4">
+            <input type="checkbox" id="removeContact" name="removeContact" (change)="removeContact(aContact)"> Remove
+          </div>
+        </div>
+      </div>
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <app-contact-adder [existingContacts]="contacts"
+                             (onContactAdded)="onContactAdded($event)"></app-contact-adder>
+          <button type="button" class="btn btn-primary btn-sm" (click)="createNewContact()">Add new contact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

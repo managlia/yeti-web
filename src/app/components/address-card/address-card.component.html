@@ -1,0 +1,29 @@
+<div class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Addresses</strong>
+    </div>
+    <div class="card-body">
+
+
+      <div *ngFor="let anAddress of addresses">
+        <div class="row" style="padding-bottom:10px;">
+          <div class="col-7">
+            <div [innerHtml]="anAddress | formatAddress"></div>
+          </div>
+          <div class="col-5">
+            <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog(anAddress)">Edit</button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="removeAddress(anAddress)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog()">Add new address</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

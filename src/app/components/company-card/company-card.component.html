@@ -1,0 +1,35 @@
+<div *ngIf="companies" class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Companies</strong>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">* Change saved *</span>
+    </div>
+    <div class="card-body">
+      <div *ngFor="let aCompany of companies">
+        <div class="row">
+          <div class="col-md-8">
+            <p
+              [style.color]="fontColor"
+              (mouseover)="onConsideringCompany(event,this)"
+              (mouseout)="onUnconsideringCompany(event,this)"
+              (click)="onSelectedCompany(event,aCompany.companyId)"
+              [innerHtml]="aCompany | companySummary">
+            </p>
+          </div>
+          <div class="col-md-4">
+            <input type="checkbox" id="removeCompany" name="removeCompany" (change)="removeCompany(aCompany)"> Remove
+          </div>
+        </div>
+      </div>
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <app-company-adder [existingCompanies]="companies"
+                             (onCompanyAdded)="onCompanyAdded($event)"></app-company-adder>
+          <button type="button" class="btn btn-primary btn-sm" (click)="createNewCompany()">Add new company</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

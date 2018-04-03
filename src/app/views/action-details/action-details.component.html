@@ -1,0 +1,200 @@
+<div *ngIf="action" id="search-component" class="animated fadeIn">
+
+  {{ action | json }}
+  <br/><br/><br/>
+
+  <div class="row">
+    <div class="col-6"><!-- first column -->
+
+      <div *ngIf="entity">
+        <div class="col-sm-12 col-md-12">
+          <div class="card text-white bg-primary text-center">
+            <div class="card-body">
+              <blockquote class="card-bodyquote">
+                Adding action for {{entity}}::{{entityId}}
+              </blockquote>
+            </div>
+          </div>
+        </div><!--/.col-->
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="actionUpdated">
+          <div class="card-body">
+            <blockquote class="card-bodyquote">
+              <p>Your update has been saved.</p>
+            </blockquote>
+          </div>
+        </div>
+      </div><!--/.col-->
+
+      <div class="card">
+        <div class="card-header">
+          <strong>Action Details</strong>
+        </div>
+        <div class="card-body">
+
+
+          <div class="row">
+            <div class="col-6">
+
+              <mat-form-field style="width:100%">
+                <input matInput [(ngModel)]="action.name" placeholder="Action Name">
+              </mat-form-field>
+
+            </div>
+            <div class="col-6">
+
+
+
+              <mat-form-field  style="width:100%;">
+                <mat-select placeholder="Action Type" [(ngModel)]="action.classificationType.actionClassificationTypeId">
+                  <mat-option *ngFor="let classificationType of classificationTypes | async" [value]="classificationType.actionClassificationTypeId">
+                    {{ classificationType.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div *ngIf="action.classificationType.actionClassificationTypeId === 'OT'">
+                <mat-form-field style="width:100%;">
+                  <mat-select placeholder="Other Type">
+                    <mat-option *ngFor="let classificationOtherType of classificationOtherTypes | async" [value]="classificationOtherType.actionClassificationOtherTypeId">
+                      {{ classificationOtherType.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+
+              <mat-form-field style="width:100%">
+               <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
+                         matAutosizeMinRows="4"
+                         matAutosizeMaxRows="10" [(ngModel)]="action.description"></textarea>
+              </mat-form-field>
+
+            </div>
+            <div class="col-6">
+
+              <mat-form-field style="width:100%">
+                <mat-select placeholder="Scope" [(ngModel)]="action.scopeType.scopeTypeId">
+                  <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+                    {{ scopeType.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <div class="card">
+                <div class="card-header">
+                  <strong>Target valuation</strong>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <mat-form-field style="width:100%">
+                        <input matInput [(ngModel)]="action.targetValuation" placeholder="Target Valuation">
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <app-simple-date-picker [theDate]="action.targetCompletionDate"
+                                              [keyPhrase]="targetStatement"></app-simple-date-picker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <strong>Actual valuation</strong>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <mat-form-field style="width:100%">
+                        <input matInput [(ngModel)]="action.actualValuation" placeholder="Actual Valuation">
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <app-simple-date-picker [theDate]="action.actualCompletionDate"
+                                              [keyPhrase]="actualStatement"></app-simple-date-picker>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+            <div class="col-6">
+              <app-tag-card [tags]="action.tags"></app-tag-card>
+              <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
+
+
+
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-12" style="text-align:right">
+              <button type="button" class="btn btn-warning" (click)="addUpdateAction()">Click to save</button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-3"><!-- second column -->
+      <!--beneath main content area-->
+      <div *ngIf="actionId">
+        <app-campaign-card [actionId]="action.actionId"
+                           [associationSuccessful]="campaignFlag"
+                           (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
+                           (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
+        ></app-campaign-card>
+      </div>
+    </div>
+    <div class="col-3"><!-- third column -->
+      <!--beneath main content area-->
+      <div *ngIf="actionId">
+        <app-company-card [actionId]="action.actionId"
+                          [associationSuccessful]="companyFlag"
+                          (onCompanyAssociatedToEntity)="onCompanyAssociatedToEntity($event)"
+                          (onCompanyFlaggedForRemoval)="onCompanyFlaggedForRemoval($event)"
+        ></app-company-card>
+        <app-contact-card [actionId]="action.actionId"
+                          [associationSuccessful]="contactFlag"
+                          (onContactAssociatedToEntity)="onContactAssociatedToEntity($event)"
+                          (onContactFlaggedForRemoval)="onContactFlaggedForRemoval($event)"
+        ></app-contact-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- https://mail.google.com/mail/?authuser=managlia@gmail.com#all/16133b3b9ba80af6 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

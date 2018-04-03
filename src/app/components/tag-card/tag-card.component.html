@@ -1,0 +1,21 @@
+<div class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Report Tags</strong>
+    </div>
+    <div class="card-body">
+
+      <mat-chip-list>
+        <mat-chip *ngFor="let tag of tags">{{tag.name}}</mat-chip>
+      </mat-chip-list>
+      <br/><br/>
+
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary btn-sm" (click)="openTagsDialog()">Add or edit report tags</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div *ngIf="campaigns" class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Campaigns</strong>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">* Change saved *</span>
+    </div>
+    <div class="card-body">
+      <div *ngFor="let aCampaign of campaigns">
+        <div class="row">
+          <div class="col-md-8">
+            <p
+              [style.color]="fontColor"
+              (mouseover)="onConsideringCampaign(event,this)"
+              (mouseout)="onUnconsideringCampaign(event,this)"
+              (click)="onSelectedCampaign(event,aCampaign.campaignId)"
+              [innerHtml]="aCampaign.name">
+            </p>
+          </div>
+          <div class="col-md-4">
+            <input type="checkbox" id="removeCampaign" name="removeCampaign" (change)="removeCampaign(aCampaign)"> Remove
+          </div>
+        </div>
+      </div>
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <app-campaign-adder [existingCampaigns]="campaigns"  (onCampaignAdded)="onCampaignAdded($event)"></app-campaign-adder>
+          <button type="button" class="btn btn-primary btn-sm" (click)="createNewCampaign()">Add new campaign</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+

@@ -1,0 +1,158 @@
+<div *ngIf="contact" id="search-component" class="animated fadeIn">
+  <div class="row">
+    <div class="col-9"><!-- first column -->
+
+      <div *ngIf="entity">
+        <div class="col-sm-12 col-md-12">
+          <div class="card text-white bg-primary text-center">
+            <div class="card-body">
+              <blockquote class="card-bodyquote">
+                Adding contact for {{entity}}::{{entityId}}
+              </blockquote>
+            </div>
+          </div>
+        </div><!--/.col-->
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="contactUpdated">
+          <div class="card-body">
+            <blockquote class="card-bodyquote">
+              <p>Your update has been saved.</p>
+            </blockquote>
+          </div>
+        </div>
+      </div><!--/.col-->
+
+      <div class="card">
+        <div class="card-header">
+          <strong>Contact Details</strong>
+        </div>
+        <div class="card-body">
+          <!--main content area-->
+          <div class="row">
+            <div class="col-8">
+
+              <div class="row">
+                <div class="col-3">
+                  <mat-form-field style="width:100%;">
+                    <input matInput [(ngModel)]="contact.firstName" placeholder="Contact First Name">
+                  </mat-form-field>
+                </div>
+                <div class="col-3">
+
+                  <mat-form-field style="width:100%;">
+                    <input matInput [(ngModel)]="contact.lastName" placeholder="Contact Last Name">
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+                  <mat-form-field style="width:100%;">
+                    <input matInput [(ngModel)]="contact.contactEmailAddress" placeholder="Email Address">
+                  </mat-form-field>
+
+                </div>
+                <div class="col-6">
+                  <mat-form-field style="width:100%;">
+                    <mat-select placeholder="Title" [(ngModel)]="contact.titleType.contactTitleTypeId">
+                      <mat-option *ngFor="let title of titleTypes" [value]="title.contactTitleTypeId">
+                        {{ title.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+
+                  <mat-form-field style="width:100%;">
+                    <mat-select placeholder="Classification Type"
+                                [(ngModel)]="contact.classificationType.classificationTypeId">
+                      <mat-option *ngFor="let classificationType of classificationTypes"
+                                  [value]="classificationType.classificationTypeId">
+                        {{ classificationType.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                </div>
+                <div class="col-6">
+
+                  <mat-form-field style="width:100%;">
+                      <textarea matInput placeholder="Contact Description (field will autosize as needed)"
+                                matTextareaAutosize
+                                matAutosizeMinRows="4"
+                                matAutosizeMaxRows="10" [(ngModel)]="contact.description"></textarea>
+                  </mat-form-field>
+                </div>
+                <div class="col-6">
+
+                  <mat-form-field style="width:100%;">
+                    <input matInput [matDatepicker]="datepicker" placeholder="This contact's birthday"
+                           [(ngModel)]="contact.dob">
+                    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datepicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-6">
+                  <!--beneath main content area-->
+                  <app-address-card [addresses]="contact.addresses"
+                                    [addressTypes]="addressClassificationTypes"></app-address-card>
+                </div>
+                <div class="col-6">
+                  <!--beneath main content area-->
+                  <app-phone-card [contact]="contact"></app-phone-card>
+                </div>
+
+              </div>
+
+
+            </div>
+            <div class="col-4">
+              <app-links-card [urls]="contact.urls" [urlTypes]="urlTypes"></app-links-card>
+              <app-tag-card [tags]="contact.tags"></app-tag-card>
+              <app-attachment-card [attachments]="contact.attachments"></app-attachment-card>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12" style="text-align:right;">
+              <button type="button" class="btn btn-warning" (click)="addUpdateContact()">Click to save</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">Back</button>
+
+      <div>
+      </div>
+    </div>
+    <div class="col-3"><!-- third column -->
+
+
+      <app-company-choice-card
+        [associationSuccessful]="companyFlag"
+        [companyId]="contact.companyId"
+        (selectCompany)="selectCompany($event)"
+        (onCompanyChosen)="onCompanyChosen($event)"
+        onCompanyChosen
+      ></app-company-choice-card>
+      <div *ngIf="contactId">
+
+        <app-campaign-card [contactId]="contact.contactId"
+                           [associationSuccessful]="campaignFlag"
+                           (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
+                           (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
+        ></app-campaign-card>
+        <app-action-card [contactId]="contact.contactId"
+                         [associationSuccessful]="actionFlag"
+                         (onActionAssociatedToEntity)="onActionAssociatedToEntity($event)"
+                         (onActionFlaggedForRemoval)="onActionFlaggedForRemoval($event)"
+        ></app-action-card>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+

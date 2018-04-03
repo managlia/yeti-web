@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Links</h4>
+</div>
+<div class="modal-body">
+  <div class="row" *ngFor="let aUrl of data.urls">
+    <div class="col-md-2">
+      <mat-form-field style="width:100%">
+        <mat-select placeholder="Url Type" [(ngModel)]="aUrl.urlType.urlTypeId">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let type of data.types" [value]="type.urlTypeId">{{type.name}} - ({{type.urlTypeId}})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-5">
+      <mat-form-field  style="width:100%">
+        <input matInput placeholder="Url Value" [(ngModel)]="aUrl.urlValue">
+      </mat-form-field>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field style="width:100%">
+        <input matInput placeholder="Url Description" [(ngModel)]="aUrl.description">
+      </mat-form-field>
+    </div>
+    <div class="col-md-2">
+      <a [href]="aUrl.urlValue" target="_blank" style="vertical-align: center;">Test Link</a>
+      <br>
+      <input type="checkbox" (change)="removeUrl($event, aUrl)" style="vertical-align: center;"> Remove
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" (click)="addUrl()" tabindex="7">Add link</button>
+  <button class="btn btn-primary" [mat-dialog-close]="data" tabindex="7">Done</button>
+</div>

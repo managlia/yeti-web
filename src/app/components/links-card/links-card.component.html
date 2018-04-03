@@ -1,0 +1,22 @@
+<div class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Links</strong>
+    </div>
+    <div class="card-body">
+
+      <div *ngFor="let aUrl of urls">
+        <div style="padding-bottom:10px;"><a href="{{aUrl.urlValue}}" target="_blank">{{ aUrl.urlValue }}</a></div>
+      </div>
+
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary btn-sm" (click)="openUrlDialog()">Add or update links</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,54 @@
+<p>
+  <b>{{ data[6].format('LLL') }}</b>
+  to
+  <b>{{ data[7].format('LLL') }}</b>
+</p>
+<br>
+<br>
+
+<mat-form-field>
+  <input matInput [matDatepicker]="myDatepicker" placeholder="Meeting date" [(ngModel)]="data[0]" (dateInput)="dateChanged($event, data)" tabindex="1">
+  <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+  <mat-datepicker #myDatepicker></mat-datepicker>
+</mat-form-field>
+<br>
+<br>
+
+<mat-select placeholder="Start Hour" [(ngModel)]="data[1]" tabindex="2" style="width:200px;" (change)="hourChanged($event, data)">
+  <mat-option *ngFor="let hour of hours" [value]="hour.hourInt">{{ hour.description }}</mat-option>
+</mat-select>
+<mat-slider thumbLabel min="5" max="22" step="1" [(ngModel)]="data[1]" style="width:500px;" tickInterval="1" (change)="hourChanged($event, data)" tabindex="-1"></mat-slider>
+<br>
+
+<mat-select placeholder="Start Minute" [(ngModel)]="data[2]" tabindex="3" style="width:200px;" (change)="minuteChanged($event, data)">
+  <mat-option *ngFor="let minute of minutes" [value]="minute.minuteInt">{{ minute.description }}</mat-option>
+</mat-select>
+<mat-slider thumbLabel min="0" max="60" step="15" [(ngModel)]="data[2]" style="width:500px;" tickInterval="1" (change)="minuteChanged($event, data)" tabindex="-1"></mat-slider>
+<br>
+<br>
+<mat-select placeholder="Duration" [(ngModel)]="data[3]" tabindex="6" style="width:200px;" (change)="durationChanged($event, data)">
+  <mat-option>None</mat-option>
+  <mat-option *ngFor="let duration of durations" [value]="duration.minutes">{{ duration.description }}</mat-option>
+</mat-select>
+<br>
+<br>
+
+<mat-select disabled placeholder="End Hour" [(ngModel)]="data[4]" tabindex="4" style="width:200px;" (change)="endHourChanged($event, data)">
+  <mat-option>None</mat-option>
+  <mat-option *ngFor="let hour of hours" [value]="hour.hourInt">{{ hour.description }}</mat-option>
+</mat-select>
+<mat-slider disabled thumbLabel min="5" max="22" step="1" [(ngModel)]="data[4]" style="width:500px;" tickInterval="1" (change)="endMinuteChanged($event, data)" tabindex="-1"></mat-slider>
+<br>
+
+<mat-select disabled placeholder="End Minute" [(ngModel)]="data[5]" tabindex="5" style="width:200px;" (change)="endMinuteChanged($event, data)">
+  <mat-option *ngFor="let minute of minutes" [value]="minute.minuteInt">{{ minute.description }}</mat-option>
+</mat-select>
+<mat-slider disabled thumbLabel min="0" max="60" step="15" [(ngModel)]="data[5]" style="width:500px;" tickInterval="1" (change)="minuteChanged($event, data)" tabindex="-1"></mat-slider>
+<br>
+<br>
+<br>
+
+<div mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close]="data" tabindex="7">Ok</button>
+  <button mat-raised-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+</div>

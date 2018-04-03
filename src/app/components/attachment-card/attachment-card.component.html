@@ -1,0 +1,26 @@
+
+<div *ngIf="attachments" class="animated fadeIn">
+  <div class="card">
+    <div class="card-header">
+      <strong>Attachments</strong>
+    </div>
+    <div class="card-body">
+
+        <div *ngFor="let anAttachment of attachments">
+          <div
+            [style.color]="fontColor"
+            (mouseover)="onAttchmentOver(event,this)"
+            (mouseout)="onAttachmentOut(event,this)"
+            (click)="onSelectAttachment(event, anAttachment.attachment.attachmentId)"
+            [innerHtml]="anAttachment | attachmentSummary">
+          </div>
+        </div>
+        <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog()">Add new address</button>
+          </div>
+        </div>
+
+    </div>
+  </div>
+</div>

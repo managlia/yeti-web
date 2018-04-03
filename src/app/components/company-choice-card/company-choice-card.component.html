@@ -1,0 +1,52 @@
+
+<div class="animated fadeIn">
+  <div class="card card-accent-primary" style="min-height:145px">
+    <div class="card-header">
+      <strong>Associated company</strong>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">* Change saved *</span>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-12">
+
+          <div *ngIf="company" class="animated fadeIn">
+            <div
+              [style.color]="fontColor"
+              (mouseover)="onConsideringCompany(event,this)"
+              (mouseout)="onUnconsideringCompany(event,this)"
+              (click)="onCompanySelected()"
+              [innerHtml]="company | companySummary">
+            </div>
+          </div>
+          <div *ngIf="viewSearch" class="animated fadeIn">
+            <form class="company-form">
+              <mat-form-field class="example-full-width" style="width:100%;">
+                <input type="text" placeholder="Find a company" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
+                       #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)">
+                <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let coc of results$ | async" [value]="coc.matchTerm" (onSelectionChange)="onOptionSelected(coc)">
+                    {{ coc.matchTerm }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </form>
+          </div>
+
+        </div>
+      </div>
+      <div class="row" style="text-align:center;vertical-align:bottom;padding-top:20px;">
+        <div class="col-md-12">
+          <div *ngIf="!viewSearch" class="animated fadeIn">
+            <button type="button" class="btn btn-primary btn-sm" (click)="resetCompany()">Associate with different
+              company
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

@@ -1,0 +1,63 @@
+/* overrides */
+mat-list-item, mat-list-item .mat-list-item-inner {
+  background-color: orange;
+  min-height: 40px !important;
+  height: auto !important;
+  vertical-align: top;
+}
+.mat-card-subtitle, .mat-card-title {
+  margin-bottom: 5px;
+  background-color: yellow;
+}
+.mat-divider {
+  padding-top:7px;
+  padding-bottom:7px;
+}
+
+
+.company-container {
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  background-color: palegreen;
+  width: 100%;
+}
+.clear-divider {
+  padding-top:7px;
+  padding-bottom:7px;
+}
+
+.mid-to-large-sized {
+  width: 63%;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+.large-sized {
+  width: 75%;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+.mid-sized {
+  width: 50%;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+.mid-to-small-sized {
+  width: 37%;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+.small-sized {
+  width: 25%;
+  min-width: 200px;
+  margin-right: 10px;
+  margin-bottom:10px;
+}
+.list-update-button {
+  float:right;
+}

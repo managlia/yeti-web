@@ -1,0 +1,175 @@
+<div *ngIf="action" id="search-component" class="animated fadeIn">
+
+{{ action | json }}
+<br>
+Is Valid: {{ emailFormGroup.valid }}<br>
+Has Recipients {{ hasRecipients }}<br>
+
+  <div class="row">
+    <div class="col-6"  [formGroup]="emailFormGroup"><!-- first column -->
+
+      <div *ngIf="entity">
+        <div class="col-sm-12 col-md-12">
+          <div class="card text-white bg-primary text-center">
+            <div class="card-body">
+              <blockquote class="card-bodyquote">
+                Adding action for {{entity}}::{{entityId}}
+              </blockquote>
+            </div>
+          </div>
+        </div><!--/.col-->
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="actionUpdated">
+          <div class="card-body">
+            <blockquote class="card-bodyquote">
+              <p>Your update has been saved.</p>
+            </blockquote>
+          </div>
+        </div>
+      </div><!--/.col-->
+
+      <div class="card">
+        <div class="card-header">
+          <strong>Email (Send / View)</strong>
+        </div>
+        <div class="card-body">
+
+
+
+          <div class="row">
+
+
+
+            <div class="col-12">
+              <app-contact-email-card [actionId]="action.actionId"
+                                [associationSuccessful]="contactFlag"
+                                (onContactAddedAsRecipient)="onContactAddedAsRecipient($event)"
+                                (onContactRemovedAsRecipient)="onContactRemovedAsRecipient($event)"
+              ></app-contact-email-card>
+
+
+            </div>
+          </div>
+          <div class="row">
+
+
+
+            <div class="col-6">
+
+              <mat-form-field style="width:100%">
+                <input matInput formControlName="name" placeholder="Subject">
+              </mat-form-field>
+
+            </div>
+            <div class="col-6">
+
+              <mat-form-field style="width:100%">
+                <mat-select placeholder="Scope" formControlName="scopeTypeId">
+                  <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+                    {{ scopeType.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+
+          <!-- ROW -->
+          <div class="row">
+            <div class="col-9">
+
+              <mat-form-field style="width:100%">
+               <textarea matInput placeholder="Email Body" matTextareaAutosize
+                         matAutosizeMinRows="10"
+                         matAutosizeMaxRows="20" formControlName="description"></textarea>
+              </mat-form-field>
+            </div>
+            <div class="col-3">
+              <mat-checkbox formControlName="deliveryReceipt">Delivery Receipt</mat-checkbox><br/>
+              <mat-checkbox formControlName="readReceipt">Read Receipt</mat-checkbox>
+            </div>
+          </div>
+
+          <!-- ROW -->
+          <div class="row">
+            <div class="col-12">
+              <br/>
+              <mat-checkbox formControlName="reminderRequested">
+
+                <app-more-simple-date-picker
+                  [theDate]="reminderDate"
+                  [keyPhrase]="targetStatement"
+                  (onDateUpdated)="onDateUpdated($event)"
+                ></app-more-simple-date-picker>
+
+              </mat-checkbox>
+              <br/>
+              <br/>
+            </div>
+          </div>
+
+          <!-- ROW -->
+          <div class="row">
+            <div class="col-6">
+              <app-tag-card [tags]="action.tags"></app-tag-card>
+            </div>
+            <div class="col-6">
+              <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
+            </div>
+          </div>
+
+
+
+          <div class="row">
+            <div class="col-12" style="text-align:right">
+              <button type="button" class="btn btn-warning" (click)="addUpdateAction()">Click to send and save</button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="col-3"><!-- second column -->
+      <!--beneath main content area-->
+      <div *ngIf="actionId">
+        <app-campaign-card [actionId]="action.actionId"
+                           [associationSuccessful]="campaignFlag"
+                           (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
+                           (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
+        ></app-campaign-card>
+      </div>
+    </div>
+    <div class="col-3"><!-- third column -->
+      <!--beneath main content area-->
+      <div *ngIf="actionId">
+        <app-company-card [actionId]="action.actionId"
+                          [associationSuccessful]="companyFlag"
+                          (onCompanyAssociatedToEntity)="onCompanyAssociatedToEntity($event)"
+                          (onCompanyFlaggedForRemoval)="onCompanyFlaggedForRemoval($event)"
+        ></app-company-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- https://mail.google.com/mail/?authuser=managlia@gmail.com#all/16133b3b9ba80af6 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

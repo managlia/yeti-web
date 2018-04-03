@@ -1,0 +1,15 @@
+.further-formatting {
+  padding: 30px;
+  min-height: 500px;
+}
+
+.decorated-card {
+  margin: 30px;
+  background-color: cornsilk;
+}
+
+.clean-card {
+  width: 95%;
+  margin:10px;
+  background-color: oldlace;
+}

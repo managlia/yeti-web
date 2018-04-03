@@ -1,0 +1,12 @@
+<div class="col-md-8" style="width:100%">
+    <mat-form-field>
+        <input matInput [matDatepicker]="datepicker" placeholder="{{keyPhrase}} date" [(ngModel)]="theDate" (dateInput)="dateChanged($event)">
+        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+        <mat-datepicker #datepicker></mat-datepicker>
+      </mat-form-field>
+</div>
+<div class="col-md-4">
+      <mat-form-field style="width:100%">
+        <input type="number" matInput placeholder="Days from now" value="0" min="-365" max="365" [(ngModel)]="daysFromToday" (change)="daysChanged($event, daysFromToday)">
+      </mat-form-field>
+</div>
