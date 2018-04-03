@@ -102,7 +102,7 @@ export class ActionService extends BaseService {
         responseType: responseTypeValue,
         observe: observeValue} )
     .pipe(
-      tap(response => this.logger.debug(`${this.S}${this.postStatement}${response.headers.get('Location')}`),
+      tap(response => this.logger.debug(`${this.S}${this.postStatement}${response.headers.get('Location')}`)),
       catchError(this.handleError<any>(`${this.E}${this.postStatement}`))
     );
   }
