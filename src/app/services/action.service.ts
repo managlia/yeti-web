@@ -43,11 +43,11 @@ export class ActionService extends BaseService {
   putCampaignToComponent = `${this.putDescription} CAMPAIGN/ADDING TO ${this.componentDescription} ${this.whoseId}`;
   deleteCampaignFromComponent = `${this.deleteDescription} CAMPAIGN FROM ${this.componentDescription} ${this.whoseId} `;
 
-  getActionList(): Observable<HttpResponse<Action[]>> {
+  getActionList(): Observable<Action[]> {
     this.logger.debug(`${this.P}${this.getAllStatement}`);
-    return this.http.get<HttpResponse<Action[]>>(this.actionUrl, {headers: headers})
+    return this.http.get<Action[]>(this.actionUrl, {headers: headers})
       .pipe(
-        tap(actions => this.logger.debug(`${this.S}${this.getAllStatement}`, actions.headers.get('Location'))),
+        tap(actions => this.logger.debug(`${this.S}${this.getAllStatement}`)),
         catchError(this.handleError(`${this.E}${this.getAllStatement}`, []))
       );
   }
