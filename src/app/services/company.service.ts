@@ -102,32 +102,6 @@ export class CompanyService extends BaseService {
     );
   }
 
-  removeContactFromCompany(companyId: string, contactId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.deleteContactFromComponent(this.cd)} ${companyId} (contactId=${contactId}`);
-    const url = `${this.companyUrl}/${companyId}/Contacts/${contactId}`;
-    return this.http.delete(url, {
-      headers: BaseService.headers,
-      responseType: BaseService.responseTypeValue,
-      observe: BaseService.observeValue})
-    .pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.deleteContactFromComponent(this.cd)}${companyId} (contactId=${contactId}`)),
-       catchError(this.handleError<any>(`${this.E}${this.deleteContactFromComponent(this.cd)} ${companyId} (contactId=${contactId}`))
-    );
-  }
-
-  addCampaignToCompany(companyId: string, campaign: Campaign): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.putCampaignToComponent(this.cd)} ${companyId}`);
-    const url = `${this.companyUrl}/${companyId}/Campaigns`;
-    return this.http.put(url, campaign, {
-      headers: BaseService.headers,
-      responseType: BaseService.responseTypeValue,
-      observe: BaseService.observeValue})
-    .pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.putCampaignToComponent(this.cd)} ${companyId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.putCampaignToComponent(this.cd)} ${companyId}`))
-    );
-  }
-
   removeCampaignFromCompany(companyId: string, campaignId: string): Observable<HttpResponse<any>> {
     this.logger.debug(`${this.P}${this.deleteCampaignFromComponent(this.cd)} ${companyId} (campaignId=${campaignId}`);
     const url = `${this.companyUrl}/${companyId}/Campaigns/${campaignId}`;
@@ -164,6 +138,32 @@ export class CompanyService extends BaseService {
     .pipe(
       tap(_ => this.logger.debug(`${this.S}${this.deleteActionFromComponent(this.cd)} ${companyId} (actionId=${actionId}`)),
       catchError(this.handleError<any>(`${this.E}${this.deleteActionFromComponent(this.cd)} ${companyId} (actionId=${actionId}`))
+    );
+  }
+  
+  removeContactFromCompany(companyId: string, contactId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteContactFromComponent(this.cd)} ${companyId} (contactId=${contactId}`);
+    const url = `${this.companyUrl}/${companyId}/Contacts/${contactId}`;
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteContactFromComponent(this.cd)}${companyId} (contactId=${contactId}`)),
+       catchError(this.handleError<any>(`${this.E}${this.deleteContactFromComponent(this.cd)} ${companyId} (contactId=${contactId}`))
+    );
+  }
+
+  addCampaignToCompany(companyId: string, campaign: Campaign): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.putCampaignToComponent(this.cd)} ${companyId}`);
+    const url = `${this.companyUrl}/${companyId}/Campaigns`;
+    return this.http.put(url, campaign, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putCampaignToComponent(this.cd)} ${companyId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putCampaignToComponent(this.cd)} ${companyId}`))
     );
   }
 }

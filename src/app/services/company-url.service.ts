@@ -1,64 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import { Url } from '../classes/common/url';
+import { BaseService } from './base.service';
+import { ServiceConstants } from '../service-constants';
 
 @Injectable()
-export class CompanyUrlService {
+export class CompanyUrlService extends BaseService {
 
-  results: string[];
   companyUrlUrl = ServiceConstants.COMPANY_URL_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'CompanyUrl'; //componentDescription
 
   getUrlList(): Observable<Url[]> {
-    console.log('fetching companyUrls');
-    return this.http.get<Url[]>(this.companyUrlUrl)
+    this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
+    return this.http.get<Url[]>(this.companyUrlUrl, {
+      headers: BaseService.headers})
       .pipe(
-        tap(companyUrls => console.log(`fetched companyUrls`)),
-        catchError(this.handleError('getCompanyUrlList', []))
+        tap(_ => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
 
   getUrl(id: string): Observable<Url> {
-    console.log(`getting companyUrl *${id}*`);
+    this.logger.debug(`${this.P}${this.getOneStatement(this.cd)} ${id}`);
     const url = `${this.companyUrlUrl}/${id}`;
-    return this.http.get<Url>(url).pipe(
-      tap(_ => console.log(`fetched companyUrl id=${id}`)),
-      catchError(this.handleError<Url>(`getAction id=${id}`))
+    return this.http.get<Url>(url, {
+      headers: BaseService.headers})
+    .pipe(
+        tap(_ => this.logger.debug(`${this.S}${this.getOneStatement(this.cd)}${id}`)),
+        catchError(this.handleError<any>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
     );
   }
-
-  addAUrl(companyUrl: Url): Observable<Url> {
-    return null;
-  }
-
-  updateUrl(companyUrl: Url): Observable<any> {
-    return null;
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
 }
-
-

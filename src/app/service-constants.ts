@@ -26,6 +26,7 @@ export class ServiceConstants {
   public static CONTACT_CLASSIFICATION_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactClassificationTypes`;
   public static CONTACT_TITLE_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactTitleTypes`;
   public static CONTACT_URL = `${ServiceConstants.HOST}/yeti/Contacts`;
+  public static CONTACT_URL_URL = `${ServiceConstants.HOST}/yeti/ContactUrls`;
   public static CONTACT_URL_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactUrlTypes`;
   public static EMAIL_URL = `${ServiceConstants.HOST}/yeti/Emails`;
   public static SCOPE_TYPE_URL = `${ServiceConstants.HOST}/yeti/ScopeTypes`;

@@ -32,5 +32,4 @@ export class CompanyClassificationTypeService extends BaseService {
         catchError(this.handleError<any>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
     );
   }
-
 }
