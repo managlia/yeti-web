@@ -1,53 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
 import { catchError, tap } from 'rxjs/operators';
 
+import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
+import {ActionClassificationType} from '../classes/types/action-classification-type';
 
 @Injectable()
-export class ActionContactService {
+export class ActionContactService extends BaseService {
 
   results: string[];
   actionContactUrl = ServiceConstants.ACTION_CONTACT_URL;
 
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  componentDescription = 'actionContact';
+  getActionContactByContactIdStatement = `${this.getDescription} ${this.componentDescription} using contactId == `;
+  getActionContactByActionIdStatement = `${this.getDescription} ${this.componentDescription} using actionId ==  `;
 
   getActionContactByContactId(contactId: string): Observable<any[]> {
-    console.log('fetching actionContacts');
+    this.logger.debug(`${this.P}${this.getActionContactByContactIdStatement}${contactId}`);
     return this.http.get<any[]>(`${this.actionContactUrl}/contactId=${contactId}`)
       .pipe(
-        tap(actionContacts => console.log(`fetched actionContacts`)),
-        catchError(this.handleError('getActionContactList', []))
+        tap(actionContacts => this.logger.debug(`${this.S}${this.getActionContactByContactIdStatement}${contactId}`)),
+        catchError(this.handleError(`${this.E}${this.getActionContactByContactIdStatement}${contactId}`, []))
       );
   }
 
   getActionContactByActionId(actionId: string): Observable<any[]> {
-    console.log('fetching actionContacts');
+    this.logger.debug(`${this.P}${this.getActionContactByActionIdStatement}${actionId}`);
     return this.http.get<any[]>(`${this.actionContactUrl}/actionId=${actionId}`)
       .pipe(
-        tap(actionContacts => console.log(`fetched actionContacts`)),
-        catchError(this.handleError('getActionContactList', []))
+        tap(actionContacts => this.logger.debug(`${this.S}${this.getActionContactByActionIdStatement}${actionId}`)),
+        catchError(this.handleError(`${this.E}${this.getActionContactByActionIdStatement}${actionId}`, []))
       );
   }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
 }

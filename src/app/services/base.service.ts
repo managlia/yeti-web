@@ -4,23 +4,15 @@ import {LoggerService} from './logger.service';
 import {Observable} from 'rxjs/Observable';
 import {of} from 'rxjs/observable/of';
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
-
-/*
-const baseOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    'X-TEST-EXTRA': 'ABC'
-  }),
-  responseType: 'text' as 'json',
-  observe: 'response'
-};
-*/
-
 @Injectable()
 export class BaseService {
+
+  static readonly headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'X-TEST-EXTRA': 'ABC'
+  });
+  static readonly observeValue = 'response';
+  static readonly responseTypeValue = 'text';
 
   getDescription = 'Getting';
   postDescription = 'Create new';
@@ -48,5 +40,22 @@ export class BaseService {
       return of(result as T);
     };
   }
+
+  public getAllStatement = (cd: string) => `${this.getDescription} all ${cd}s`;
+  public getAllFilterStatement = (cd: string) => `${this.getDescription} all ${cd}s ${this.whoseFilter} `;
+  public getOneStatement = (cd: string) => `${this.getDescription} one ${cd} ${this.whoseId} `;
+  public postStatement = (cd: string) => `${this.postDescription} ${cd}  ${this.whoseId}  ${this.foundOn} `;
+  public putStatement = (cd: string) => `${this.putDescription} one ${cd} ${this.whoseId} `;
+  public deleteStatement = (cd: string) => `${this.deleteDescription} ${cd} ${this.whoseId} `;
+  public patchStatement = (cd: string) => `${this.patchDescription} ${cd} ${this.whoseFilter} `;
+
+  public putContactToComponent = (cd: string) => `${this.putDescription} CONTACT/ADDING TO ${cd} ${this.whoseId}`;
+  public deleteContactFromComponent = (cd: string) => `${this.deleteDescription} CONTACT FROM ${cd} ${this.whoseId} `;
+  public putCampaignToComponent = (cd: string) => `${this.putDescription} CAMPAIGN/ADDING TO ${cd} ${this.whoseId}`;
+  public deleteCampaignFromComponent = (cd: string) => `${this.deleteDescription} CAMPAIGN FROM ${cd} ${this.whoseId} `;
+  public putCompanyToComponent = (cd: string) => `${this.putDescription} COMPANY/ADDING TO ${cd} ${this.whoseId} `;
+  public deleteCompanyFromComponent = (cd: string) => `${this.deleteDescription} COMPANY FROM ${cd} ${this.whoseId} `;
+  public putActionToComponent = (cd: string) => `${this.putDescription} ACTION/ADDING TO ${cd} ${this.whoseId}`;
+  public deleteActionFromComponent = (cd: string) => `${this.deleteDescription} ACTION FROM ${cd} ${this.whoseId} `;
 
 }

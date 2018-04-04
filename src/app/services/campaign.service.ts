@@ -1,37 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
+import {HttpResponse} from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import {Action} from '../classes/action';
 import {Campaign} from '../classes/campaign';
 import {Company} from '../classes/company';
 import {Contact} from '../classes/contact';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+import {BaseService} from './base.service';
+import {ServiceConstants} from '../service-constants';
 
 @Injectable()
-export class CampaignService {
+export class CampaignService extends BaseService {
 
-  results: string[];
   campaignUrl = ServiceConstants.CAMPAIGN_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'campaign'; // 'componentDescription'
 
   getCampaignList(): Observable<Campaign[]> {
-    console.log('fetching campaigns');
-    return this.http.get<Campaign[]>(this.campaignUrl)
-      .pipe(
-        tap(campaigns => console.log(`fetched campaigns`)),
-        catchError(this.handleError('getCampaignList', []))
+     this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
+    return this.http.get<Campaign[]>(this.campaignUrl, {
+      headers: BaseService.headers})
+    .pipe(
+        tap(campaigns => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+         catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
 
@@ -51,102 +42,134 @@ export class CampaignService {
   }
 
   getCampaignListByFilter(filterId: string, filterKey: string): Observable<Campaign[]> {
-    console.log(`getting campaigns with ${filterKey} *${filterId}*`);
+    this.logger.debug(`${this.P}${this.getAllFilterStatement(this.cd)} ${filterId}`);
     const url = `${this.campaignUrl}?${filterKey}=${filterId}`;
-    return this.http.get<Campaign[]>(url)
-      .pipe(
-        tap(campaigns => console.log(`fetched campaigns using id ${filterId}`)),
-        catchError(this.handleError('getCampaignListByFilter', []))
+    return this.http.get<Campaign[]>(url, {
+      headers: BaseService.headers})
+    .pipe(
+        tap(campaigns => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${filterId}`)),
+        catchError(this.handleError(`${this.E}${this.getAllFilterStatement(this.cd)} ${filterId}`, []))
       );
   }
 
   getCampaign(id: string): Observable<Campaign> {
-    console.log(`getting campaign with id *${id}*`);
+    this.logger.debug(`${this.P}${this.getOneStatement(this.cd)} ${id}`);
     const url = `${this.campaignUrl}/${id}`;
-    console.log(`calling *${url}*`);
-    return this.http.get<Campaign>(url).pipe(
-      tap(_ => console.log(`fetched campaign id=${id}`)),
-      catchError(this.handleError<Campaign>(`getCampaign id=${id}`))
+    return this.http.get<Campaign>(url, {
+      headers: BaseService.headers})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.getOneStatement(this.cd)}${id}`)),
+      catchError(this.handleError<any>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
     );
   }
 
   addCampaign(campaign: Campaign): Observable<HttpResponse<any>> {
-    return this.http.post(this.campaignUrl, campaign, { responseType: 'text', observe: 'response' }).pipe(
-      tap( response  => console.log('created entity location: ', response.headers.get('Location') )  ),
-      catchError(this.handleError<any>('addCampaign'))
+    this.logger.debug(`${this.P}${this.postStatement(this.cd)}`);
+    return this.http.post(this.campaignUrl, campaign, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap( response  => this.logger.debug(`${this.S}${this.postStatement(this.cd)}${response.headers.get('Location')}`)),
+      catchError(this.handleError<any>(`${this.E}${this.postStatement(this.cd)}`))
     );
   }
 
   updateCampaign(campaign: Campaign): Observable<any> {
+    const id = campaign.campaignId;
+    this.logger.debug(`${this.P}${this.putStatement(this.cd)} ${id}`);
     const url = `${this.campaignUrl}/${campaign.campaignId}`;
-    return this.http.put(url, campaign, httpOptions).pipe(
-      tap(_ => console.log(`updated campaign id=${campaign.campaignId}`)),
-      catchError(this.handleError<any>('updateCampaign'))
+    return this.http.put(url, campaign, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putStatement(this.cd)} ${id}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putStatement(this.cd)} ${id}`))
     );
   }
 
   addCampaignToContact(contact: Contact, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.putContactToComponent(this.cd)}${campaignId}`);
     const url = `${this.campaignUrl}/${campaignId}/Contacts`;
-    return this.http.put(url, contact, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`updated campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToContact'))
+    return this.http.put(url, contact, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putContactToComponent(this.cd)}${campaignId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putContactToComponent(this.cd)} ${campaignId}`))
     );
   }
 
   removeCampaignFromContact(contactId: string, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteContactFromComponent(this.cd)} ${campaignId} (contactId=${contactId}`);
     const url = `${this.campaignUrl}/${campaignId}/Contacts/${contactId}`;
-    return this.http.delete(url, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`removed ${contactId} from campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToContact'))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteContactFromComponent(this.cd)}${campaignId} (contactId=${contactId}`)),
+       catchError(this.handleError<any>(`${this.E}${this.deleteContactFromComponent(this.cd)} ${campaignId} (contactId=${contactId}`))
     );
   }
 
   addCampaignToCompany(company: Company, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.putCompanyToComponent(this.cd)} ${campaignId}`);
     const url = `${this.campaignUrl}/${campaignId}/Companies`;
-    return this.http.put(url, company, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`updated campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToCompany'))
+    return this.http.put(url, company, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putCompanyToComponent(this.cd)} ${campaignId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putCompanyToComponent(this.cd)} ${campaignId}`))
     );
   }
 
   removeCampaignFromCompany(companyId: string, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteCompanyFromComponent(this.cd)} ${campaignId} (companyId=${companyId}`);
     const url = `${this.campaignUrl}/${campaignId}/Companies/${companyId}`;
-    return this.http.delete(url, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`removed ${companyId} from campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToCompany'))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteCompanyFromComponent(this.cd)} ${campaignId} (companyId=${companyId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteCompanyFromComponent(this.cd)} ${campaignId} (companyId=${companyId}`))
     );
   }
 
   addCampaignToAction(action: Action, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.putActionToComponent(this.cd)} ${campaignId}`);
     const url = `${this.campaignUrl}/${campaignId}/Actions`;
-    return this.http.put(url, action, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`updated campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToCompany'))
+    return this.http.put(url, action, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putActionToComponent(this.cd)} ${campaignId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putActionToComponent(this.cd)} ${campaignId}`))
     );
   }
 
   removeCampaignFromAction(actionId: string, campaignId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteActionFromComponent(this.cd)} ${campaignId} (actionId=${actionId}`);
     const url = `${this.campaignUrl}/${campaignId}/Actions/${actionId}`;
-    return this.http.delete(url, { responseType: 'text', observe: 'response' }).pipe(
-      tap(_ => console.log(`removed ${actionId} from campaign id=${campaignId}`)),
-      catchError(this.handleError<any>('addCampaignToCompany'))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteActionFromComponent(this.cd)} ${campaignId} (actionId=${actionId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteActionFromComponent(this.cd)} ${campaignId} (actionId=${actionId}`))
     );
   }
 
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.log('dfm dfm dfm');
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
+  closeCampaign(id: string): Observable<any> {
+    // TODO: implement patch for th close action
+    this.logger.debug(`TODO:${this.patchStatement(this.cd)}`);
+    return null;
   }
-
 }
-
-

@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import { CampaignOrAction } from '../classes/common/campaign-or-action';
+import {BaseService} from './base.service';
+import {ServiceConstants} from '../service-constants';
 
 @Injectable()
-export class CampaignOrActionService {
+export class CampaignOrActionService extends BaseService {
 
-  results: string[];
   campaignOrActionUrl = ServiceConstants.CAMPAIGN_OR_ACTION_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'CampaignOrAction';
+  getFilterStatement = (cd: string) => `${this.getDescription} all ${cd}s ${this.whoseFilter} `;
 
   searchCampaignAndAction(term: string): Observable<CampaignOrAction[]> {
     const key = 'term';
@@ -35,28 +30,14 @@ export class CampaignOrActionService {
   }
 
   doSearch(term: string, key: string): Observable<CampaignOrAction[]> {
+    this.logger.debug(`${this.P}${this.getFilterStatement(this.cd)}${key} === "${term}"`);
     if (!term.trim()) {
       return of([]);
     }
     return this.http.get<CampaignOrAction[]>(`${this.campaignOrActionUrl}/?${key}=${term}`)
       .pipe(
-        tap(_ => console.log(`found campaign-or-action matching "${term}"`)),
-        catchError(this.handleError<CampaignOrAction[]>('searchHeroes', []))
+        tap(_ => this.logger.debug(`${this.S}${this.getFilterStatement(this.cd)}${key} === "${term}"`)),
+        catchError(this.handleError<any>(`${this.E}${this.getFilterStatement(this.cd)}${key} === "${term}"`))
       );
   }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
 }

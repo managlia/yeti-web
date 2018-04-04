@@ -1,3 +1,4 @@
+import {HttpHeaders} from '@angular/common/http';
 
 export class ServiceConstants {
 
@@ -7,7 +8,7 @@ export class ServiceConstants {
   private static HOST = ServiceConstants.DEV_HOST;
   private static EMAIL_HOST = ServiceConstants.DEV_EMAIL_HOST;
   /* Until env variables are externalized && CAMEL... END */
-  
+
   public static ACTION_CLASSIFICATION_OTHER_TYPE_URL = `${ServiceConstants.HOST}/yeti/ActionClassificationOtherTypes`;
   public static ACTION_CLASSIFICATION_TYPE_URL = `${ServiceConstants.HOST}/yeti/ActionClassificationTypes`;
   public static ACTION_CONTACT_URL = `${ServiceConstants.HOST}/yeti/ActionContacts`;

@@ -1,54 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import {Action} from '../classes/action';
 import {Email} from '../classes/email';
 import {Campaign} from '../classes/campaign';
 import {Company} from '../classes/company';
 import {Contact} from '../classes/contact';
-import {BaseService} from './base.service';
-import {IRequestOptions} from './irequest-options';
 
-const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'X-TEST-EXTRA': 'ABC'
-});
-const observeValue = 'response';
-const responseTypeValue = 'text';
+import {BaseService} from './base.service';
+import {ServiceConstants} from '../service-constants';
 
 @Injectable()
 export class ActionService extends BaseService {
 
-  results: string[];
   actionUrl = ServiceConstants.ACTION_URL;
   emailUrl = ServiceConstants.EMAIL_URL;
 
-  componentDescription = 'action';
-  getAllStatement = `${this.getDescription} all ${this.componentDescription}s`;
-  getAllFilterStatement = `${this.getDescription} all ${this.componentDescription}s ${this.whoseFilter} `;
-  getOneStatement = `${this.getDescription} one ${this.componentDescription} ${this.whoseId} `;
-  postStatement = `${this.postDescription} ${this.componentDescription}  ${this.whoseId}  ${this.foundOn} `;
-  putStatement = `${this.putDescription} one ${this.componentDescription} ${this.whoseId} `;
-  deleteStatement = `${this.deleteDescription} ${this.componentDescription} ${this.whoseId} `;
-  patchStatement = `${this.patchDescription} ${this.componentDescription} ${this.whoseFilter} `;
+  cd = 'action'; // 'componentDescription'
 
-  getOneEmailStatement = `${this.getDescription} one EMAIL ${this.whoseId} `;
-  putCompanyToComponent = `${this.putDescription} COMPANY/ADDING TO ${this.componentDescription} ${this.whoseId} `;
-  deleteCompanyFromComponent = `${this.deleteDescription} COMPANY FROM ${this.componentDescription} ${this.whoseId} `;
-  putContactToComponent = `${this.putDescription} CONTACT/ADDING TO ${this.componentDescription} ${this.whoseId}`;
-  deleteContactFromComponent = `${this.deleteDescription} CONTACT FROM ${this.componentDescription} ${this.whoseId} `;
-  putCampaignToComponent = `${this.putDescription} CAMPAIGN/ADDING TO ${this.componentDescription} ${this.whoseId}`;
-  deleteCampaignFromComponent = `${this.deleteDescription} CAMPAIGN FROM ${this.componentDescription} ${this.whoseId} `;
+  getOneEmailStatement = (cd: string) => `${cd} one EMAIL ${this.whoseId} `;
 
   getActionList(): Observable<Action[]> {
-    this.logger.debug(`${this.P}${this.getAllStatement}`);
-    return this.http.get<Action[]>(this.actionUrl, {headers: headers})
+    this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
+    return this.http.get<Action[]>(this.actionUrl, {
+        headers: BaseService.headers} )
       .pipe(
-        tap(actions => this.logger.debug(`${this.S}${this.getAllStatement}`)),
-        catchError(this.handleError(`${this.E}${this.getAllStatement}`, []))
+        tap(actions => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
 
@@ -68,121 +48,158 @@ export class ActionService extends BaseService {
   }
 
   getActionListByFilter(filterId: string, filterKey: string): Observable<Action[]> {
-    this.logger.debug(`${this.P}${this.getAllFilterStatement} ${filterId}`);
+    this.logger.debug(`${this.P}${this.getAllFilterStatement(this.cd)} ${filterId}`);
     const url = `${this.actionUrl}?${filterKey}=${filterId}`;
-    return this.http.get<Action[]>(url)
+    return this.http.get<Action[]>(url, {
+      headers: BaseService.headers} )
       .pipe(
-        tap(actions => this.logger.debug(`${this.S}${this.getAllFilterStatement} ${filterId}`)),
-        catchError(this.handleError(`${this.E}${this.getAllFilterStatement} ${filterId}`, []))
+        tap(actions => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${filterId}`)),
+        catchError(this.handleError(`${this.E}${this.getAllFilterStatement(this.cd)} ${filterId}`, []))
       );
   }
 
   getAction(id: string): Observable<Action> {
-    this.logger.debug(`${this.P}${this.getOneStatement} ${id}`);
+    this.logger.debug(`${this.P}${this.getOneStatement(this.cd)} ${id}`);
     const url = `${this.actionUrl}/${id}`;
-    return this.http.get<Action>(url).pipe(
-      tap(result => this.logger.debug(`${this.S}${this.getOneStatement}${id}`)),
-      catchError(this.handleError<Action>(`${this.E}${this.getOneStatement} ${id}`))
+    return this.http.get<Action>(url, {
+      headers: BaseService.headers} )
+      .pipe(
+      tap(result => this.logger.debug(`${this.S}${this.getOneStatement(this.cd)}${id}`)),
+      catchError(this.handleError<Action>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
     );
   }
 
   getEmail(id: string): Observable<Email> {
-    this.logger.debug(`${this.P}${this.getOneEmailStatement} ${id}`);
+    this.logger.debug(`${this.P}${this.getOneEmailStatement(this.cd)} ${id}`);
     const url = `${this.emailUrl}/${id}`;
-    return this.http.get<Email>(url).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.getOneEmailStatement} ${id}`)),
-      catchError(this.handleError<Email>(`${this.E}${this.getOneEmailStatement} ${id}`))
+    return this.http.get<Email>(url, {
+      headers: BaseService.headers} )
+      .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.getOneEmailStatement(this.cd)} ${id}`)),
+      catchError(this.handleError<Email>(`${this.E}${this.getOneEmailStatement(this.cd)} ${id}`))
     );
   }
 
   addAction(action: Action): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.postStatement}`);
+    this.logger.debug(`${this.P}${this.postStatement(this.cd)}`);
     return this.http.post(this.actionUrl, action, {
-        headers: headers,
-        responseType: responseTypeValue,
-        observe: observeValue} )
+        headers: BaseService.headers,
+        responseType: BaseService.responseTypeValue,
+        observe: BaseService.observeValue} )
     .pipe(
-      tap(response => this.logger.debug(`${this.S}${this.postStatement}${response.headers.get('Location')}`)),
-      catchError(this.handleError<any>(`${this.E}${this.postStatement}`))
+      tap(response => this.logger.debug(`${this.S}${this.postStatement(this.cd)}${response.headers.get('Location')}`)),
+      catchError(this.handleError<any>(`${this.E}${this.postStatement(this.cd)}`))
     );
   }
 
-  updateAction(action: Action): Observable<any> {
+  updateAction(action: Action): Observable<HttpResponse<any>> {
     const id = action.actionId;
-    this.logger.debug(`${this.P}${this.putStatement} ${id}`);
+    this.logger.debug(`${this.P}${this.putStatement(this.cd)} ${id}`);
     const url = `${this.actionUrl}/${action.actionId}`;
-    return this.http.put(url, action, {headers: headers} ).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.putStatement} ${id}`)),
-      catchError(this.handleError<any>(`${this.E}${this.putStatement} ${id}`))
+    return this.http.put(url, action, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putStatement(this.cd)} ${id}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putStatement(this.cd)} ${id}`))
     );
   }
 
-  deleteAction(id: string): Observable<any> {
-    this.logger.debug(`${this.P}${this.deleteStatement} ${id}`);
+  deleteAction(id: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteStatement(this.cd)} ${id}`);
     const url = `${this.actionUrl}/${id}`;
-    return this.http.delete(url, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.deleteStatement}${id}`)),
-      catchError(this.handleError<any>(`${this.E}${this.deleteStatement} ${id}`))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteStatement(this.cd)}${id}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteStatement(this.cd)} ${id}`))
     );
   }
 
   addActionToCompany(company: Company, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.putCompanyToComponent}${actionId}`);
+    this.logger.debug(`${this.P}${this.putCompanyToComponent(this.cd)}${actionId}`);
     const url = `${this.actionUrl}/${actionId}/Companies`;
-    return this.http.put(url, company, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.putCompanyToComponent}${actionId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.putCompanyToComponent} ${actionId}`))
+    return this.http.put(url, company, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putCompanyToComponent(this.cd)}${actionId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putCompanyToComponent(this.cd)} ${actionId}`))
     );
   }
 
   removeActionFromCompany(companyId: string, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.deleteCompanyFromComponent} ${actionId} (companyId=${companyId}`);
+    this.logger.debug(`${this.P}${this.deleteCompanyFromComponent(this.cd)} ${actionId} (companyId=${companyId}`);
     const url = `${this.actionUrl}/${actionId}/Companies/${companyId}`;
-    return this.http.delete(url, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.deleteCompanyFromComponent}${actionId} (companyId=${companyId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.deleteCompanyFromComponent} ${actionId} (companyId=${companyId}`))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteCompanyFromComponent(this.cd)}${actionId} (companyId=${companyId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteCompanyFromComponent(this.cd)} ${actionId} (companyId=${companyId}`))
     );
   }
 
   addActionToContact(contact: Contact, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.putContactToComponent} ${actionId}`);
+    this.logger.debug(`${this.P}${this.putContactToComponent(this.cd)} ${actionId}`);
     const url = `${this.actionUrl}/${actionId}/Contacts`;
-    return this.http.put(url, contact, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.putContactToComponent} ${actionId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.putContactToComponent} ${actionId}`))
+    return this.http.put(url, contact, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putContactToComponent(this.cd)} ${actionId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putContactToComponent(this.cd)} ${actionId}`))
     );
   }
 
   removeActionFromContact(contactId: string, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.deleteContactFromComponent} ${actionId} (contactId=${contactId}`);
+    this.logger.debug(`${this.P}${this.deleteContactFromComponent(this.cd)} ${actionId} (contactId=${contactId}`);
     const url = `${this.actionUrl}/${actionId}/Contacts/${contactId}`;
-    return this.http.delete(url, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.deleteContactFromComponent} ${actionId} (contactId=${contactId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.deleteContactFromComponent} ${actionId} (contactId=${contactId}`))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteContactFromComponent(this.cd)} ${actionId} (contactId=${contactId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteContactFromComponent(this.cd)} ${actionId} (contactId=${contactId}`))
     );
   }
 
   addActionToCampaign(campaign: Campaign, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.putCampaignToComponent} ${actionId}`);
+    this.logger.debug(`${this.P}${this.putCampaignToComponent(this.cd)} ${actionId}`);
     const url = `${this.actionUrl}/${actionId}/Campaigns`;
-    return this.http.put(url, campaign, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.putCampaignToComponent} ${actionId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.putCampaignToComponent} ${actionId}`))
+    return this.http.put(url, campaign, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.putCampaignToComponent(this.cd)} ${actionId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.putCampaignToComponent(this.cd)} ${actionId}`))
     );
   }
 
   removeActionFromCampaign(campaignId: string, actionId: string): Observable<HttpResponse<any>> {
-    this.logger.debug(`${this.P}${this.deleteCampaignFromComponent} ${actionId} (campaignId=${campaignId}`);
+    this.logger.debug(`${this.P}${this.deleteCampaignFromComponent(this.cd)} ${actionId} (campaignId=${campaignId}`);
     const url = `${this.actionUrl}/${actionId}/Campaigns/${campaignId}`;
-    return this.http.delete(url, {responseType: 'text', observe: 'response'}).pipe(
-      tap(_ => this.logger.debug(`${this.S}${this.deleteCampaignFromComponent} ${actionId} (campaignId=${campaignId}`)),
-      catchError(this.handleError<any>(`${this.E}${this.deleteCampaignFromComponent} ${actionId} (campaignId=${campaignId}`))
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+    .pipe(
+      tap(_ => this.logger.debug(`${this.S}${this.deleteCampaignFromComponent(this.cd)} ${actionId} (campaignId=${campaignId}`)),
+      catchError(this.handleError<any>(`${this.E}${this.deleteCampaignFromComponent(this.cd)} ${actionId} (campaignId=${campaignId}`))
     );
   }
 
   closeAction(id: string): Observable<any> {
-    // todo: implement patch for th close action
-    this.logger.debug(`TODO:${this.patchStatement}`);
+    // TODO: implement patch for th close action
+    this.logger.debug(`TODO:${this.patchStatement(this.cd)}`);
     return null;
   }
 }

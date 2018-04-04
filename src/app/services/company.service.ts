@@ -1,30 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
+import {HttpHeaders, HttpResponse} from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import {Action} from '../classes/action';
 import {Campaign} from '../classes/campaign';
 import {Company} from '../classes/company';
 import {Contact} from '../classes/contact';
+import {BaseService} from './base.service';
+import {ServiceConstants} from '../service-constants';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
 @Injectable()
-export class CompanyService {
+export class CompanyService extends BaseService {
 
-  results: string[];
   companyUrl = ServiceConstants.COMPANY_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'Company';
 
   getCompanyList(): Observable<Company[]> {
     console.log('fetching companies');
@@ -134,20 +128,6 @@ export class CompanyService {
       tap(_ => console.log(`removed ${actionId} from copmany id=${companyId}`)),
       catchError(this.handleError<any>('removeActionFromCompany'))
     );
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.log('dfm dfm dfm');
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 
 }
