@@ -18,7 +18,8 @@ export class ActionContactService extends BaseService {
 
   getActionContactByContactId(contactId: string): Observable<any[]> {
     this.logger.debug(`${this.P}${this.getActionContactByContactIdStatement}${contactId}`);
-    return this.http.get<any[]>(`${this.actionContactUrl}/contactId=${contactId}`)
+    return this.http.get<any[]>(`${this.actionContactUrl}/contactId=${contactId}`, {
+      headers: BaseService.headers})
       .pipe(
         tap(actionContacts => this.logger.debug(`${this.S}${this.getActionContactByContactIdStatement}${contactId}`)),
         catchError(this.handleError(`${this.E}${this.getActionContactByContactIdStatement}${contactId}`, []))
@@ -27,7 +28,8 @@ export class ActionContactService extends BaseService {
 
   getActionContactByActionId(actionId: string): Observable<any[]> {
     this.logger.debug(`${this.P}${this.getActionContactByActionIdStatement}${actionId}`);
-    return this.http.get<any[]>(`${this.actionContactUrl}/actionId=${actionId}`)
+    return this.http.get<any[]>(`${this.actionContactUrl}/actionId=${actionId}`, {
+      headers: BaseService.headers})
       .pipe(
         tap(actionContacts => this.logger.debug(`${this.S}${this.getActionContactByActionIdStatement}${actionId}`)),
         catchError(this.handleError(`${this.E}${this.getActionContactByActionIdStatement}${actionId}`, []))

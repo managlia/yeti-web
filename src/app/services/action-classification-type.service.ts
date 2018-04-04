@@ -3,15 +3,14 @@ import { Observable } from 'rxjs/Observable';
 import { catchError, tap } from 'rxjs/operators';
 
 import { ActionClassificationType } from '../classes/types/action-classification-type';
-import {BaseService} from './base.service';
-import {ServiceConstants} from '../service-constants';
+import { BaseService } from './base.service';
+import { ServiceConstants } from '../service-constants';
 
 @Injectable()
 export class ActionClassificationTypeService extends BaseService {
 
   actionClassificationTypeUrl = ServiceConstants.ACTION_CLASSIFICATION_TYPE_URL;
-
-  cd = 'actionClassificationTypeService';
+  cd = 'actionClassificationTypeService'; // componentDescription
 
   getActionClassificationTypeList(): Observable<ActionClassificationType[]> {
     this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);

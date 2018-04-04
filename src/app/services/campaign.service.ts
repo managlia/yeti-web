@@ -21,7 +21,7 @@ export class CampaignService extends BaseService {
     return this.http.get<Campaign[]>(this.campaignUrl, {
       headers: BaseService.headers})
     .pipe(
-        tap(campaigns => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        tap(_ => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
          catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
@@ -47,7 +47,7 @@ export class CampaignService extends BaseService {
     return this.http.get<Campaign[]>(url, {
       headers: BaseService.headers})
     .pipe(
-        tap(campaigns => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${filterId}`)),
+        tap(_ => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${filterId}`)),
         catchError(this.handleError(`${this.E}${this.getAllFilterStatement(this.cd)} ${filterId}`, []))
       );
   }

@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
 import { catchError, tap } from 'rxjs/operators';
 
+import { BaseService } from './base.service';
 import {ServiceConstants} from '../service-constants';
 import { CompanyOrContact } from '../classes/common/company-or-contact';
 
 @Injectable()
-export class CompanyOrContactService {
+export class CompanyOrContactService extends BaseService {
 
-  results: string[];
   companyOrContactUrl = ServiceConstants.COMPANY_OR_CONTACT_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'CompanyOrContact'; // componentDescription
+  getFilterStatement = (cd: string) => `${this.getDescription} all ${cd}s ${this.whoseFilter} `;
 
   searchCompanyAndContact(term: string): Observable<CompanyOrContact[]> {
     const key = 'term';
@@ -35,28 +30,14 @@ export class CompanyOrContactService {
   }
 
   doSearch(term: string, key: string): Observable<CompanyOrContact[]> {
+    this.logger.debug(`${this.P}${this.getFilterStatement(this.cd)}${key} === "${term}"`);
     if (!term.trim()) {
       return of([]);
     }
     return this.http.get<CompanyOrContact[]>(`${this.companyOrContactUrl}/?${key}=${term}`)
       .pipe(
-        tap(_ => console.log(`found company-or-contact matching "${term}"`)),
-        catchError(this.handleError<CompanyOrContact[]>('searchHeroes', []))
+        tap(_ => this.logger.debug(`${this.S}${this.getFilterStatement(this.cd)}${key} === "${term}"`)),
+        catchError(this.handleError<any>(`${this.E}${this.getFilterStatement(this.cd)}${key} === "${term}"`))
       );
   }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
 }

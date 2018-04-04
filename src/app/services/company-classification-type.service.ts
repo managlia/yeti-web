@@ -1,66 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs/observable/of';
-import { LoggerService } from './logger.service';
 import { catchError, tap } from 'rxjs/operators';
 
-import {ServiceConstants} from '../service-constants';
 import { EntityClassificationType } from '../classes/types/entity-classification-type';
+import { BaseService } from './base.service';
+import { ServiceConstants } from '../service-constants';
 
 @Injectable()
-export class CompanyClassificationTypeService {
+export class CompanyClassificationTypeService extends BaseService {
 
-  results: string[];
   companyClassificationTypeUrl = ServiceConstants.COMPANY_CLASSIFICATION_TYPE_URL;
-
-  constructor(
-    private http: HttpClient,
-    private loggerService: LoggerService
-  ) { }
+  cd = 'CompanyClassificationType'; // componentDescription
 
   getCompanyClassificationTypeList(): Observable<EntityClassificationType[]> {
-    console.log('fetching companyClassificationTypes');
-    return this.http.get<EntityClassificationType[]>(this.companyClassificationTypeUrl)
+    this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
+    return this.http.get<EntityClassificationType[]>(this.companyClassificationTypeUrl, {
+      headers: BaseService.headers})
       .pipe(
-        tap(companyClassificationTypes => console.log(`fetched companyClassificationTypes`)),
-        catchError(this.handleError('getCompanyClassificationTypeList', []))
+        tap(_ => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
 
-  getCompany(id: string): Observable<EntityClassificationType> {
-    console.log(`getting companyClassificationType *${id}*`);
+  getCompanyClassificationType(id: string): Observable<EntityClassificationType> {
+    this.logger.debug(`${this.P}${this.getOneStatement(this.cd)} ${id}`);
     const url = `${this.companyClassificationTypeUrl}/${id}`;
-    return this.http.get<EntityClassificationType>(url).pipe(
-      tap(_ => console.log(`fetched companyClassificationType id=${id}`)),
-      catchError(this.handleError<EntityClassificationType>(`getCompany id=${id}`))
+    return this.http.get<EntityClassificationType>(url, {
+      headers: BaseService.headers})
+    .pipe(
+        tap(_ => this.logger.debug(`${this.S}${this.getOneStatement(this.cd)}${id}`)),
+        catchError(this.handleError<any>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
     );
-  }
-
-  addCompany(companyClassificationType: EntityClassificationType): Observable<EntityClassificationType> {
-    return null;
-  }
-
-  updateCompany(companyClassificationType: EntityClassificationType): Observable<any> {
-    return null;
-  }
-
-  closeCompany(id: string): Observable<any> {
-    return null;
-  }
-
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      console.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 
 }
