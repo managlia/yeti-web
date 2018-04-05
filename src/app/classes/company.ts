@@ -4,14 +4,6 @@ import {Address} from './common/address';
 
 export class Company {
 
-  constructor() {
-    this.classificationType = new EntityClassificationType();
-    this.addresses = [];
-    this.attachments = [];
-    this.tags = [];
-    this.urls = [];
-  }
-
   companyId: string;
   name: string;
   description: string;
@@ -27,4 +19,12 @@ export class Company {
   attachments: any[];
   tags: any[];
   urls: Url[];
+
+  constructor() {
+    this.classificationType = new EntityClassificationType();
+    this.addresses = [];
+    this.attachments = [];
+    this.tags = [];
+    this.urls = [];
+  }
 }

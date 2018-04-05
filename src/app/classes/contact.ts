@@ -8,16 +8,6 @@ import {Company} from './company';
 
 export class Contact {
 
-  constructor() {
-    this.active = true;
-    this.classificationType = new EntityClassificationType();
-    this.titleType = new ContactTitleType();
-    this.addresses = [];
-    this.attachments = [];
-    this.tags = [];
-    this.urls = [];
-  }
-
   emailRecipientIndicator: string;
   contactId: string;
   companyId: string;
@@ -39,5 +29,14 @@ export class Contact {
   tags: Tag[];
   urls: Url[];
 
+  constructor() {
+    this.active = true;
+    this.classificationType = new EntityClassificationType();
+    this.titleType = new ContactTitleType();
+    this.addresses = [];
+    this.attachments = [];
+    this.tags = [];
+    this.urls = [];
+  }
 }
 

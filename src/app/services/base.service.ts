@@ -37,7 +37,12 @@ export class BaseService {
     return (error: any): Observable<T> => {
       this.logger.error(error);
       this.logger.error(`${operation} failed: ${error.message}`);
-      return of(result as T);
+
+      // TODO: Distinguish between errors that should stop flow and those that should ask for retry.
+      // Currently all errors are being passed up the the views that triggered the request. Not good for an outage.
+
+      // return of(result as T);
+      return error;
     };
   }
 

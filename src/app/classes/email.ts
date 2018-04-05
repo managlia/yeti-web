@@ -11,9 +11,7 @@ export class Email extends Action {
   instanceDate: Date;
   lastRetrievedDate: Date;
   threadId: string;
-
   recipients: Contact[];
-
 }
 
 

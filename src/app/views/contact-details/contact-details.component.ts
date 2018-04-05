@@ -29,10 +29,16 @@ import {Action} from '../../classes/action';
   styleUrls: ['./contact-details.component.css']
 })
 export class ContactDetailsComponent implements OnInit {
+
   contactUpdated = false;
   companyFlag = false;
-  actionFlag = false;
   campaignFlag = false;
+  actionFlag = false;
+
+  contactFailureUpdated = false;
+  companyFailureFlag = false;
+  campaignFailureFlag = false;
+  actionFailureFlag = false;
 
   contactId: string;
   contact: Contact;
@@ -71,7 +77,6 @@ export class ContactDetailsComponent implements OnInit {
   getContactsById(): void {
     this.contactId = this.route.snapshot.paramMap.get('id');
     if ( this.contactId ) {
-      console.log('contactId ' + this.contactId);
       this.contactService.getContact( this.contactId )
         .subscribe(contact => this.contact = contact );
     } else {
@@ -95,10 +100,8 @@ export class ContactDetailsComponent implements OnInit {
   addUpdateContact() {
     const contactId = this.contact.contactId;
     if ( contactId ) {
-      console.log(`This is an update because contact id is ${contactId}`);
       this.contactService.updateContact(this.contact).subscribe(feedback => this.showAssocationSuccessful('contact'));
     } else {
-      console.log(`This is an ADD because contact id is ${contactId}`);
       if ( this.entity && this.entityId ) {
         this.addContactAndAssociation(this.contact, this.entity, this.entityId);
       } else {
@@ -188,74 +191,101 @@ export class ContactDetailsComponent implements OnInit {
     console.log('onCampaignAssociatedToEntity:: end');
     if ( this.contact && campaign ) {
       this.contactService.addCampaignToContact(this.contact.contactId, campaign )
-        .subscribe(response => {
-          console.log('onCampaignAssociatedToEntity:: completed');
-          this.showAssocationSuccessful('campaign');
-        } );
+        .subscribe(response => this.showAssocationSuccessful('action', response),
+          response => this.handleAssociationFailure('campaign', response),
+        );
     }
   }
 
   onCampaignFlaggedForRemoval(campaign: Campaign) {
     if ( this.contact && campaign ) {
       this.contactService.removeCampaignFromContact(this.contact.contactId, campaign.campaignId )
-        .subscribe(response => {
-          console.log('onContactFlaggedForRemoval:: completed');
-          this.showAssocationSuccessful('campaign');
-        } );
+        .subscribe(response => this.showAssocationSuccessful('action', response),
+          response => {
+            this.handleAssociationFailure('campaign', response);
+          }
+        );
     }
   }
 
-  onActionAssociatedToEntity(action: Action): void {
-    console.log('onActionAssociatedToEntity:: end');
+  onActionAssociatedToEntity(payload: any): void {
+    const actions = payload.entities;
+    const action = payload.action;
     if ( this.contact && action ) {
       this.contactService.addActionToContact(this.contact.contactId, action )
-        .subscribe(response => {
-          console.log('onActionAssociatedToEntity:: completed');
-          this.showAssocationSuccessful('action');
-        } );
+        .subscribe(response => this.showAssocationSuccessful('action', response),
+          response =>  {
+            actions.filter(anAction => anAction === action);
+            this.handleAssociationFailure('action', response);
+          }
+        );
     }
   }
 
-  onActionFlaggedForRemoval(action: Action) {
+  onActionFlaggedForRemoval(payload: any): void {
+    const actions = payload.entities;
+    const action = payload.action;
     if ( this.contact && action ) {
       this.contactService.removeActionFromContact(this.contact.contactId, action.actionId )
-        .subscribe(response => {
-          console.log('onContactFlaggedForRemoval:: completed');
-          this.showAssocationSuccessful('action');
-        } );
+        .subscribe(response => this.showAssocationSuccessful('action', response),
+          response => {
+            actions.push(action);
+            this.handleAssociationFailure('action', response);
+          }
+        );
     }
   }
-
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  showAssocationSuccessful(entity: string): void {
-    if ( entity === 'company' ) {
+  handleAssociationFailure(entity: string, resposne?: any): void {
+    if (entity === 'company') {
+      this.companyFailureFlag = true;
+    } else if (entity === 'campaign') {
+      this.campaignFailureFlag = true;
+    } else if (entity === 'contact') {
+      this.contactFailureUpdated = true;
+    } else if (entity === 'action') {
+      this.actionFailureFlag = true;
+    }
+    this.waitAndReset(entity);
+  }
+
+  showAssocationSuccessful(entity: string, resposne?: any): void {
+    if (entity === 'company') {
       this.companyFlag = true;
-    } else if ( entity === 'campaign' ) {
+    } else if (entity === 'campaign') {
       this.campaignFlag = true;
-    } else if ( entity === 'contact' ) {
+    } else if (entity === 'contact') {
       this.contactUpdated = true;
-    } else if ( entity === 'action' ) {
+    } else if (entity === 'action') {
       this.actionFlag = true;
     }
-    this.delay(4000).then(resolve => {
-        if ( entity === 'company' ) {
-          this.companyFlag = false;
-        } else if ( entity === 'campaign' ) {
-          this.campaignFlag = false;
-        } else if ( entity === 'contact' ) {
-          this.contactUpdated = false;
-        } else if ( entity === 'action' ) {
-          this.actionFlag = false;
+    this.waitAndReset(entity);
+  }
+
+   waitAndReset(entity: string): void {
+      this.delay(4000).then(resolve => {
+          if ( entity === 'company' ) {
+            this.companyFlag = false;
+            this.companyFailureFlag = false;
+          } else if ( entity === 'campaign' ) {
+            this.campaignFlag = false;
+            this.campaignFailureFlag = false;
+          } else if ( entity === 'contact' ) {
+            this.contactUpdated = false;
+            this.contactFailureUpdated = false;
+          } else if ( entity === 'action' ) {
+            this.actionFlag = false;
+            this.actionFailureFlag = false;
+          }
         }
-      }
     );
   }
+
   goBack(): void {
     this.location.back();
   }
-
 }

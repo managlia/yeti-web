@@ -142,6 +142,7 @@
       <div *ngIf="campaign?.campaignId">
       <app-action-card [campaignId]="campaign.campaignId"
                        [associationSuccessful]="actionFlag"
+                       [associationFailure]="actionFailureFlag"
                        (onActionAssociatedToEntity)="onActionAssociatedToEntity($event)"
                        (onActionFlaggedForRemoval)="onActionFlaggedForRemoval($event)"
       ></app-action-card>

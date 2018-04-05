@@ -1,50 +1,21 @@
-import {Component, OnInit, OnChanges, Input, Output, Renderer, EventEmitter} from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import * as _ from 'lodash';
-import { ElectronService } from 'ngx-electron';
-
 
 import { Action } from '../../classes/action';
-import { ActionService } from '../../services/action.service';
+import { CardComponent } from '../base/card/card.component';
 
 @Component({
   selector: 'app-action-card',
   templateUrl: './action-card.component.html',
   styleUrls: ['./action-card.component.css']
 })
+/* Component used to add and remove Actions from Company, Campaign, and Contact entities. */
+export class ActionCardComponent extends CardComponent implements OnInit {
 
-export class ActionCardComponent implements OnInit {
-
-  @Input() companyId: string;
-  @Input() contactId: string;
-  @Input() campaignId: string;
-  @Input() associationSuccessful = false;
-  @Output() onActionFlaggedForRemoval = new EventEmitter<Action>();
-  @Output() onActionAssociatedToEntity = new EventEmitter<Action>();
-
-  actions: Action[];
-
-  fontColor = 'black';
-
-  constructor(
-    private actionService: ActionService,
-    public renderer: Renderer,
-    private router: Router,
-    private electronService: ElectronService
-  ) {}
-
-  sendActionStatus( status: String ) {
-    if (this.electronService.isElectronApp) {
-      this.electronService.ipcRenderer.sendToHost('action-status', status);
-    }
-  }
+  @Output() onActionFlaggedForRemoval = new EventEmitter<any>();
+  @Output() onActionAssociatedToEntity = new EventEmitter<any>();
 
   ngOnInit() {
-    console.log('-------------------------> -----------------------> isElectronApp:: ', this.electronService.isElectronApp);
-    this.sendActionStatus('viewing actions on page');
-    console.log(`companyCardComponent this.companyId is ${this.companyId}`);
-    console.log(`companyCardComponent this.contactId is ${this.contactId}`);
-    console.log(`companyCardComponent this.campaignId is ${this.campaignId}`);
     if (this.companyId) {
       this.getActionsByCustomerId();
     } else if (this.contactId) {
@@ -52,45 +23,37 @@ export class ActionCardComponent implements OnInit {
     } else if (this.campaignId) {
       this.getActionsByCampaignId();
     } else {
-      this.actions = [];
+      this.entities = [];
     }
-  }
-
-
-  onActionAdded(action: Action) {
-    console.log('onActionAdded / onActionAssociatedToEntity');
-    this.onActionAssociatedToEntity.emit(action);
-    this.sendActionStatus('an action was added');
-  }
-
-  removeAction(action: Action) {
-    this.onActionFlaggedForRemoval.emit(action);
-    _.remove(this.actions, {
-      actionId: action.actionId
-    });
-    this.sendActionStatus('an action was removed');
   }
 
   getActionsByCustomerId(): void {
     this.actionService.getActionListByCompany( this.companyId )
-      .subscribe(actions => this.actions = actions );
+      .subscribe(actions => this.entities = actions );
   }
 
   getActionsByContactId(): void {
-    console.log(`dfmdfm getting actions by contact id ${this.contactId}`);
     this.actionService.getActionListByContact( this.contactId )
-      .subscribe(actions => this.actions = actions );
+      .subscribe(actions => this.entities = actions );
   }
 
   getActionsByCampaignId(): void {
     this.actionService.getActionListByCampaign( this.campaignId )
-      .subscribe(actions => this.actions = actions );
+      .subscribe(actions => this.entities = actions );
+  }
+
+  onActionAdded(action: Action) {
+   this.onActionAssociatedToEntity.emit( {entities: this.entities, action} );
+  }
+
+  removeAction(action: Action) {
+    this.onActionFlaggedForRemoval.emit( {entities: this.entities, action} );
+    _.remove(this.entities, {
+      actionId: action.actionId
+    });
   }
 
   createNewAction(): void {
-    this.sendActionStatus('routed away');
-
-    console.log('ready to add a new action');
     if (this.companyId) {
       this.router.navigateByUrl( `/action/add/company/${this.companyId}` );
     } else if (this.contactId) {
@@ -100,24 +63,7 @@ export class ActionCardComponent implements OnInit {
     }
   }
 
-  onConsideringAction($event, thediv): void {
-    this.sendActionStatus('considering an action');
-    const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'color', 'rebeccapurple');
-    this.renderer.setElementStyle(target, 'cursor', 'pointer');
-  }
-
-  onUnconsideringAction($event, thediv): void {
-    this.sendActionStatus('unconsidering an action');
-    const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'color', this.fontColor);
-  }
-
   onSelectedAction($event, actionId): void {
-    this.sendActionStatus(`NOW clicked on ${actionId}`);
-    console.log(`clicked on ${actionId}`);
     this.router.navigateByUrl( `/action/${actionId}` );
   }
-
 }
-

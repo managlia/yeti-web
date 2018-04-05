@@ -9,16 +9,6 @@ import {EntityClassificationType} from "./types/entity-classification-type";
 import {ContactTitleType} from "./types/contact-title-type";
 
 export class Campaign {
-
-  constructor() {
-    this.active = true;
-    this.classificationType = new CampaignClassificationType();
-    this.scopeType = new ScopeType();
-    this.actions = [];
-    this.attachments = [];
-    this.tags = [];
-  }
-
   campaignId: string;
   ownerId: string;
   owner: Contact;
@@ -37,4 +27,13 @@ export class Campaign {
   attachments: Attachment[];
   actions: Action[];
   contacts: Contact[];
+
+  constructor() {
+    this.active = true;
+    this.classificationType = new CampaignClassificationType();
+    this.scopeType = new ScopeType();
+    this.actions = [];
+    this.attachments = [];
+    this.tags = [];
+  }
 }

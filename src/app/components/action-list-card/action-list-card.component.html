@@ -5,182 +5,103 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <strong>Actions</strong>
+            <strong>{{label.action.listTitle}}</strong>
           </div>
           <div class="card-body">
+            <div class="row">
+              <div class="col-9">
+                <mat-form-field>
+                  <input matInput [(ngModel)]="textFilter" (keyup)="applyFilters()" placeholder="Filter">
+                </mat-form-field>
+              </div>
+              <div class="col-3">
+                <button type="button" class="btn btn-primary btn-sm" (click)="addNewAction()">Add new action</button>
+              </div>
+            </div>
+            <mat-table #table [dataSource]="dataSource" matSort>
 
-                  <div class="row">
-                    <div class="col-9">
-                      <mat-form-field>
-                        <input matInput [(ngModel)]="textFilter" (keyup)="applyFilters()" placeholder="Filter">
-                      </mat-form-field>
+              <!-- Basic column: Name Column -->
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.name}}</mat-header-cell>
+                <mat-cell *matCellDef="let action"> {{action.name}}</mat-cell>
+              </ng-container>
 
+              <!-- Basic column: Description Column -->
+              <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.description}}</mat-header-cell>
+                <mat-cell *matCellDef="let action"> {{action.description}}</mat-cell>
+              </ng-container>
 
+              <!-- Basic column: Type Column -->
+              <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.type}}</mat-header-cell>
+                <mat-cell *matCellDef="let action">
 
-
-
-
-                    </div>
-                    <div class="col-3">
-                      <button type="button" class="btn btn-primary btn-sm" (click)="addNewAction()">Add new action</button>
+                  {{action.classificationType?.name}}
+                  <div *ngIf="action.classificationType?.name === 'Other'">
+                    <div *ngIf="action.classificationOtherType">
+                     - {{action.classificationOtherType?.name}}
                     </div>
                   </div>
 
-                  <mat-table #table [dataSource]="dataSource" matSort>
 
-                    <!-- Name Column -->
-                    <ng-container matColumnDef="name">
-                      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-                      <mat-cell *matCellDef="let action"> {{action.name}} </mat-cell>
-                    </ng-container>
-
-                    <!-- description Column -->
-                    <ng-container matColumnDef="description">
-                      <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
-                      <mat-cell *matCellDef="let action"> {{action.description}} </mat-cell>
-                    </ng-container>
-
-                    <!-- type Column -->
-                    <ng-container matColumnDef="type">
-                      <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
-                      <mat-cell *matCellDef="let action">
-
-                          <div *ngIf="action.classificationType;else action_assignment">
-                            {{action.classificationType.name}}
-                          </div>
-                         <ng-template #action_assignment>
+                </mat-cell>
+              </ng-container>
 
 
-                           <mat-form-field style="width:67%">
-                             <mat-select placeholder="Action Type">
-                               <mat-option *ngFor="let classificationType of classificationTypes"
-                                           [value]="classificationType.actionClassificationTypeId"
-                                           (click)="setClassificationForAction(classificationType, action)">
-                                 {{ classificationType.name }}
-                               </mat-option>
-                             </mat-select>
-                           </mat-form-field>
+              <div *ngIf="this.fullEdit">
+
+                <!-- Full Edit column: Delete Column -->
+                <ng-container matColumnDef="deleteAction">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.delete}}</mat-header-cell>
+                  <mat-cell *matCellDef="let action"> {{action.deleteable}}</mat-cell>
+                </ng-container>
 
 
-                         </ng-template>
-                      </mat-cell>
-                    </ng-container>
+                <!-- Full Edit column: Scope Column -->
+                <ng-container matColumnDef="scope">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.scope}}</mat-header-cell>
+                  <mat-cell *matCellDef="let action"> {{action.scopeType?.name}}</mat-cell>
+                </ng-container>
 
 
+                <!--  Full Edit column: Active -->
+                <ng-container matColumnDef="active">
+                  <mat-header-cell *matHeaderCellDef>
+                    <mat-select placeholder="Active Action"
+                                [(ngModel)]="activeFilter"
+                                (selectionChange)="applyFilters()">
+                      <mat-option value="true">Active</mat-option>
+                      <mat-option value="false">Closed</mat-option>
+                      <mat-option value="all">All</mat-option>
+                    </mat-select>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let action"> {{action.active | activeConversion}}</mat-cell>
+                </ng-container>
 
-                    <div *ngIf="this.fullEdit">
+              </div>
 
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <div *ngIf="this.fullEdit">
+                <mat-row *matRowDef="let action; columns: displayedColumns;"
+                         [style.background-color]="bgColor"
+                         (mouseover)="onConsideringAction(event,this)"
+                         (mouseout)="onUnconsideringAction(event,this)"
+                         (click)="onSelectAction(action)"></mat-row>
+              </div>
+              <ng-template #row_limitation>
+                <mat-row *matRowDef="let action; columns: displayedColumns;"
+                         [style.background-color]="bgColor"
+                         (mouseover)="onConsideringAction(event,this)"
+                         (mouseout)="onUnconsideringAction(event,this)"
+                         (click)="onSelectAction(action)"></mat-row>
 
-                      <!-- delete Column -->
-                      <ng-container matColumnDef="scope">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header> Scope </mat-header-cell>
-                        <mat-cell *matCellDef="let action">
-
-                          <div *ngIf="action.scopeType;else scope_assignment">
-
-                            <mat-form-field style="width:67%">
-                              <mat-select placeholder="Scope"  [(ngModel)]="action.scopeType.scopeTypeId">
-                                <mat-option *ngFor="let scopeType of scopeTypes"
-                                            [value]="scopeType.scopeTypeId"
-                                            (click)="setScopeForAction(scopeType , action)">
-                                  {{ scopeType.name }}
-                                </mat-option>
-                              </mat-select>
-                            </mat-form-field>
-
-
-                          </div>
-                          <ng-template #scope_assignment>
-                            <mat-form-field style="width:67%">
-                              <mat-select placeholder="Scope" >
-                                <mat-option *ngFor="let scopeType of scopeTypes"
-                                            [value]="scopeType.scopeTypeId"
-                                            (click)="setScopeForAction(scopeType , action)">
-                                  {{ scopeType.name }}
-                                </mat-option>
-                              </mat-select>
-                            </mat-form-field>
-                          </ng-template>
-
-                        </mat-cell>
-                      </ng-container>
-
-
-                      <!-- delete Column -->
-                      <ng-container matColumnDef="deleteAction">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header> Delete </mat-header-cell>
-                        <mat-cell *matCellDef="let action">
-                          <div *ngIf="action.deleteable">
-                           <input type="checkbox" id="deleteAction" name="deleteAction" (change)="deleteAction(action)"> Delete Action
-                          </div>
-                        </mat-cell>
-                      </ng-container>
-
-                      <!-- Edit -->
-                      <ng-container matColumnDef="editAction">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header> Edit </mat-header-cell>
-                        <mat-cell *matCellDef="let action">
-                          <div id="editAction" name="editAction" (click)="onSelectAction(action)"> Edit Action!!!! </div>
-                        </mat-cell>
-                      </ng-container>
-                      <!-- Edit -->
-
-
-                      <!-- Active -->
-                      <ng-container matColumnDef="active">
-                        <mat-header-cell *matHeaderCellDef>
-
-                          <mat-select placeholder="Active Action"
-                                      [(ngModel)]="activeFilter"
-                                      (selectionChange)="applyFilters()">
-                            <mat-option value="true">Active</mat-option>
-                            <mat-option value="false">Closed</mat-option>
-                            <mat-option value="all">All</mat-option>
-                          </mat-select>
-
-                        </mat-header-cell>
-                         <mat-cell *matCellDef="let action"> {{action.active | activeConversion}} </mat-cell>
-                      </ng-container>
-                      <!-- Active -->
-
-
-
-                    </div>
-
-
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-
-                    <div *ngIf="this.fullEdit">
-
-                      <mat-row *matRowDef="let action; columns: displayedColumns;"
-                               [style.background-color]="bgColor"></mat-row>
-
-                    </div>
-                    <ng-template #row_limitation>
-
-                      <mat-row *matRowDef="let action; columns: displayedColumns;"
-                               [style.background-color]="bgColor"
-                               (mouseover)="onConsideringAction(event,this)"
-                               (mouseout)="onUnconsideringAction(event,this)"
-                               (click)="onSelectAction(action)"></mat-row>
-
-                    </ng-template>
-
-
-
-
-
-
-
-
-                  </mat-table>
-
-                  <mat-paginator #paginator
-                                 [pageSize]="3"
-                                 [pageSizeOptions]="[3, 6, 9]">
-                  </mat-paginator>
-
+              </ng-template>
+            </mat-table>
+            <mat-paginator #paginator
+                           [pageSize]="3"
+                           [pageSizeOptions]="[3, 6, 9]">
+            </mat-paginator>
           </div>
         </div>
       </div>

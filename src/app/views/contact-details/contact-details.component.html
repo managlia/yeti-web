@@ -143,6 +143,7 @@
         ></app-campaign-card>
         <app-action-card [contactId]="contact.contactId"
                          [associationSuccessful]="actionFlag"
+                         [associationFailure]="actionFailureFlag"
                          (onActionAssociatedToEntity)="onActionAssociatedToEntity($event)"
                          (onActionFlaggedForRemoval)="onActionFlaggedForRemoval($event)"
         ></app-action-card>

@@ -3,6 +3,7 @@
     <div class="card-header">
       <strong>Email contacts</strong>
       <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">* Change saved *</span>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:indianred" *ngIf="associationFailure">* Change failed *</span>
     </div>
     <div class="card-body">
       <div *ngFor="let aContact of contacts">

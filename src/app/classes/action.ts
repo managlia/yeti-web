@@ -7,17 +7,6 @@ import {Tag} from './common/tag';
 import {CalendarEvent} from './calendar-event';
 
 export class Action {
-  constructor() {
-    this.active = true;
-    this.deleteable = true;
-    this.classificationType = new ActionClassificationType();
-    this.classificationOtherType = new ActionClassificationOtherType();
-    this.scopeType = new ScopeType();
-    this.actionChildren = [];
-    this.attachments = [];
-    this.tags = [];
-  }
-
   contacts: Contact[];
   calendarEvents: CalendarEvent[];
   id: string;
@@ -37,4 +26,15 @@ export class Action {
   tags: Tag[];
   attachments: Attachment[];
   actionChildren: Action[];
+
+  constructor() {
+    this.active = true;
+    this.deleteable = true;
+    this.classificationType = new ActionClassificationType();
+    this.classificationOtherType = new ActionClassificationOtherType();
+    this.scopeType = new ScopeType();
+    this.actionChildren = [];
+    this.attachments = [];
+    this.tags = [];
+  }
 }

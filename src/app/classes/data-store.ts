@@ -21,6 +21,5 @@ export class DataStore {
   loadedContact: Contact;
   loadedContactCampaigns: Campaign[];
   loadedContactActions: Action[];
-
   loadedCampaignActions: Action[];
 }

@@ -1,5 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
+
 import {Contact} from '../contact';
+import * as tc from './text-constants';
 
 @Pipe({
   name: 'contactEmailSummary'

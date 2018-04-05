@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ViewChild, Renderer, AfterViewInit} from '@angular/core';
+import {Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit, ElementRef} from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Router } from '@angular/router';
@@ -12,6 +12,8 @@ import {ActionClassificationOtherTypeService} from '../../services/action-classi
 import {ActionClassificationOtherType} from '../../classes/types/action-classification-other-type';
 import {ScopeType} from '../../classes/types/scope-type';
 import {ScopeTypeService} from '../../services/scope-type.service';
+import {ActionQuickEditService} from '../widgets/action-quick-edit.service';
+import * as label from '../labels';
 
 @Component({
   selector: 'app-action-list-card',
@@ -19,23 +21,27 @@ import {ScopeTypeService} from '../../services/scope-type.service';
   styleUrls: ['./action-list-card.component.css']
 })
 export class ActionListCardComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('something', {read: ElementRef}) something: ElementRef;
+
+  dataSource = new MatTableDataSource();
+
   bgColor = 'white';
-  fullEdit = false;
   activeFilter = 'true';
   textFilter = '';
   action: Action;
-  dataSource = new MatTableDataSource();
-  classificationOtherTypes: Observable<ActionClassificationOtherType[]>;
+  classificationOtherTypes: ActionClassificationOtherType[];
   classificationTypes: ActionClassificationType[];
   scopeTypes: ScopeType[];
+  public readonly label = label;
 
+  fullEdit = false;
   shortList = ['name', 'description', 'type'];
-  fullList = ['name', 'description', 'type', 'scope', 'deleteAction', 'editAction', 'active'];
+  fullList = ['name', 'description', 'type', 'deleteAction', 'scope', 'active'];
 
-  displayedColumns = this.fullList;
+  displayedColumns: string[] = null;
   @Input() companyId: string;
   @Input() contactId: string;
-  @Input() campaignId: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -46,11 +52,12 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
     private actionClassificationTypeService: ActionClassificationTypeService,
     private actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
     private scopeTypeService: ScopeTypeService,
-    public renderer: Renderer,
-    private router: Router
+    public renderer: Renderer2,
+    private router: Router,
+    private actionQuickEditService: ActionQuickEditService
   ) {
-    this. getClassificationTypes();
-    this.classificationOtherTypes = this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList();
+    this.getClassificationTypes();
+    this.getClassificationOtherTypes();
     this.getScopeTypes();
   }
 
@@ -74,11 +81,7 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
     } else if (this.contactId) {
       this.actionService.getActionListByContact( this.contactId )
         .subscribe(actions => this.dataSource.data = actions);
-    } else if (this.campaignId) {
-      this.actionService.getActionListByCampaign( this.campaignId )
-        .subscribe(actions => this.dataSource.data = actions);
     } else {
-      console.log('********** LOADING ALL ACTIONS *************');
       this.fullEdit = true;
       this.displayedColumns = this.fullList;
       this.actionService.getActionList()
@@ -86,20 +89,37 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onSelectAction(action: Action) {
-    this.router.navigateByUrl( `/action/${action.actionId}` );
+  addNewAction(): void {
+    if (this.companyId) {
+      this.router.navigateByUrl( `/action/add/company/${this.companyId}` );
+    } else if (this.contactId) {
+      this.router.navigateByUrl( `/action/add/contact/${this.contactId}` );
+    } else {
+      this.router.navigateByUrl( `/action` );
+    }
+  }
+
+  onSelectAction = (action: Action) => {
+    // this.router.navigateByUrl( `/action/${action.actionId}` );
+    const data = {
+      dataSource: this.dataSource,
+      action: action,
+      classificationTypes: this.classificationTypes,
+      classificationOtherTypes: this.classificationOtherTypes,
+      scopeTypes: this.scopeTypes
+    };
+    this.actionQuickEditService.openDialog(data)
+      .subscribe(result => {
+        console.log('Gotta think what will be done here');
+      });
   }
 
   setClassificationForAction(classificationType: ActionClassificationType, action: Action) {
-      console.log('doing classificationType ', classificationType);
-      console.log('doing classificationType update for action ', action);
       action.classificationType = classificationType;
       this.updateIfReady( action );
   }
 
   setScopeForAction(scopeType: ScopeType, action: Action) {
-    console.log('doing scopeType ', scopeType);
-    console.log('doing scopeType update for action ', action);
     action.scopeType = scopeType;
     this.updateIfReady( action );
   }
@@ -118,14 +138,8 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
   }
 
   deleteAction( action: Action ) {
-    console.log('Hard delete of action ', action);
     this.actionService.deleteAction(action.actionId)
-      .subscribe(feedback => {
-        console.log('DELETED: Now I should remove the record from the list because it was deleted.', feedback);
-        console.log( 'size of data source now ' + this.dataSource.data.length );
-        this.dataSource.data = this.dataSource.data.filter(e => e !== action );
-        console.log( 'size of data source later ' + this.dataSource.data.length );
-      });
+      .subscribe(feedback => this.dataSource.data = this.dataSource.data.filter(e => e !== action ) );
   }
 
   applyFilters() {
@@ -135,7 +149,6 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
       general: this.textFilter,
       activeStatus: this.activeFilter
     };
-    console.log(JSON.stringify(filterValues));
     this.dataSource.filter = JSON.stringify(filterValues);
   }
 
@@ -150,29 +163,18 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
     return filterFunction
   }
 
-
   onConsideringAction($event, thediv): void {
     const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'backgroundColor', 'lavender');
-    this.renderer.setElementStyle(target, 'cursor', 'pointer');
+    console.log('something', this.something);
+
+
+    this.renderer.setStyle(target, 'backgroundColor', 'lavender');
+    this.renderer.setStyle(target, 'cursor', 'pointer');
   }
 
   onUnconsideringAction($event, thediv): void {
     const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'backgroundColor', this.bgColor);
-  }
-
-  addNewAction(): void {
-    if (this.companyId) {
-      console.log(`Going to add ACTION for the existing company ${this.companyId}`);
-    } else if (this.contactId) {
-      console.log(`Going to add ACTION for the existing contact ${this.contactId}`);
-    } else if (this.campaignId) {
-      console.log(`Going to add ACTION for the existing campaign ${this.campaignId}`);
-    } else {
-      console.log('Going to add ACTION for NOTHING');
-      this.router.navigateByUrl( `/action` );
-    }
+    this.renderer.setStyle(target, 'backgroundColor', this.bgColor);
   }
 
   getClassificationTypes(): void {
@@ -180,9 +182,13 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
       .subscribe(classificationTypes => this.classificationTypes = classificationTypes);
   }
 
+  getClassificationOtherTypes(): void {
+    this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList()
+      .subscribe(classificationOtherTypes => this.classificationOtherTypes = classificationOtherTypes);
+  }
+
   getScopeTypes(): void {
     this.scopeTypeService.getScopeTypeList()
       .subscribe(scopeTypes => this.scopeTypes = scopeTypes);
   }
-
 }

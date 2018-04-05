@@ -130,6 +130,7 @@
         ></app-campaign-card>
         <app-action-card [companyId]="company.companyId"
                          [associationSuccessful]="actionFlag"
+                         [associationFailure]="actionFailureFlag"
                          (onActionAssociatedToEntity)="onActionAssociatedToEntity($event)"
                          (onActionFlaggedForRemoval)="onActionFlaggedForRemoval($event)"
         ></app-action-card>

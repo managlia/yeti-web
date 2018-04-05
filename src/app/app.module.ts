@@ -130,7 +130,7 @@ import { AttachmentService } from './components/widgets/attachment.service';
 import { DateTimeService } from './components/widgets/date-time.service';
 import { TagService } from './components/widgets/tag.service';
 import { UrlService } from './components/widgets/url.service';
-
+import { ActionQuickEditService } from './components/widgets/action-quick-edit.service';
 
 import { ActionClassificationOtherTypeService } from './services/action-classification-other-type.service';
 import { ActionClassificationTypeService } from './services/action-classification-type.service';
@@ -200,6 +200,8 @@ import { ActiveConversionPipe } from './classes/pipes/active-conversion.pipe';
 import { ContactEmailCardComponent } from './components/contact-email-card/contact-email-card.component';
 import { ContactEmailSummaryPipe } from './classes/pipes/contact-email-summary.pipe';
 import { MoreSimpleDatePickerComponent } from './components/widgets/more-simple-date-picker/more-simple-date-picker.component';
+import { CardComponent } from './components/base/card/card.component';
+import { ActionQuickEditComponent } from './components/widgets/action-quick-edit/action-quick-edit.component';
 
 @NgModule({
   imports: [
@@ -300,9 +302,11 @@ import { MoreSimpleDatePickerComponent } from './components/widgets/more-simple-
     ContactEmailCardComponent,
     ContactEmailSummaryPipe,
     MoreSimpleDatePickerComponent,
+    CardComponent,
+    ActionQuickEditComponent,
   ],
   providers: [
-    AddressService, AttachmentService, DateTimeService, TagService, UrlService,
+    AddressService, AttachmentService, DateTimeService, TagService, UrlService, ActionQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
     ActionClassificationOtherTypeService, CompanyUrlService, CompanyUrlTypeService, ContactUrlService, ContactUrlTypeService,
@@ -315,6 +319,6 @@ import { MoreSimpleDatePickerComponent } from './components/widgets/more-simple-
       useClass: HashLocationStrategy,
     }],
   bootstrap: [ AppComponent ],
-  entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent, UrlDetailsComponent]
+  entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent, ActionQuickEditComponent, UrlDetailsComponent]
 })
 export class AppModule { }
