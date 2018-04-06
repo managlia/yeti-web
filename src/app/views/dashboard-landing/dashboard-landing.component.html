@@ -3,80 +3,85 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header">
-          <strong>Company **AND** Contact Search</strong>
+          <strong>{{label.dashboard.title}}</strong>
         </div>
         <div class="card-body">
 
           <form action="" method="post" class="form-horizontal">
             <div class="form-group row">
               <div class="col-md-6">
-                    <mat-form-field style="width:100%">
-                      <input type="text" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"  placeholder="Enter your search"
-                             #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)" id="searcher">
-                      <mat-autocomplete #auto="matAutocomplete">
-                        <mat-option *ngFor="let coc of results$ | async" [value]="coc.matchTerm" (onSelectionChange)="onOptionSelected(coc)">
-                          {{ coc.matchTerm }}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </mat-form-field>
+                <mat-form-field style="width:100%">
+                  <input type="text" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
+                         [(placeholder)]="label.dashboard.searchPlaceholder"
+                         #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)" id="searcher">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let coc of results$ | async" [value]="coc.matchTerm"
+                                (onSelectionChange)="onOptionSelected(coc)">
+                      {{ coc.matchTerm }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <button type="button" class="btn btn-secondary" (click)="resetSearch()"> {{label.dashboard.clear}} </button>
               </div>
             </div>
           </form>
 
-          <div *ngIf="(companyLoaded && this.loadedCompany) || (contactLoaded && this.loadedContact)">
+          <div *ngIf="entityLoaded()">
             <div class="row">
               <div class="col-sm-6 col-md-4">
                 <div class="card card-accent-primary">
 
-                    <div *ngIf="(companyLoaded && this.loadedCompany)">
-                      <div class="card-header">
-                        Company Loaded
-                      </div>
-                      <div class="card-body">
-                        <div [innerHtml]="loadedCompany | companySummary"
-                             (mouseover)="onConsideringEntity(event,this)"
-                             (mouseout)="onUnconsideringEntity(event,this)"
-                             (click)="selectCompany()"></div>
-                      </div>
+                  <div *ngIf="(companyLoaded && this.loadedCompany)">
+                    <div class="card-header">
+                      <strong>{{label.dashboard.company}}</strong>
                     </div>
-                    <div *ngIf="(contactLoaded && this.loadedContact)">
-                      <div class="card-header">
-                        Contact Loaded
-                      </div>
-                      <div class="card-body">
-                        <div [innerHtml]="loadedContact | contactSummary"
-                             (mouseover)="onConsideringEntity(event,this)"
-                             (mouseout)="onUnconsideringEntity(event,this)"
-                             (click)="selectContact()"></div>
-                      </div>
+                    <div class="card-body">
+                      <div [innerHtml]="loadedCompany | companySummary"
+                           (mouseover)="onConsideringEntity(event,this)"
+                           (mouseout)="onUnconsideringEntity(event,this)"
+                           (click)="selectCompany()"></div>
                     </div>
+                  </div>
+                  <div *ngIf="(contactLoaded && this.loadedContact)">
+                    <div class="card-header">
+                      <strong>{{label.dashboard.contact}}</strong>
+                    </div>
+                    <div class="card-body">
+                      <div [innerHtml]="loadedContact | contactSummary"
+                           (mouseover)="onConsideringEntity(event,this)"
+                           (mouseout)="onUnconsideringEntity(event,this)"
+                           (click)="selectContact()"></div>
+                    </div>
+                  </div>
                 </div>
               </div><!--/.col-->
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <app-action-list-card [companyId]="loadedCompany?.companyId" [contactId]="loadedContact?.contactId"></app-action-list-card>
-              </div>
-              <div class="col-md-6">
-                <app-campaign-list-card [companyId]="loadedCompany?.companyId" [contactId]="loadedContact?.contactId"></app-campaign-list-card>
-              </div>
-            </div>
-          </div>
-          <div *ngIf="!(companyLoaded && this.loadedCompany) && !(contactLoaded && this.loadedContact)">
-
-            <div class="row">
-              <div class="col-md-12">
-                <app-action-list-card [companyId]="loadedCompany?.companyId" [contactId]="loadedContact?.contactId"></app-action-list-card>
-              </div>
-            </div>
-
-
           </div>
 
+            <div class="row">
 
+              <div *ngIf="entityLoaded(); then actionAndCampaign; else actionOnly"></div>
 
+              <ng-template #actionAndCampaign>
+                <div class="col-md-6">
+                  <app-action-list-card [companyId]="loadedCompany?.companyId"
+                                        [contactId]="loadedContact?.contactId"></app-action-list-card>
+                </div>
+                <div class="col-md-6">
+                  <app-campaign-list-card [companyId]="loadedCompany?.companyId"
+                                          [contactId]="loadedContact?.contactId"></app-campaign-list-card>
+                </div>
+              </ng-template>
 
+              <ng-template #actionOnly>
+                <div class="col-md-12">
+                  <app-action-list-card></app-action-list-card>
+                </div>
+              </ng-template>
 
+            </div>
         </div>
       </div>
     </div>

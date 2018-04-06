@@ -1,86 +1,134 @@
-import { Component, OnInit, Input, ViewChild, Renderer } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Router } from '@angular/router';
 
+import { CampaignClassificationTypeService } from '../../services/campaign-classification-type.service';
 import { CampaignService } from '../../services/campaign.service';
-import { Company } from '../../classes/company';
-import { Contact } from '../../classes/contact';
+import { CampaignClassificationType } from '../../classes/types/campaign-classification-type';
 import { Campaign } from '../../classes/campaign';
-import { DataStore } from '../../classes/data-store';
+import {ScopeType} from '../../classes/types/scope-type';
+import {ScopeTypeService} from '../../services/scope-type.service';
+import {CampaignQuickEditService} from '../widgets/campaign-quick-edit.service';
+import * as label from '../labels';
 
 @Component({
   selector: 'app-campaign-list-card',
   templateUrl: './campaign-list-card.component.html',
   styleUrls: ['./campaign-list-card.component.css']
 })
-export class CampaignListCardComponent implements OnInit {
-  bgColor = 'white';
+export class CampaignListCardComponent implements OnInit, AfterViewInit {
 
-  campaign: Campaign;
-  dataSource = new MatTableDataSource();
-  displayedColumns = ['name', 'description', 'type'];
-  @Input() actionId: string;
   @Input() companyId: string;
   @Input() contactId: string;
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  dataSource = new MatTableDataSource();
+  bgColor = 'white';
+  activeFilter = 'true';
+  typeFilter: string;
+  textFilter = '';
+
+  classificationTypes: CampaignClassificationType[];
+  scopeTypes: ScopeType[];
+  public readonly label = label;
+  displayedColumns = ['name', 'description', 'type', 'active'];
 
   constructor(
     private campaignService: CampaignService,
-    public renderer: Renderer,
+    private campaignClassificationTypeService: CampaignClassificationTypeService,
+    private scopeTypeService: ScopeTypeService,
+    public renderer: Renderer2,
     private router: Router
-  ) { }
+    private campaignQuickEditService: CampaignQuickEditService
+  ) {
+    this.getClassificationTypes();
+    this.getScopeTypes();
+  }
 
-  ngOnInit(): void {
+  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+  ngOnInit(): void {
+    this.dataSource.filterPredicate = this.createFilter();
+    this.dataSource.filter = JSON.stringify({
+      general: '',
+      activeStatus: 'true',
+      typeStatus: 'all'
+    });
     if (this.companyId) {
-      console.log('load with comapny id ', this.companyId);
       this.campaignService.getCampaignListByCompany(this.companyId)
         .subscribe(campaigns => this.dataSource.data = campaigns);
     } else if (this.contactId) {
       this.campaignService.getCampaignListByContact( this.contactId )
         .subscribe(campaigns => this.dataSource.data = campaigns);
-    } else if (this.actionId) {
-      this.campaignService.getCampaignListByAction( this.actionId )
-        .subscribe(campaigns => this.dataSource.data = campaigns);
+    }
+  }
+
+  addNewCampaign(): void {
+  if (this.companyId) {
+      this.router.navigateByUrl(`/campaign/add/company/${this.companyId}`);
+    } else if (this.contactId) {
+      this.router.navigateByUrl(`/campaign/add/contact/${this.contactId}`);
+    } else {
+      this.router.navigateByUrl(`/campaign`);
     }
   }
 
   onSelectCampaign(campaign: Campaign) {
-    this.router.navigateByUrl( `/campaign/${campaign.campaignId}` );
+    const data = {
+      dataSource: this.dataSource,
+      campaign: campaign,
+      classificationTypes: this.classificationTypes,
+      classificationOtherTypes: this.classificationOtherTypes,
+      scopeTypes: this.scopeTypes
+    };
+    this.campaignQuickEditService.openDialog(data)
+      .subscribe(result => {
+        console.log('Does anything need to be done here????');
+      });
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-    this.dataSource.filter = filterValue;
+  applyFilters() {
+    this.textFilter = this.textFilter.trim(); // Remove whitespace
+    this.textFilter = this.textFilter.toLowerCase(); // Datasource defaults to lowercase matches
+    const filterValues = {
+      general: this.textFilter,
+      activeStatus: this.activeFilter,
+      typeStatus: this.typeFilter ? this.typeFilter : 'all',
+    };
+    this.dataSource.filter = JSON.stringify(filterValues);
   }
 
+  createFilter(): (data: any, filter: string) => boolean {
+    const filterFunction = function (data, filter): boolean {
+      const searchTerms = JSON.parse(filter);
+      return (
+        data.name.toString().toLowerCase().indexOf(searchTerms.general) !== -1
+        || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
+        && (searchTerms.activeStatus === 'all' || data.active === (searchTerms.activeStatus === 'true'))
+        && (searchTerms.typeStatus === 'all' || (data.classificationType &&
+           (data.classificationType.campaignClassificationTypeId === searchTerms.typeStatus)))
+    };
+    return filterFunction
+  }
   onConsideringCampaign($event, thediv): void {
     const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'backgroundColor', 'lavender');
-    this.renderer.setElementStyle(target, 'cursor', 'pointer');
+    this.renderer.setStyle(target, 'backgroundColor', 'lavender');
+    this.renderer.setStyle(target, 'cursor', 'pointer');
   }
 
   onUnconsideringCampaign($event, thediv): void {
     const target = event.currentTarget || event.target || event.srcElement;
-    this.renderer.setElementStyle(target, 'backgroundColor', this.bgColor);
+    this.renderer.setStyle(target, 'backgroundColor', this.bgColor);
   }
 
-  addNewCampaign(): void {
-    if (this.companyId) {
-      console.log(`Going to add CAMPAIGN for the existing company ${this.companyId}`);
-    } else if (this.contactId) {
-      console.log(`Going to add CAMPAIGN for the existing contact ${this.contactId}`);
-    } else if (this.actionId) {
-      console.log(`Going to add CAMPAIGN for the existing action ${this.actionId}`);
-    } else {
-      console.log('Going to add CAMPAIGN for NOTHING');
-    }
+  getClassificationTypes(): void {
+    this.campaignClassificationTypeService.getCampaignClassificationTypeList()
+      .subscribe(classificationTypes => this.classificationTypes = classificationTypes);
   }
-
-
+  getScopeTypes(): void {
+    this.scopeTypeService.getScopeTypeList()
+      .subscribe(scopeTypes => this.scopeTypes = scopeTypes);
+  }
 }

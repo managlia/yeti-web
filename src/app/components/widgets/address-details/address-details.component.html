@@ -2,56 +2,76 @@
   <h4 class="modal-title">Add or edit address</h4>
 </div>
 <div class="modal-body">
-  <div class="row" style="padding-bottom:10px;width=100%;">
-    <div class="col-12">
-      <mat-form-field>
-        <mat-select placeholder="Address Type" [(ngModel)]="data.address.addressType.addressTypeId" tabindex="6"  (selectionChange)="updateAddressType($event)">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let addressType of data.types" [value]="addressType.addressTypeId">{{addressType.addressTypeId}} - {{addressType.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <div *ngIf="data.address" id="address-edit" class="animated fadeIn">
+
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+
+        <mat-form-field style="width:100%">
+          <mat-select placeholder="Address Type" [(ngModel)]="data.address.addressType.addressTypeId" tabindex="1"  (selectionChange)="updateAddressType($event)">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let addressType of data.types" [value]="addressType.addressTypeId">{{addressType.addressTypeId}} - {{addressType.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <input matInput tabindex="1" placeholder="Address 1" [(ngModel)]="data.address.address1" tabindex="1">
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <input matInput tabindex="1" placeholder="Address 1" [(ngModel)]="data.address.address1" tabindex="2">
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <input matInput tabindex="1" placeholder="Address 2" [(ngModel)]="data.address.address2" tabindex="2">
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <input matInput tabindex="1" placeholder="Address 2" [(ngModel)]="data.address.address2" tabindex="3">
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <input matInput tabindex="1" placeholder="City" [(ngModel)]="data.address.city" tabindex="3">
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <input matInput tabindex="1" placeholder="City" [(ngModel)]="data.address.city" tabindex="4">
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <mat-select placeholder="State" [(ngModel)]="data.address.stateId" tabindex="4">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let s of states" [value]="s.abbr">{{s.abbr}} - {{s.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <mat-select placeholder="State" [(ngModel)]="data.address.stateId" tabindex="5">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let s of states" [value]="s.abbr">{{s.abbr}} - {{s.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <input matInput tabindex="1" placeholder="Postal Code" [(ngModel)]="data.address.postalCode" tabindex="5">
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <input matInput tabindex="1" placeholder="Postal Code" [(ngModel)]="data.address.postalCode" tabindex="6">
+        </mat-form-field>
+      </div>
     </div>
-    <div class="col-12">
-      <mat-form-field>
-        <mat-select placeholder="Country" [(ngModel)]="data.address.countryId" tabindex="6">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let c of countries" [value]="c.alpha2">{{c.alpha2}} - {{c.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12">
+        <mat-form-field style="width:100%">
+          <mat-select placeholder="Country" [(ngModel)]="data.address.countryId" tabindex="7">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let c of countries" [value]="c.alpha2">{{c.alpha2}} - {{c.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
+    <div class="row" style="padding-top:5px;">
+      <div class="col-12" align="center">
+        <div class="modal-footer" align="center">
+          <button class="btn btn-primary" [mat-dialog-close]="data.address" tabindex="8">Ok</button>
+          <button class="btn btn-primary" (click)="onNoClick()" tabindex="-1">Cancel</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
-<div class="modal-footer">
-  <button class="btn btn-primary" [mat-dialog-close]="data.address" tabindex="7">Ok</button>
-  <button class="btn btn-primary" (click)="onNoClick()" tabindex="-1">Cancel</button>
-</div>
-
-

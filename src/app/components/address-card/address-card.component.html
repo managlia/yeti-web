@@ -1,27 +1,35 @@
 <div class="animated fadeIn">
   <div class="card">
     <div class="card-header">
-      <strong>Addresses</strong>
+      <strong>{{label.address.title}}</strong>
     </div>
     <div class="card-body">
-
-
-      <div *ngFor="let anAddress of addresses">
+      <div *ngFor="let anAddress of addressesToModify">
         <div class="row" style="padding-bottom:10px;">
           <div class="col-7">
-            <div [innerHtml]="anAddress | formatAddress"></div>
+            <div *ngIf="anAddress.flaggedForDelete; then showGrayed; else showNormal"></div>
+            <ng-template #showGrayed>
+              <div style="color:lightgray;" [innerHtml]="anAddress | formatAddress"></div>
+            </ng-template>
+            <ng-template #showNormal>
+              <div [innerHtml]="anAddress | formatAddress"></div>
+            </ng-template>
           </div>
-          <div class="col-5">
-            <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog(anAddress)">Edit</button>
-            <button type="button" class="btn btn-primary btn-sm" (click)="removeAddress(anAddress)">Remove</button>
+          <div class="col-5"  align="center">
+            <div *ngIf="anAddress.flaggedForDelete; then isFlaggedForRemoval; else notFlaggedForRemoval"></div>
+            <ng-template #isFlaggedForRemoval>
+              <button type="button" class="btn btn-warning btn-sm" (click)="flagForRetention(anAddress)">{{label.address.retain}}</button>
+            </ng-template>
+            <ng-template #notFlaggedForRemoval>
+              <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog(anAddress)">{{label.address.edit}}</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="flagForRemoval(anAddress)">{{label.address.remove}}</button>
+            </ng-template>
           </div>
         </div>
       </div>
-
-
       <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
         <div class="col-md-12">
-          <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog()">Add new address</button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog()">{{label.address.add}}</button>
         </div>
       </div>
     </div>

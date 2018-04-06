@@ -25,5 +25,28 @@ export const action = {
   }
 };
 
+export const campaign = {
+  title: 'Campaigns',
+  listTitle: 'Campaign List',
+  addExisting: 'Add existing campaign',
+  addNew: 'Add new campaign',
+  remove: 'Remove',
+  column: {
+    name: 'Name',
+    description: 'Description',
+    type: 'Type',
+    active: 'Is Active'
+  }
+}
+
+export const address = {
+  title: 'Addresses',
+  listTitle: 'Address List',
+  edit: 'Edit',
+  remove: 'Remove',
+  retain: 'Retain',
+  add: 'Add new address'
+};
+
 
 

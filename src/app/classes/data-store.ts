@@ -10,7 +10,7 @@ export class DataStore {
   user: Contact;
   hostCompany: Company;
 
-  //temp till data-store is active
+  // temp till data-store is active
   userId = '1';
 
   loadedCompany: Company;

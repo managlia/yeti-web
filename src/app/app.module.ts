@@ -131,6 +131,7 @@ import { DateTimeService } from './components/widgets/date-time.service';
 import { TagService } from './components/widgets/tag.service';
 import { UrlService } from './components/widgets/url.service';
 import { ActionQuickEditService } from './components/widgets/action-quick-edit.service';
+import { CampaignQuickEditService } from './components/widgets/campaign-quick-edit.service';
 
 import { ActionClassificationOtherTypeService } from './services/action-classification-other-type.service';
 import { ActionClassificationTypeService } from './services/action-classification-type.service';
@@ -202,6 +203,8 @@ import { ContactEmailSummaryPipe } from './classes/pipes/contact-email-summary.p
 import { MoreSimpleDatePickerComponent } from './components/widgets/more-simple-date-picker/more-simple-date-picker.component';
 import { CardComponent } from './components/base/card/card.component';
 import { ActionQuickEditComponent } from './components/widgets/action-quick-edit/action-quick-edit.component';
+import { CampaignQuickEditComponent } from './components/widgets/campaign-quick-edit/campaign-quick-edit.component';
+import { ViewBaseComponent } from './views/view-base/view-base.component';
 
 @NgModule({
   imports: [
@@ -304,9 +307,11 @@ import { ActionQuickEditComponent } from './components/widgets/action-quick-edit
     MoreSimpleDatePickerComponent,
     CardComponent,
     ActionQuickEditComponent,
+    CampaignQuickEditComponent,
+    ViewBaseComponent,
   ],
   providers: [
-    AddressService, AttachmentService, DateTimeService, TagService, UrlService, ActionQuickEditService,
+    AddressService, AttachmentService, DateTimeService, TagService, UrlService, ActionQuickEditService, CampaignQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
     ActionClassificationOtherTypeService, CompanyUrlService, CompanyUrlTypeService, ContactUrlService, ContactUrlTypeService,
@@ -319,6 +324,7 @@ import { ActionQuickEditComponent } from './components/widgets/action-quick-edit
       useClass: HashLocationStrategy,
     }],
   bootstrap: [ AppComponent ],
-  entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent, ActionQuickEditComponent, UrlDetailsComponent]
+  entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent,
+                  ActionQuickEditComponent, CampaignQuickEditComponent, UrlDetailsComponent]
 })
 export class AppModule { }

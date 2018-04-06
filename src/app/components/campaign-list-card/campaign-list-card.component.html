@@ -5,19 +5,18 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <strong>Campaigns</strong>
+            <strong>{{label.campaign.listTitle}}</strong>
           </div>
           <div class="card-body">
-
 
                 <div class="row">
                   <div class="col-9">
                       <mat-form-field>
-                        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-                      </mat-form-field>
+                   <input matInput [(ngModel)]="textFilter" (keyup)="applyFilters()" placeholder="Filter">
+                     </mat-form-field>
                   </div>
                     <div class="col-3">
-                      <button type="button" class="btn btn-primary btn-sm" (click)="addNewCampaign()">Add new campaign</button>
+                      <button type="button" class="btn btn-primary btn-sm" (click)="addNewCampaign()">{{label.campaign.addNew}}</button>
                     </div>
                 </div>
 
@@ -25,22 +24,46 @@
 
                   <!-- Name Column -->
                   <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{label.campaign.column.name}} </mat-header-cell>
                     <mat-cell *matCellDef="let campaign"> {{campaign.name}} </mat-cell>
                   </ng-container>
 
                   <!-- description Column -->
                   <ng-container matColumnDef="description">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{label.campaign.column.description}} </mat-header-cell>
                     <mat-cell *matCellDef="let campaign"> {{campaign.description}} </mat-cell>
                   </ng-container>
 
                   <!-- type Column -->
                   <ng-container matColumnDef="type">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>
+
+                  <mat-select [(placeholder)]="label.campaign.column.type"
+                              [(ngModel)]="typeFilter"
+                              (selectionChange)="applyFilters()">
+                    <mat-option value="all">All Types</mat-option>
+                    <mat-option *ngFor="let classificationType of classificationTypes" [value]="classificationType.campaignClassificationTypeId">
+                      {{ classificationType.name }}
+                    </mat-option>
+                  </mat-select>
+
+                </mat-header-cell>
                     <mat-cell *matCellDef="let campaign"> {{campaign.classificationType.name}} </mat-cell>
                   </ng-container>
 
+               <!--  Full Edit column: Active -->
+                <ng-container matColumnDef="active">
+                  <mat-header-cell *matHeaderCellDef>
+                    <mat-select placeholder="Filter by Open/Closed"
+                                [(ngModel)]="activeFilter"
+                                (selectionChange)="applyFilters()">
+                      <mat-option value="true">Open</mat-option>
+                      <mat-option value="false">Closed</mat-option>
+                      <mat-option value="all">All</mat-option>
+                    </mat-select>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let campaign"> {{campaign.active | activeConversion}}</mat-cell>
+                </ng-container>
                   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                   <mat-row *matRowDef="let campaign; columns: displayedColumns;"
                            [style.background-color]="bgColor"
@@ -50,10 +73,10 @@
 
                 </mat-table>
 
-                <mat-paginator #paginator
-                               [pageSize]="3"
-                               [pageSizeOptions]="[3, 6, 9]">
-                </mat-paginator>
+            <mat-paginator [length]="100"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
 
 
           </div>

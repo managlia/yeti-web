@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
@@ -22,6 +22,8 @@ import { UrlType } from '../../classes/types/url-type';
 import {Company} from '../../classes/company';
 import {Campaign} from '../../classes/campaign';
 import {Action} from '../../classes/action';
+import {Address} from '../../classes/common/address';
+import {AddressCardComponent} from '../../components/address-card/address-card.component';
 
 @Component({
   selector: 'app-contact-details',
@@ -30,10 +32,13 @@ import {Action} from '../../classes/action';
 })
 export class ContactDetailsComponent implements OnInit {
 
+  @ViewChild(AddressCardComponent) addressCard: AddressCardComponent;
+
   contactUpdated = false;
   companyFlag = false;
   campaignFlag = false;
   actionFlag = false;
+  addressIsDirty = false;
 
   contactFailureUpdated = false;
   companyFailureFlag = false;
@@ -260,6 +265,7 @@ export class ContactDetailsComponent implements OnInit {
       this.campaignFlag = true;
     } else if (entity === 'contact') {
       this.contactUpdated = true;
+      this.addressCard.writeCopyFromOriginal();
     } else if (entity === 'action') {
       this.actionFlag = true;
     }
@@ -283,6 +289,10 @@ export class ContactDetailsComponent implements OnInit {
           }
         }
     );
+  }
+  addressesChanged(addresses: Address[]): void {
+    console.log('making the addresses dirty!!!');
+    this.addressIsDirty = true;
   }
 
   goBack(): void {

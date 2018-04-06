@@ -19,8 +19,8 @@ export class AddressService {
       types: addressClassificationTypes
     };
     const dialogRef = this.dialog.open(AddressDetailsComponent, {
-      width: '300px',
-      height: '630px',
+      width: '400px',
+      height: '670px',
       data: data
     });
 

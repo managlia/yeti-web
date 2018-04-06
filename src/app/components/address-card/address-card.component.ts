@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash';
 
 import { AddressClassificationType } from '../../classes/types/address-classification-type';
 import { Address } from '../../classes/common/address';
 import { AddressService } from '../widgets/address.service';
+import * as label from '../labels';
 
 @Component({
   selector: 'app-address-card',
@@ -11,49 +12,67 @@ import { AddressService } from '../widgets/address.service';
   styleUrls: ['./address-card.component.css']
 })
 export class AddressCardComponent implements OnInit {
+
   @Input() addresses: Address[];
   @Input() addressTypes: AddressClassificationType[];
-
-  emptyAddress: Address = new Address(
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    'US',
-    new AddressClassificationType('', '', ''));
+  @Output() addressesChangedInCard = new EventEmitter<Address[]>();
+  public readonly label = label;
+  addressesToModify: Address[];
 
   constructor(
     private addressService: AddressService,
   ) { }
 
   ngOnInit() {
+    this.writeCopyFromOriginal();
   }
 
+  writeCopyFromOriginal = () => this.addressesToModify = _.cloneDeep(this.addresses);
+
   openAddressDialog(anAddress: Address): void {
-    console.log('opening address dialog');
     if ( !anAddress ) {
-      this.addressService.openDialog(_.cloneDeep(this.emptyAddress), this.addressTypes)
-        .subscribe(result => ( result ? this.addresses.push(result) : null));
+      // Adding a new address
+      this.addressService.openDialog(new Address(), this.addressTypes)
+        .subscribe(result => {
+          if ( result ) {
+            this.addressesToModify.push(result);
+            this.addresses.push(result);
+            this.addressesChangedInCard.emit(this.addresses);
+          }
+        });
     } else {
+      // Modifying an existing address
       const anAddressCopy = _.cloneDeep(anAddress);
       this.addressService.openDialog(anAddress, this.addressTypes)
-        .subscribe( result => ( result ? null : this.resetAddress(anAddressCopy, anAddress)) );
+        .subscribe( result => {
+          if ( result ) {
+            const foundInOriginalIndex = this.addresses.findIndex( e => e === anAddress );
+            if ( foundInOriginalIndex < 0 ) {
+              // dirtying a previously clean address - need to splice and populate with common reference
+              const indexUsingId = this.addresses.findIndex( e => e.addressId === anAddress.addressId );
+              this.addresses.splice(indexUsingId, 1, result);
+            }
+            anAddress = result;
+            this.addressesChangedInCard.emit(this.addresses);
+          }
+      });
     }
   }
 
-  resetAddress(replacementAddress: Address, originalAddress: Address) {
-    originalAddress.address1 = replacementAddress.address1;
-    originalAddress.address2 = replacementAddress.address2;
-    originalAddress.city = replacementAddress.city;
-    originalAddress.stateId = replacementAddress.stateId;
-    originalAddress.countryId = replacementAddress.countryId;
-    originalAddress.addressType = replacementAddress.addressType;
+  flagForRemoval = (anAddress: Address)  => {
+    anAddress.flaggedForDelete = true;
+    let indexOfElement = this.addresses.findIndex( e => e === anAddress );
+    if ( indexOfElement < 0 ) {
+      indexOfElement = this.addresses.findIndex( e => e.addressId === anAddress.addressId );
+    }
+    this.addresses.splice(indexOfElement, 1);
+    this.addressesChangedInCard.emit(this.addresses);
   }
 
-  removeAddress(value): void {
-    this.addresses.splice(this.addresses.indexOf(value), 1);
+  flagForRetention = (anAddress: Address)  => {
+    anAddress.flaggedForDelete = false;
+    this.addresses.push(anAddress);
+    this.addressesChangedInCard.emit(this.addresses);
   }
 
 }

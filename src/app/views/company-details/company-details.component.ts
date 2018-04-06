@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import * as stringify from 'json-stringify-safe';
@@ -19,6 +19,8 @@ import { CompanyUrlTypeService } from '../../services/company-url-type.service';
 import {Contact} from '../../classes/contact';
 import {Campaign} from '../../classes/campaign';
 import {Action} from '../../classes/action';
+import {Address} from '../../classes/common/address';
+import {AddressCardComponent} from '../../components/address-card/address-card.component';
 
 @Component({
   selector: 'app-company-details',
@@ -26,10 +28,14 @@ import {Action} from '../../classes/action';
   styleUrls: ['./company-details.component.css']
 })
 export class CompanyDetailsComponent implements OnInit {
+
+  @ViewChild(AddressCardComponent) addressCard: AddressCardComponent;
+
   companyUpdated = false;
   actionFlag = false;
   contactFlag = false;
   campaignFlag = false;
+  addressIsDirty = false;
 
   companyFormGroup: FormGroup;
   company: Company;
@@ -97,7 +103,10 @@ export class CompanyDetailsComponent implements OnInit {
     const companyId = this.company.companyId;
     if ( companyId ) {
       console.log(`This is an update because company id is ${companyId}`);
-      this.companyService.updateCompany(this.company).subscribe(feedback => this.showAssocationSuccessful('company'));
+      this.companyService.updateCompany(this.company).subscribe(result => {
+          console.log('what is the result of the updated company???', result);
+          this.showAssocationSuccessful('company');
+      });
     } else {
       console.log(`This is an ADD because company id is ${companyId}`);
       if ( this.entity && this.entityId ) {
@@ -139,7 +148,6 @@ export class CompanyDetailsComponent implements OnInit {
       response => this.completeAssociation(response.headers.get('Location'), entity, entityId)
     );
   }
-
 
   updateRoute( location: string ) {
     const locattionNodes = _.split( location, '/' );
@@ -235,6 +243,7 @@ export class CompanyDetailsComponent implements OnInit {
   showAssocationSuccessful(entity: string): void {
     if ( entity === 'company' ) {
       this.companyUpdated = true;
+      this.addressCard.writeCopyFromOriginal();
     } else if ( entity === 'campaign' ) {
       this.campaignFlag = true;
     } else if ( entity === 'contact' ) {
@@ -256,4 +265,8 @@ export class CompanyDetailsComponent implements OnInit {
     );
   }
 
+  addressesChanged(addresses: Address[]): void {
+    console.log('making the addresses dirty!!!');
+    this.addressIsDirty = true;
+  }
 }

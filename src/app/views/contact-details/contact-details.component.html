@@ -94,7 +94,8 @@
                 <div class="col-6">
                   <!--beneath main content area-->
                   <app-address-card [addresses]="contact.addresses"
-                                    [addressTypes]="addressClassificationTypes"></app-address-card>
+                                    [addressTypes]="addressClassificationTypes"
+                                    (addressesChangedInCard)="addressesChanged($event)"></app-address-card>
                 </div>
                 <div class="col-6">
                   <!--beneath main content area-->

@@ -1,99 +1,37 @@
-import {Component, OnInit, Input, Renderer} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import {ActivatedRoute, Router} from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import {FormControl} from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
-import { EntityService } from '../../services/entity.service';
-import { CompanyOrContactService } from '../../services/company-or-contact.service';
-import {CompanyOrContact} from '../../classes/common/company-or-contact';
-import {Company} from '../../classes/company';
-import {Contact} from '../../classes/contact';
+import { ViewBaseComponent} from '../view-base/view-base.component';
+import { CompanyOrContact } from '../../classes/common/company-or-contact';
 
 @Component({
   selector: 'app-dashboard-landing',
   templateUrl: './dashboard-landing.component.html',
   styleUrls: ['./dashboard-landing.component.css']
 })
-export class DashboardLandingComponent implements OnInit {
-  bgColor = 'black';
-  myControl: FormControl = new FormControl();
+export class DashboardLandingComponent extends ViewBaseComponent implements OnInit {
+
+  myControl: FormControl;
   results$: Observable<CompanyOrContact[]>;
   private searchTerms = new Subject<string>();
-  public loadedCompany;  // need to replace
-  public loadedContact;  // need to replace
+  public loadedCompany;  // TODO: Consider replacing with global from datastore
+  public loadedContact;  // TODO: Consider replacing with global from datastore
 
   @Input() coc: string;
   @Input() id: string;
 
   loadedCompanyOrContact: CompanyOrContact;
-  companyLoaded: boolean = this.loadedCompanyOrContact && (this.loadedCompanyOrContact.entiyType === 'company');
-  contactLoaded: boolean = this.loadedCompanyOrContact && (this.loadedCompanyOrContact.entiyType === 'contact');
-
-  constructor(
-    private route: ActivatedRoute,
-    private companyOrContactService: CompanyOrContactService,
-    private router: Router,
-    public renderer: Renderer,
-    private entityService: EntityService
-  ) {
-  }
-
-  search(term: string): void {
-    this.searchTerms.next(term);
-  }
-
-  resetEntities(): void {
-    this.loadedCompany = null;  // need to replace
-    this.loadedContact = null;  // need to replace
-  }
-
-  onOptionSelected(selectedCoc): void {
-    this.resetEntities();
-    let id;
-    this.loadedCompanyOrContact = selectedCoc;
-    const loadedEnitty = this.loadedCompanyOrContact.entiyType;
-    this.companyLoaded =
-      this.loadedCompanyOrContact && ( loadedEnitty === 'company');
-    this.contactLoaded =
-      this.loadedCompanyOrContact && ( loadedEnitty === 'contact');
-    if ( this.companyLoaded ) {
-      id = this.loadedCompanyOrContact.companyId;
-      this.router.navigateByUrl( `/dl/company/${id}` );
-    } else if ( this.contactLoaded ) {
-      id = this.loadedCompanyOrContact.contactId;
-      this.router.navigateByUrl( `/dl/contact/${id}` );
-    }
-    this.loadPageFromParams(loadedEnitty, id);
-    this.myControl = new FormControl();
-  }
-
-  loadPageFromParams(coc: string, id: string): void {
-    this.companyLoaded = (coc === 'company');
-    this.contactLoaded = (coc === 'contact');
-    if (this.companyLoaded) {
-      // this.loadedContact = new Contact();
-      this.getCompaniesById(id);
-    } else if (this.contactLoaded) {
-      // this.loadedCompany = new Company();
-      this.getContactsById(id);
-    }
-  }
-
-  getContactsById(id: string): void {
-    this.entityService.getContactById( id )
-      .subscribe( contact => this.loadedContact = contact );
-  }
-
-  getCompaniesById(id: string): void {
-    this.entityService.getCompanyById( id )
-        .subscribe( company => this.loadedCompany = company );
-  }
+  companyLoaded = false;
+  contactLoaded = false;
 
   ngOnInit() {
+    this.myControl = new FormControl();
     const coc = this.route.snapshot.paramMap.get('coc');
     const id = this.route.snapshot.paramMap.get('id');
+    // Used the entity and id pulled off url
     this.loadPageFromParams(coc, id);
     this.results$ = this.searchTerms.pipe(
       debounceTime(300),
@@ -102,25 +40,58 @@ export class DashboardLandingComponent implements OnInit {
     );
   }
 
-  onConsideringEntity($event, thediv): void {
-    const target = event.srcElement;
-    this.renderer.setElementStyle(target, 'color', 'rebeccapurple');
-    this.renderer.setElementStyle(target, 'cursor', 'pointer');
+  /* This will tell us if and when we can load the cards in the template. */
+  entityLoaded(): boolean {
+    const entityDesired = this.companyLoaded || this.contactLoaded;
+    const entityLoaded = this.loadedCompany || this.loadedContact;
+    return entityDesired && entityLoaded;
   }
 
-  onUnconsideringEntity($event, thediv): void {
-    const target = event.srcElement;
-    this.renderer.setElementStyle(target, 'color', this.bgColor);
+  search(term: string): void {
+    this.searchTerms.next(term);
   }
 
-  selectCompany(): void {
-    console.log( `selected company ${this.loadedCompany.companyId}`);
-    this.router.navigateByUrl( `/company/${this.loadedCompany.companyId}` );
+  resetSearch(): void {
+    this.loadedCompany = null;
+    this.loadedContact = null;
+    this.companyLoaded = false;
+    this.contactLoaded = false;
+    this.myControl = new FormControl();
+    this.location.replaceState( `/dl` );
   }
 
-  selectContact(): void {
-    console.log( `selected contact ${this.loadedContact.contactId}`);
-    this.router.navigateByUrl( `/contact/${this.loadedContact.contactId}` );
+  onOptionSelected(selectedCoc): void {
+    this.loadedCompany = null;
+    this.loadedContact = null;
+    let id;
+    this.loadedCompanyOrContact = selectedCoc;
+    const loadedEnitty = this.loadedCompanyOrContact.entiyType;
+    this.companyLoaded = this.loadedCompanyOrContact && ( loadedEnitty === 'company');
+    this.contactLoaded = this.loadedCompanyOrContact && ( loadedEnitty === 'contact');
+    if ( this.companyLoaded ) {
+      id = this.loadedCompanyOrContact.companyId;
+      this.location.replaceState( `/dl/company/${id}` );
+    } else if ( this.contactLoaded ) {
+      id = this.loadedCompanyOrContact.contactId;
+      this.location.replaceState( `/dl/contact/${id}` );
+    }
+    // Emulate ngOnInit that pulls the entity and id off url
+    this.loadPageFromParams(loadedEnitty, id);
   }
 
+  loadPageFromParams(coc: string, id: string): void {
+    this.companyLoaded = (coc === 'company');
+    this.contactLoaded = (coc === 'contact');
+    if (this.companyLoaded) {
+      this.getCompaniesById(id);
+    } else if (this.contactLoaded) {
+      this.getContactsById(id);
+    }
+  }
+
+  getContactsById = (id: string) =>this.entityService.getContactById( id ).subscribe( contact => this.loadedContact = contact );
+  getCompaniesById = (id: string) => this.entityService.getCompanyById( id ).subscribe( company => this.loadedCompany = company );
+
+  selectCompany = () => this.router.navigateByUrl( `/company/${this.loadedCompany.companyId}` );
+  selectContact = () => this.router.navigateByUrl( `/contact/${this.loadedContact.contactId}` );
 }

@@ -87,7 +87,8 @@
                 <div class="row">
                   <div class="col-6">
                     <app-address-card [addresses]="company.addresses"
-                                      [addressTypes]="addressClassificationTypes"></app-address-card>
+                                      [addressTypes]="addressClassificationTypes"
+                                      (addressesChangedInCard)="addressesChanged($event)"></app-address-card>
                   </div>
                   <div class="col-6">
                     <app-phone-card [company]="company"></app-phone-card>

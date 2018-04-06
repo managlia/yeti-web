@@ -89,6 +89,20 @@ export class CampaignService extends BaseService {
     );
   }
 
+  deleteCampaign(id: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteStatement(this.cd)} ${id}`);
+    const url = `${this.campaignUrl}/${id}`;
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue} )
+      .pipe(
+        tap(_ => this.logger.debug(`${this.S}${this.deleteStatement(this.cd)}${id}`)),
+        catchError(this.handleError<any>(`${this.E}${this.deleteStatement(this.cd)} ${id}`))
+      );
+  }
+
+
   addCampaignToContact(contact: Contact, campaignId: string): Observable<HttpResponse<any>> {
     this.logger.debug(`${this.P}${this.putContactToComponent(this.cd)}${campaignId}`);
     const url = `${this.campaignUrl}/${campaignId}/Contacts`;

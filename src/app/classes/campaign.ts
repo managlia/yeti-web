@@ -1,12 +1,9 @@
 import {Action} from './action';
-// import {Company} from './company';
 import {Contact} from './contact';
 import {Attachment} from './common/attachment';
 import {Tag} from './common/tag';
 import {ScopeType} from './types/scope-type';
 import {CampaignClassificationType} from './types/campaign-classification-type';
-import {EntityClassificationType} from "./types/entity-classification-type";
-import {ContactTitleType} from "./types/contact-title-type";
 
 export class Campaign {
   campaignId: string;
@@ -15,6 +12,7 @@ export class Campaign {
   name: string;
   description: string;
   active: boolean;
+  deleteable: boolean;
   restrictedToOwner: boolean;
   deactivationDate: Date;
   actualCompletionDate: Date;

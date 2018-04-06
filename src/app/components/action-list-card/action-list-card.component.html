@@ -3,6 +3,7 @@
   <div id="search-component" class="animated fadeIn">
     <div class="row">
       <div class="col-12">
+
         <div class="card">
           <div class="card-header">
             <strong>{{label.action.listTitle}}</strong>
@@ -15,7 +16,7 @@
                 </mat-form-field>
               </div>
               <div class="col-3">
-                <button type="button" class="btn btn-primary btn-sm" (click)="addNewAction()">Add new action</button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="addNewAction()">{{label.action.addNew}}</button>
               </div>
             </div>
             <mat-table #table [dataSource]="dataSource" matSort>
@@ -34,7 +35,18 @@
 
               <!-- Basic column: Type Column -->
               <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.type}}</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>
+
+                  <mat-select [(placeholder)]="label.action.column.type"
+                              [(ngModel)]="typeFilter"
+                              (selectionChange)="applyFilters()">
+                    <mat-option value="all">All Types</mat-option>
+                    <mat-option *ngFor="let classificationType of classificationTypes" [value]="classificationType.actionClassificationTypeId">
+                      {{ classificationType.name }}
+                    </mat-option>
+                  </mat-select>
+
+                </mat-header-cell>
                 <mat-cell *matCellDef="let action">
 
                   {{action.classificationType?.name}}
@@ -43,24 +55,48 @@
                      - {{action.classificationOtherType?.name}}
                     </div>
                   </div>
-
-
                 </mat-cell>
               </ng-container>
-
 
               <div *ngIf="this.fullEdit">
 
                 <!-- Full Edit column: Delete Column -->
                 <ng-container matColumnDef="deleteAction">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.delete}}</mat-header-cell>
-                  <mat-cell *matCellDef="let action"> {{action.deleteable}}</mat-cell>
+                  <mat-header-cell *matHeaderCellDef>
+                    <mat-select [(placeholder)]="label.action.column.delete"
+                                [(ngModel)]="deleteableStatus"
+                                (selectionChange)="applyFilters()">
+                      <mat-option value="all">All</mat-option>
+                      <mat-option value="true">Can Delete</mat-option>
+                      <mat-option value="false">Archive Only</mat-option>
+                    </mat-select>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let action">
+
+                    <div *ngIf="action.deleteable; then canDelete; else cannotDelete"></div>
+                    <ng-template #canDelete>
+                      Can Delete
+                    </ng-template>
+                    <ng-template #cannotDelete>
+                      Archive Only
+                    </ng-template>
+
+                  </mat-cell>
                 </ng-container>
 
 
                 <!-- Full Edit column: Scope Column -->
                 <ng-container matColumnDef="scope">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.scope}}</mat-header-cell>
+                  <mat-header-cell *matHeaderCellDef>
+                    <mat-select [(placeholder)]="label.action.column.scope"
+                                [(ngModel)]="scopeFilter"
+                                (selectionChange)="applyFilters()">
+                      <mat-option value="all">All Scopes</mat-option>
+                      <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+                        {{ scopeType.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-header-cell>
                   <mat-cell *matCellDef="let action"> {{action.scopeType?.name}}</mat-cell>
                 </ng-container>
 
@@ -68,10 +104,10 @@
                 <!--  Full Edit column: Active -->
                 <ng-container matColumnDef="active">
                   <mat-header-cell *matHeaderCellDef>
-                    <mat-select placeholder="Active Action"
+                    <mat-select placeholder="Filter by Open/Closed"
                                 [(ngModel)]="activeFilter"
                                 (selectionChange)="applyFilters()">
-                      <mat-option value="true">Active</mat-option>
+                      <mat-option value="true">Open</mat-option>
                       <mat-option value="false">Closed</mat-option>
                       <mat-option value="all">All</mat-option>
                     </mat-select>
@@ -98,9 +134,9 @@
 
               </ng-template>
             </mat-table>
-            <mat-paginator #paginator
-                           [pageSize]="3"
-                           [pageSizeOptions]="[3, 6, 9]">
+            <mat-paginator [length]="100"
+                           [pageSize]="10"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
             </mat-paginator>
           </div>
         </div>
