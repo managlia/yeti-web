@@ -1,0 +1,88 @@
+<div class="modal-header">
+  <h4 class="modal-title">Campaign quick edit</h4>
+</div>
+<div class="modal-body">
+  <div *ngIf="campaign" id="quick-campaign-edit" class="animated fadeIn">
+
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <mat-form-field style="width:100%">
+          <input matInput [(ngModel)]="campaign.name" placeholder="Campaign Name">
+        </mat-form-field>
+
+      </div>
+      <div class="col-6">
+
+        <mat-form-field style="width:100%">
+          <mat-select placeholder="Scope" [(ngModel)]="localScopeTypeId">
+            <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+              {{ scopeType.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <mat-form-field style="width:100%;">
+          <mat-select placeholder="Campaign Type"
+                      #typeSelect [(ngModel)]="localClassificationTypeId">
+            <mat-option *ngFor="let classificationType of classificationTypes"
+                        [value]="classificationType.campaignClassificationTypeId">
+              {{ classificationType.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+      <div class="col-6">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12" style="padding-top:10px;">
+
+        <mat-form-field style="width:100%">
+               <textarea matInput placeholder="Campaign Description (field will autosize as needed)" matTextareaAutosize
+                         matAutosizeMinRows="8"
+                         matAutosizeMaxRows="10" [(ngModel)]="campaign.description"></textarea>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <div *ngIf="campaign.deleteable">
+          <mat-checkbox id="deleteCampaign" [(ngModel)]="shouldDelete"> Delete this Campaign </mat-checkbox><br/>
+        </div>
+
+      </div>
+      <div class="col-6">
+
+        <mat-radio-group name="activeCampaign" [(ngModel)]="campaign.active">
+          <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+          <mat-radio-button [value]="false"> Closed</mat-radio-button>
+        </mat-radio-group>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:100px;">
+      <div class="col-3">
+
+        &nbsp;
+        <button type="button" class="btn btn-secondary" (click)="routeToCampaign()">Campaign Full Edit</button>
+
+      </div>
+      <div class="col-9" align="right">
+
+        <button type="button" class="btn btn-warning" (click)="closeAndUndo()">Undo changes and close</button>
+        &nbsp;
+        <button type="button" class="btn btn-primary" (click)="closeAndKeep()">Keep changes and close</button>
+
+      </div>
+    </div>
+  </div>
+</div>

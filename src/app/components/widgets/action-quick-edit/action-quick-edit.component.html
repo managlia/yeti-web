@@ -1,0 +1,101 @@
+<div class="modal-header">
+  <h4 class="modal-title">Action quick edit</h4>
+</div>
+<div class="modal-body">
+  <div *ngIf="action" id="quick-action-edit" class="animated fadeIn">
+
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <mat-form-field style="width:100%">
+          <input matInput [(ngModel)]="action.name" placeholder="Action Name">
+        </mat-form-field>
+
+      </div>
+      <div class="col-6">
+
+        <mat-form-field style="width:100%">
+          <mat-select placeholder="Scope" [(ngModel)]="localScopeTypeId">
+            <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+              {{ scopeType.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <mat-form-field style="width:100%;">
+          <mat-select placeholder="Action Type"
+                      (change)="updateTheOther(localClassificationTypeId)"
+                      #typeSelect [(ngModel)]="localClassificationTypeId">
+            <mat-option *ngFor="let classificationType of classificationTypes"
+                        [value]="classificationType.actionClassificationTypeId">
+              {{ classificationType.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+      <div class="col-6">
+
+            <mat-form-field style="width:100%;">
+              <mat-select placeholder="Other Type"
+                          [(disabled)]="isDisabledOtherActive"
+                          [(ngModel)]="localClassificationOtherTypeId">
+                <mat-option *ngFor="let classificationOtherType of classificationOtherTypes"
+                            [value]="classificationOtherType.actionClassificationOtherTypeId">
+                  {{ classificationOtherType.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12" style="padding-top:10px;">
+
+        <mat-form-field style="width:100%">
+               <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
+                         matAutosizeMinRows="8"
+                         matAutosizeMaxRows="10" [(ngModel)]="action.description"></textarea>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:10px;">
+      <div class="col-6">
+
+        <div *ngIf="action.deleteable">
+          <mat-checkbox id="deleteAction" [(ngModel)]="shouldDelete"> Delete this Action </mat-checkbox><br/>
+        </div>
+
+      </div>
+      <div class="col-6">
+
+          <mat-radio-group name="activeAction" [(ngModel)]="action.active">
+            <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+            <mat-radio-button [value]="false"> Closed</mat-radio-button>
+          </mat-radio-group>
+
+      </div>
+    </div>
+    <div class="row" style="padding-top:100px;">
+      <div class="col-3">
+
+                &nbsp;
+        <button type="button" class="btn btn-secondary" (click)="routeToAction()">Action Full Edit</button>
+
+      </div>
+      <div class="col-9" align="right">
+
+        <button type="button" class="btn btn-warning" (click)="closeAndUndo()">Undo changes and close</button>
+        &nbsp;
+        <button type="button" class="btn btn-primary" (click)="closeAndKeep()">Keep changes and close</button>
+
+      </div>
+    </div>
+  </div>
+</div>
