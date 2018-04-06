@@ -37,7 +37,25 @@ export const campaign = {
     type: 'Type',
     active: 'Is Active'
   }
-}
+};
+
+export const companies = {
+  title: 'Companies',
+  listTitle: 'Company List',
+  addExisting: 'Add existing company',
+  addNew: 'Add new company',
+  remove: 'Remove',
+  associatedTitle: 'Associated company',
+  changeAssociation: 'Associate with different company'
+};
+
+export const contact = {
+  title: 'Contacts',
+  listTitle: 'Contact List',
+  addExisting: 'Add existing contact',
+  addNew: 'Add new contact',
+  remove: 'Remove'
+};
 
 export const address = {
   title: 'Addresses',

@@ -1,43 +1,32 @@
-import {Component, OnInit, Input, EventEmitter, Output, Renderer} from '@angular/core';
+import {Component, OnInit, EventEmitter, Output} from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
+import { CardComponent } from '../base/card/card.component';
 import { Company } from '../../classes/company';
-import {EntityService} from '../../services/entity.service';
-import {Observable} from 'rxjs/Observable';
-import {CompanyOrContact} from '../../classes/common/company-or-contact';
-import {CompanyOrContactService} from '../../services/company-or-contact.service';
-import {FormControl} from '@angular/forms';
+import { CompanyOrContact } from '../../classes/common/company-or-contact';
 
 @Component({
   selector: 'app-company-choice-card',
   templateUrl: './company-choice-card.component.html',
   styleUrls: ['./company-choice-card.component.css']
 })
-export class CompanyChoiceCardComponent implements OnInit {
-  fontColor = 'black';
-  myControl: FormControl = new FormControl();
+export class CompanyChoiceCardComponent extends CardComponent implements OnInit {
 
-  @Input() companyId: string;
-  @Input() associationSuccessful = false;
   @Output() selectCompany = new EventEmitter<Company>();
   @Output() onCompanyChosen = new EventEmitter<string>();
 
+  myControl: FormControl = new FormControl();
   company: Company;
   results$: Observable<CompanyOrContact[]>;
   viewSearch = false;
   private searchTerms = new Subject<string>();
 
-  constructor(
-    private entityService: EntityService,
-    public renderer: Renderer,
-    private companyOrContactService: CompanyOrContactService,
-  ) { }
-
   ngOnInit() {
-    console.log(`dfm companyId ${this.companyId}`)
-    if( this.companyId ) {
+    if ( this.companyId ) {
       this.loadCustomer();
     } else {
       this.viewSearch = _.isUndefined(this.companyId);
@@ -54,12 +43,11 @@ export class CompanyChoiceCardComponent implements OnInit {
   }
 
   loadCustomer(): void {
-    this.entityService.getCompanyById(this.companyId)
+    this.companyService.getCompany(this.companyId)
       .subscribe(company => this.company = company);
   }
 
   onOptionSelected(selectedCoc): void {
-    console.log( '--------------->>>>>>>>>>>>>>>> ', this.myControl );
     this.companyId = selectedCoc.companyId;
     this.loadCustomer();
     this.viewSearch = false;
@@ -67,19 +55,7 @@ export class CompanyChoiceCardComponent implements OnInit {
   }
 
   onCompanySelected(): void {
-    console.log('onCompanySelected / selectCompany');
     this.selectCompany.emit(this.company);
-  }
-
-  onConsideringCompany($event, thediv): void {
-    const target =  event.currentTarget || event.target || event.srcElement ;
-    this.renderer.setElementStyle(target, 'color', 'rebeccapurple');
-    this.renderer.setElementStyle(target, 'cursor', 'pointer');
-  }
-
-  onUnconsideringCompany($event, thediv): void {
-    const target =  event.currentTarget || event.target || event.srcElement ;
-    this.renderer.setElementStyle(target, 'color', this.fontColor);
   }
 
   resetCompany(): void {
@@ -88,5 +64,4 @@ export class CompanyChoiceCardComponent implements OnInit {
     this.myControl = new FormControl();
     this.viewSearch = true;
   }
-
 }

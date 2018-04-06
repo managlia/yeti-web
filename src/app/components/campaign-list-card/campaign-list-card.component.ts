@@ -38,7 +38,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
     private campaignClassificationTypeService: CampaignClassificationTypeService,
     private scopeTypeService: ScopeTypeService,
     public renderer: Renderer2,
-    private router: Router
+    private router: Router,
     private campaignQuickEditService: CampaignQuickEditService
   ) {
     this.getClassificationTypes();
@@ -80,7 +80,6 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
       dataSource: this.dataSource,
       campaign: campaign,
       classificationTypes: this.classificationTypes,
-      classificationOtherTypes: this.classificationOtherTypes,
       scopeTypes: this.scopeTypes
     };
     this.campaignQuickEditService.openDialog(data)

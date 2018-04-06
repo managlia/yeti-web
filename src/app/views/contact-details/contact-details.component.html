@@ -130,15 +130,15 @@
 
       <app-company-choice-card
         [associationSuccessful]="companyFlag"
+        [associationFailure]="companyFailureFlag"
         [companyId]="contact.companyId"
         (selectCompany)="selectCompany($event)"
-        (onCompanyChosen)="onCompanyChosen($event)"
-        onCompanyChosen
-      ></app-company-choice-card>
+        (onCompanyChosen)="onCompanyChosen($event)"></app-company-choice-card>
       <div *ngIf="contactId">
 
         <app-campaign-card [contactId]="contact.contactId"
                            [associationSuccessful]="campaignFlag"
+                           [associationFailure]="campaignFailureFlag"
                            (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
                            (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
         ></app-campaign-card>

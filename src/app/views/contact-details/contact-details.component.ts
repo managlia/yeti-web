@@ -188,7 +188,10 @@ export class ContactDetailsComponent implements OnInit {
     const contactId = this.contact.contactId;
     if ( contactId ) {
       // is an update - should go ahead and update backend
-      this.contactService.updateContact(this.contact).subscribe(feedback => this.showAssocationSuccessful('company'));
+      this.contactService.updateContact(this.contact)
+        .subscribe(response => this.showAssocationSuccessful('company', response),
+          response => this.handleAssociationFailure('company', response),
+        );
     }
   }
 
@@ -196,7 +199,7 @@ export class ContactDetailsComponent implements OnInit {
     console.log('onCampaignAssociatedToEntity:: end');
     if ( this.contact && campaign ) {
       this.contactService.addCampaignToContact(this.contact.contactId, campaign )
-        .subscribe(response => this.showAssocationSuccessful('action', response),
+        .subscribe(response => this.showAssocationSuccessful('campaign', response),
           response => this.handleAssociationFailure('campaign', response),
         );
     }
@@ -205,10 +208,8 @@ export class ContactDetailsComponent implements OnInit {
   onCampaignFlaggedForRemoval(campaign: Campaign) {
     if ( this.contact && campaign ) {
       this.contactService.removeCampaignFromContact(this.contact.contactId, campaign.campaignId )
-        .subscribe(response => this.showAssocationSuccessful('action', response),
-          response => {
-            this.handleAssociationFailure('campaign', response);
-          }
+        .subscribe(response => this.showAssocationSuccessful('campaign', response),
+          response => this.handleAssociationFailure('campaign', response)
         );
     }
   }
