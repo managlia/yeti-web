@@ -1,35 +1,57 @@
 <div class="modal-header">
   <h4 class="modal-title">Links</h4>
 </div>
+
 <div class="modal-body">
-  <div class="row" *ngFor="let aUrl of data.urls">
-    <div class="col-md-2">
-      <mat-form-field style="width:100%">
-        <mat-select placeholder="Url Type" [(ngModel)]="aUrl.urlType.urlTypeId">
-          <mat-option>None</mat-option>
-          <mat-option *ngFor="let type of data.types" [value]="type.urlTypeId">{{type.name}} - ({{type.urlTypeId}})
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <form [formGroup]="urlForm" (ngSubmit)="submit(urlForm)">
+
+    <div formArrayName="items"
+         *ngFor="let item of urlForm.get('items').controls; let i = index;">
+
+
+      <div class="row" [formGroupName]="i" style="padding-bottom:15px;">
+        <div class="col-3">
+          <mat-form-field style="width:100%">
+            <mat-select placeholder="Url Type" formControlName="typeControl">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let type of getOptions(i)" [value]="type.urlTypeId">{{type.name}} -
+                ({{type.urlTypeId}})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-7">
+
+
+          <mat-form-field style="width:100%; padding-bottom:0px;">
+            <input matInput placeholder="Url Value" formControlName="valueControl">
+            <mat-error>Please enter a valid url beginning 'http...'</mat-error>
+          </mat-form-field>
+
+
+        </div>
+        <div class="col-2"><mat-checkbox (change)="removeUrl(i)"> Remove</mat-checkbox></div>
+        <!--| value:{{ item.value }} | status:{{ item.status }} | pristine:{{ item.pristine }} | untouched:{{ item.untouched }}-->
+      </div>
+
+
     </div>
-    <div class="col-md-5">
-      <mat-form-field  style="width:100%">
-        <input matInput placeholder="Url Value" [(ngModel)]="aUrl.urlValue">
-      </mat-form-field>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <div class="row" style="width:100%">
+    <div class="col-3" align="left">
+      <button type="button" class="btn btn-secondary" (click)="closeWithoutSaving()">Cancel</button>
     </div>
-    <div class="col-md-3">
-      <mat-form-field style="width:100%">
-        <input matInput placeholder="Url Description" [(ngModel)]="aUrl.description">
-      </mat-form-field>
-    </div>
-    <div class="col-md-2">
-      <a [href]="aUrl.urlValue" target="_blank" style="vertical-align: center;">Test Link</a>
-      <br>
-      <input type="checkbox" (change)="removeUrl($event, aUrl)" style="vertical-align: center;"> Remove
+    <div class="col-9" align="right">
+      <button class="btn btn-primary" (click)="addUrl()"  [disabled]="discontinueAdd()">Add link</button>
+      <button class="btn btn-primary" (click)="processDone()" [disabled]="urlForm.invalid">Done</button>
     </div>
   </div>
 </div>
-<div class="modal-footer">
-  <button class="btn btn-primary" (click)="addUrl()" tabindex="7">Add link</button>
-  <button class="btn btn-primary" [mat-dialog-close]="data" tabindex="7">Done</button>
-</div>
+
+<!--status:{{ urlForm.status }} | invalid:{{ urlForm.invalid }} | valid:{{ urlForm.valid }} | pristine:{{ urlForm.pristine }} | untouched:{{ urlForm.untouched }}-->
+<!--<br><br>-->
+<!--value:{{ urlForm.value | json }}-->

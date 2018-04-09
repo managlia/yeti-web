@@ -1,12 +1,20 @@
 <div class="animated fadeIn">
   <div class="card">
-    <div class="card-header">
+    <div class="card-header" [style.backgroundColor]="isDirtyColor()">
       <strong>Links</strong>
     </div>
     <div class="card-body">
 
       <div *ngFor="let aUrl of urls">
-        <div style="padding-bottom:10px;"><a href="{{aUrl.urlValue}}" target="_blank">{{ aUrl.urlValue }}</a></div>
+        <div style="padding-bottom:10px;" align="center">
+          <div
+            [matTooltip]="aUrl.urlValue"
+            [style.color]="fontColor"
+            (mouseover)="onConsideringEntity(event,this)"
+            (mouseout)="onUnconsideringEntity(event,this)"
+            (click)="openUrl(aUrl.urlValue)"
+          > {{ aUrl.urlType.name }}</div>
+        </div>
       </div>
 
       <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">

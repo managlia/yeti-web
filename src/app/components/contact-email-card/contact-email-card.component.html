@@ -1,4 +1,4 @@
-<div *ngIf="contacts" class="animated fadeIn">
+<div *ngIf="entities" class="animated fadeIn">
   <div class="card">
     <div class="card-header">
       <strong>Email contacts</strong>
@@ -6,13 +6,13 @@
       <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:indianred" *ngIf="associationFailure">* Change failed *</span>
     </div>
     <div class="card-body">
-      <div *ngFor="let aContact of contacts">
+      <div *ngFor="let aContact of entities">
         <div class="row">
           <div class="col-md-6">
             <p
               [style.color]="fontColor"
-              (mouseover)="onConsideringContact(event,this)"
-              (mouseout)="onUnconsideringContact(event,this)"
+              (mouseover)="onConsideringEntity(event,this)"
+              (mouseout)="onUnconsideringEntity(event,this)"
               (click)="onSelectedContact(event,aContact.contactId)"
               [innerHtml]="aContact | contactEmailSummary">
             </p>
@@ -22,21 +22,21 @@
 
             <mat-select placeholder="To / CC / BCC"
                         [(ngModel)]="aContact.emailRecipientIndicator">
-              <mat-option value="to">To</mat-option>
-              <mat-option value="cc">CC</mat-option>
-              <mat-option value="bcc">Bcc</mat-option>
+              <div *ngFor="let anOption of recipientOptions">
+                <mat-option [value]="anOption.key">{{anOption.value}}</mat-option>
+              </div>
             </mat-select>
 
 
           </div>
           <div class="col-md-3">
-            <input type="checkbox" id="removeContact" name="removeContact" (change)="removeContact(aContact)"> Remove
+            <input type="checkbox" id="removeContact" name="removeContact" (change)="removeEmailContact(aContact)"> Remove
           </div>
         </div>
       </div>
       <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
         <div class="col-md-12">
-          <app-contact-adder [existingContacts]="contacts"
+          <app-contact-adder [existingContacts]="entities"
                              (onContactAdded)="onContactAdded($event)"></app-contact-adder>
           <button type="button" class="btn btn-primary btn-sm" (click)="createNewContact()">Add new contact</button>
         </div>

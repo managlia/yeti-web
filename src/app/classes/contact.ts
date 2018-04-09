@@ -5,6 +5,7 @@ import {Attachment} from './common/attachment';
 import {Address} from './common/address';
 import {Tag} from './common/tag';
 import {Company} from './company';
+import {Phone} from './common/phone';
 
 export class Contact {
 
@@ -28,6 +29,7 @@ export class Contact {
   attachments: Attachment[];
   tags: Tag[];
   urls: Url[];
+  phones: Phone[];
 
   constructor() {
     this.active = true;
@@ -37,6 +39,7 @@ export class Contact {
     this.attachments = [];
     this.tags = [];
     this.urls = [];
+    this.phones = [];
   }
 }
 

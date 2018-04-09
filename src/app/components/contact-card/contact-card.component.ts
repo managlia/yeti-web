@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 import { Contact } from '../../classes/contact';
 import { CardComponent } from '../base/card/card.component';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-contact-card',
@@ -12,7 +13,7 @@ import { CardComponent } from '../base/card/card.component';
 
 export class ContactCardComponent extends CardComponent implements OnInit {
 
-  @Output() onContactFlaggedForRemoval = new EventEmitter<Contact>();
+  @Output() onContactFlaggedForRemoval = new EventEmitter<string>();
   @Output() onContactAssociatedToEntity = new EventEmitter<Contact>();
 
   ngOnInit() {
@@ -45,15 +46,24 @@ export class ContactCardComponent extends CardComponent implements OnInit {
 
   onContactAdded(contact: Contact) {
     this.onContactAssociatedToEntity.emit(contact);
+    this.suspendedUndoEvent  = new Observable<any>(observer => {
+      this.entities = this.entities.filter(e => e.contactId !== contact.contactId);
+      observer.next('undone');
+      observer.complete();
+      return {unsubscribe() {}};
+    });
   }
 
-  removeContact(contact: Contact) {
-    this.onContactFlaggedForRemoval.emit(contact);
-   _.remove(this.entities, {
-     contactId: contact.contactId
-   });
+  removeContact(contactId: string) {
+    console.log('removing contactId ', contactId);
+    this.onContactFlaggedForRemoval.emit(contactId);
+    this.suspendedEvent = new Observable<any> ( observer => {
+      this.entities = this.entities.filter( e => e.contactId !== contactId );
+      observer.next('success');
+      observer.complete();
+      return {unsubscribe() {}};
+    });
   }
-
 
   createNewContact(): void {
     if (this.companyId) {

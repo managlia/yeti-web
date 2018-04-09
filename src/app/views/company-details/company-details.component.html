@@ -88,11 +88,22 @@
                   <div class="col-6">
                     <app-address-card [addresses]="company.addresses"
                                       [addressTypes]="addressClassificationTypes"
-                                      (addressesChangedInCard)="addressesChanged($event)"></app-address-card>
+                                      (addressesChangedInCard)="addressesChanged($event)"
+                    ></app-address-card>
                   </div>
                   <div class="col-6">
-                    <app-phone-card [company]="company"></app-phone-card>
-                    <app-links-card [urls]="company.urls" [urlTypes]="urlTypes"></app-links-card>
+                    <app-phone-card
+                      [phones]="company.phones"
+                      [phoneTypes]="phoneTypes"
+                      (phonesUpdated)="updatePhones($event)"
+                    ></app-phone-card>
+
+
+                    <app-links-card
+                      [urls]="company.urls"
+                      [urlTypes]="urlTypes"
+                      (linksUpdated)="updateLinks($event)"
+                    ></app-links-card>
                   </div>
                 </div>
               </div>
@@ -126,6 +137,7 @@
       <div *ngIf="company?.companyId">
         <app-campaign-card [companyId]="company.companyId"
                            [associationSuccessful]="campaignFlag"
+                           [associationFailure]="campaignFailureFlag"
                            (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
                            (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
         ></app-campaign-card>
@@ -137,6 +149,7 @@
         ></app-action-card>
         <app-contact-card [companyId]="company.companyId"
                           [associationSuccessful]="contactFlag"
+                          [associationFailure]="contacFailuretFlag"
                           (onContactAssociatedToEntity)="onContactAssociatedToEntity($event)"
                           (onContactFlaggedForRemoval)="onContactFlaggedForRemoval($event)"
         ></app-contact-card>

@@ -26,9 +26,13 @@ import {Action} from '../../classes/action';
 })
 export class CampaignDetailsComponent implements OnInit {
   campaignUpdated = false;
+  campaignFailureUpdated = false;
   companyFlag = false;
   contactFlag = false;
   actionFlag = false;
+  companyFailureFlag = false;
+  contactFailureFlag = false;
+  actionFailureFlag = false;
 
   isLinear: true;
   campaign: Campaign;
@@ -155,16 +159,20 @@ export class CampaignDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('addCampaignToCompany:: completed');
           this.showAssocationSuccessful('company');
+        }, error => {
+          this.handleAssociationFailure('company');
         } );
     }
   }
 
-  onCompanyFlaggedForRemoval(company: Company) {
-    if ( this.campaign && company ) {
-      this.campaignService.removeCampaignFromCompany(company.companyId, this.campaign.campaignId )
+  onCompanyFlaggedForRemoval(companyId: string) {
+    if ( this.campaign && companyId ) {
+      this.campaignService.removeCampaignFromCompany(companyId, this.campaign.campaignId )
         .subscribe(response => {
           console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('company');
+        }, error => {
+          this.handleAssociationFailure('company');
         } );
     }
   }
@@ -176,16 +184,20 @@ export class CampaignDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('addCampaignToContact:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
 
-  onContactFlaggedForRemoval(contact: Contact) {
-    if ( this.campaign && contact ) {
-      this.campaignService.removeCampaignFromContact(contact.contactId, this.campaign.campaignId )
+  onContactFlaggedForRemoval(contactId: string) {
+    if ( this.campaign && contactId ) {
+      this.campaignService.removeCampaignFromContact(contactId, this.campaign.campaignId )
         .subscribe(response => {
           console.log('onContactFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
@@ -197,16 +209,20 @@ export class CampaignDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onActionAssociatedToEntity:: completed');
           this.showAssocationSuccessful('action');
+        }, error => {
+          this.handleAssociationFailure('action');
         } );
     }
   }
 
-  onActionFlaggedForRemoval(action: Action) {
-    if ( this.campaign && action ) {
-      this.campaignService.removeCampaignFromAction(action.actionId, this.campaign.campaignId)
+  onActionFlaggedForRemoval(actionId: string) {
+    if ( this.campaign && actionId ) {
+      this.campaignService.removeCampaignFromAction(actionId, this.campaign.campaignId)
         .subscribe(response => {
           console.log('onCampaignFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('action');
+        }, error => {
+          this.handleAssociationFailure('action');
         } );
     }
   }
@@ -215,7 +231,20 @@ export class CampaignDetailsComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  showAssocationSuccessful(entity: string): void {
+  handleAssociationFailure(entity: string, response?: any): void {
+    if (entity === 'company') {
+      this.companyFailureFlag = true;
+    } else if (entity === 'contact') {
+      this.contactFailureFlag = true;
+    } else if (entity === 'action') {
+      this.actionFailureFlag = true;
+    } else if ( entity === 'campaign' ) {
+      this.campaignFailureUpdated = true;
+    }
+    this.waitAndReset(entity);
+  }
+
+  showAssocationSuccessful(entity: string, response?: any): void {
     if ( entity === 'company' ) {
       this.companyFlag = true;
     } else if ( entity === 'campaign' ) {
@@ -225,18 +254,25 @@ export class CampaignDetailsComponent implements OnInit {
     } else if ( entity === 'action' ) {
       this.actionFlag = true;
     }
+    this.waitAndReset(entity);
+  }
+
+  waitAndReset(entity: string): void {
     this.delay(4000).then(resolve => {
         if ( entity === 'company' ) {
           this.companyFlag = false;
+          this.companyFailureFlag = false;
         } else if ( entity === 'campaign' ) {
           this.campaignUpdated = false;
+          this.campaignFailureUpdated = false;
         } else if ( entity === 'contact' ) {
           this.contactFlag = false;
+          this.contactFailureFlag = false;
         } else if ( entity === 'action' ) {
           this.actionFlag = false;
+          this.actionFailureFlag = false;
         }
-      }
-    );
+    });
   }
 
   getScopeTypes(): void {

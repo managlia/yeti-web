@@ -10,7 +10,7 @@ import { UrlDetailsComponent } from './url-details/url-details.component';
 export class UrlService {
 
   urls: Url[] = [
-    new Url('', new UrlType('', '', ''), '', '')
+    new Url(new UrlType(), '', '')
   ];
 
   constructor(
@@ -23,8 +23,8 @@ export class UrlService {
       types: types
     };
     const dialogRef = this.dialog.open(UrlDetailsComponent, {
-      width: '1100px',
-      height: '500px',
+      width: '900px',
+      height: '600px',
       data: data
     });
     return dialogRef.afterClosed();

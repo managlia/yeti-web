@@ -1,0 +1,58 @@
+<div class="modal-header">
+  <h4 class="modal-title">Phone Numbers</h4>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="phoneForm" (ngSubmit)="submit(phoneForm)">
+
+    <div formArrayName="items"
+         *ngFor="let item of phoneForm.get('items').controls; let i = index;">
+
+
+      <div class="row" [formGroupName]="i" style="padding-bottom:15px;">
+        <div class="col-3">
+          <mat-form-field style="width:100%">
+            <mat-select placeholder="Phone Type" formControlName="typeControl">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let type of getOptions(i)" [value]="type.phoneTypeId">{{type.name}} -
+                ({{type.phoneTypeId}})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <mat-form-field style="width:100%; padding-bottom:0px;">
+            <input matInput placeholder="Phone Value" (keyup)="considerReformat(item)" formControlName="valueControl">
+            <mat-error>Please enter a valid phone number.</mat-error>
+          </mat-form-field>
+        </div>
+          <div class="col-4">
+            <mat-form-field style="width:100%; padding-bottom:0px;">
+              <input matInput placeholder="Extension or Instruction" formControlName="descriptionControl">
+            </mat-form-field>
+          </div>
+        <div class="col-2"><mat-checkbox (change)="removePhone(i)"> Remove</mat-checkbox></div>
+        <!--| value:{{ item.value }} | status:{{ item.status }} | pristine:{{ item.pristine }} | untouched:{{ item.untouched }}-->
+      </div>
+
+
+    </div>
+
+  </form>
+</div>
+
+<div class="modal-footer">
+  <div class="row" style="width:100%">
+    <div class="col-3" align="left">
+      <button type="button" class="btn btn-secondary" (click)="closeWithoutSaving()">Cancel</button>
+    </div>
+    <div class="col-9" align="right">
+      <button class="btn btn-primary" (click)="addPhone()"  [disabled]="discontinueAdd()">Add phone number</button>
+      <button class="btn btn-primary" (click)="processDone()" [disabled]="phoneForm.invalid">Done</button>
+    </div>
+  </div>
+</div>
+
+<!--status:{{ phoneForm.status }} | invalid:{{ phoneForm.invalid }} | valid:{{ phoneForm.valid }} | pristine:{{ phoneForm.pristine }} | untouched:{{ phoneForm.untouched }}-->
+<!--<br><br>-->
+<!--value:{{ phoneForm.value | json }}-->

@@ -16,8 +16,12 @@ import { ContactTitleType } from '../../classes/types/contact-title-type';
 import { ContactClassificationTypeService } from '../../services/contact-classification-type.service';
 import { ContactAddressClassificationTypeService } from '../../services/contact-address-classification-type.service';
 import { ContactUrlTypeService } from '../../services/contact-url-type.service';
+import { ContactPhoneTypeService } from '../../services/contact-phone-type.service';
 import { ContactTitleTypeService } from '../../services/contact-title-type.service';
 import { UrlType } from '../../classes/types/url-type';
+import { Url } from '../../classes/common/url';
+import { PhoneType } from '../../classes/types/phone-type';
+import { Phone } from '../../classes/common/phone';
 
 import {Company} from '../../classes/company';
 import {Campaign} from '../../classes/campaign';
@@ -39,6 +43,8 @@ export class ContactDetailsComponent implements OnInit {
   campaignFlag = false;
   actionFlag = false;
   addressIsDirty = false;
+  urlsIsDirty = false;
+  phonesIsDirty = false;
 
   contactFailureUpdated = false;
   companyFailureFlag = false;
@@ -48,6 +54,7 @@ export class ContactDetailsComponent implements OnInit {
   contactId: string;
   contact: Contact;
   urlTypes: UrlType[];
+  phoneTypes: PhoneType[];
   titleTypes: ContactTitleType[];
   classificationTypes: EntityClassificationType[];
   addressClassificationTypes: AddressClassificationType[];
@@ -65,12 +72,14 @@ export class ContactDetailsComponent implements OnInit {
     private contactClassificationTypeService: ContactClassificationTypeService,
     private contactAddressClassificationTypeService: ContactAddressClassificationTypeService,
     private contactUrlTypeService: ContactUrlTypeService,
+    private contactPhoneTypeService: ContactPhoneTypeService,
     private contactTitleTypeService: ContactTitleTypeService,
     private location: Location
   ) {
     this.getContactsById();
     this.getContactAddressTypes();
     this.getContactUrlTypes();
+    this.getContactPhoneTypes();
     this.getContactTypes();
     this.getContactTitleTypes();
   }
@@ -114,6 +123,16 @@ export class ContactDetailsComponent implements OnInit {
           response => this.updateRoute(response.headers.get('Location')));
       }
     }
+  }
+
+  updateLinks = (urls: Url[]) => {
+    this.contact.urls = urls;
+    this.urlsIsDirty = true;
+  }
+
+  updatePhones = (phones: Phone[]) => {
+    this.contact.phones = phones;
+    this.phonesIsDirty = true;
   }
 
   completeAssociation( location: string, entity: string, entityId: string ) {
@@ -171,6 +190,11 @@ export class ContactDetailsComponent implements OnInit {
       .subscribe(urlTypes => this.urlTypes = urlTypes);
   }
 
+  getContactPhoneTypes(): void {
+    this.contactPhoneTypeService.getPhoneTypeList()
+      .subscribe(phoneTypes => this.phoneTypes = phoneTypes);
+  }
+
   getContactTitleTypes(): void {
     this.contactTitleTypeService.getTitleTypeList()
       .subscribe(titleTypes => this.titleTypes = titleTypes);
@@ -190,7 +214,7 @@ export class ContactDetailsComponent implements OnInit {
       // is an update - should go ahead and update backend
       this.contactService.updateContact(this.contact)
         .subscribe(response => this.showAssocationSuccessful('company', response),
-          response => this.handleAssociationFailure('company', response),
+          error => this.handleAssociationFailure('company', error),
         );
     }
   }
@@ -200,43 +224,39 @@ export class ContactDetailsComponent implements OnInit {
     if ( this.contact && campaign ) {
       this.contactService.addCampaignToContact(this.contact.contactId, campaign )
         .subscribe(response => this.showAssocationSuccessful('campaign', response),
-          response => this.handleAssociationFailure('campaign', response),
+          error => this.handleAssociationFailure('campaign', error),
         );
     }
   }
 
-  onCampaignFlaggedForRemoval(campaign: Campaign) {
-    if ( this.contact && campaign ) {
-      this.contactService.removeCampaignFromContact(this.contact.contactId, campaign.campaignId )
+  onCampaignFlaggedForRemoval(campaignId: string) {
+    if ( this.contact && campaignId ) {
+      this.contactService.removeCampaignFromContact(this.contact.contactId, campaignId )
         .subscribe(response => this.showAssocationSuccessful('campaign', response),
-          response => this.handleAssociationFailure('campaign', response)
+          error => this.handleAssociationFailure('campaign', error)
         );
     }
   }
 
-  onActionAssociatedToEntity(payload: any): void {
-    const actions = payload.entities;
-    const action = payload.action;
+  onActionAssociatedToEntity(action: Action): void {
+    console.log('onActionAssociatedToEntity:: end');
     if ( this.contact && action ) {
       this.contactService.addActionToContact(this.contact.contactId, action )
-        .subscribe(response => this.showAssocationSuccessful('action', response),
-          response =>  {
-            actions.filter(anAction => anAction === action);
-            this.handleAssociationFailure('action', response);
-          }
-        );
+        .subscribe(response => {
+          console.log('onActionAssociatedToEntity:: completed');
+          this.showAssocationSuccessful('action');
+        }, error => {
+          this.handleAssociationFailure('action', error);
+        } );
     }
   }
 
-  onActionFlaggedForRemoval(payload: any): void {
-    const actions = payload.entities;
-    const action = payload.action;
-    if ( this.contact && action ) {
-      this.contactService.removeActionFromContact(this.contact.contactId, action.actionId )
+  onActionFlaggedForRemoval(actionId: string): void {
+    if ( this.contact && actionId ) {
+      this.contactService.removeActionFromContact(this.contact.contactId, actionId )
         .subscribe(response => this.showAssocationSuccessful('action', response),
-          response => {
-            actions.push(action);
-            this.handleAssociationFailure('action', response);
+          error => {
+            this.handleAssociationFailure('action', error);
           }
         );
     }
@@ -246,7 +266,7 @@ export class ContactDetailsComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  handleAssociationFailure(entity: string, resposne?: any): void {
+  handleAssociationFailure(entity: string, response?: any): void {
     if (entity === 'company') {
       this.companyFailureFlag = true;
     } else if (entity === 'campaign') {
@@ -259,7 +279,7 @@ export class ContactDetailsComponent implements OnInit {
     this.waitAndReset(entity);
   }
 
-  showAssocationSuccessful(entity: string, resposne?: any): void {
+  showAssocationSuccessful(entity: string, response?: any): void {
     if (entity === 'company') {
       this.companyFlag = true;
     } else if (entity === 'campaign') {

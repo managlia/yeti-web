@@ -14,16 +14,22 @@ export class ContactEmailCardComponent extends ContactCardComponent implements O
   @Output() onContactAddedAsRecipient = new EventEmitter<Contact[]>();
   @Output() onContactRemovedAsRecipient = new EventEmitter<Contact[]>();
 
+  recipientOptions = [
+    {key: 'to', value: 'To'},
+    {key: 'cc', value: 'CC'},
+    {key: 'bcc', value: 'BCC'}
+  ];
+
   onContactAdded(contact: Contact) {
     console.log('---->>>>>> OVERRIDING onContactAdded / onContactAssociatedToEntity');
     contact.emailRecipientIndicator = 'to';
-    this.onContactAddedAsRecipient.emit(this.contacts);
+    this.onContactAddedAsRecipient.emit(this.entities);
   }
 
-  removeContact(removedContact: Contact) {
+  removeEmailContact(removedContact: Contact) {
     console.log('---->>>>>> OVERRIDING removeContact / onContactFlaggedForRemoval');
-    this.contacts = this.contacts.filter( contact => contact !== removedContact );
-    this.onContactRemovedAsRecipient.emit(this.contacts);
+    this.entities = this.entities.filter( contact => contact !== removedContact );
+    this.onContactRemovedAsRecipient.emit(this.entities);
   }
 
 

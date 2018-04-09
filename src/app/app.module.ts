@@ -130,6 +130,7 @@ import { AttachmentService } from './components/widgets/attachment.service';
 import { DateTimeService } from './components/widgets/date-time.service';
 import { TagService } from './components/widgets/tag.service';
 import { UrlService } from './components/widgets/url.service';
+import { PhoneService } from './components/widgets/phone.service';
 import { ActionQuickEditService } from './components/widgets/action-quick-edit.service';
 import { CampaignQuickEditService } from './components/widgets/campaign-quick-edit.service';
 
@@ -145,14 +146,21 @@ import { CompanyAddressClassificationTypeService } from './services/company-addr
 import { CompanyClassificationTypeService } from './services/company-classification-type.service';
 import { CompanyOrContactService } from './services/company-or-contact.service';
 import { CompanyService } from './services/company.service';
-import { CompanyUrlService } from './services/company-url.service';
-import { CompanyUrlTypeService } from './services/company-url-type.service';
 import { ContactAddressClassificationTypeService } from './services/contact-address-classification-type.service';
 import { ContactClassificationTypeService } from './services/contact-classification-type.service';
 import { ContactService } from './services/contact.service';
 import { ContactTitleTypeService } from './services/contact-title-type.service';
+
+import { CompanyUrlService } from './services/company-url.service';
+import { CompanyUrlTypeService } from './services/company-url-type.service';
 import { ContactUrlService } from './services/contact-url.service';
 import { ContactUrlTypeService } from './services/contact-url-type.service';
+
+import { CompanyPhoneService } from './services/company-phone.service';
+import { CompanyPhoneTypeService } from './services/company-phone-type.service';
+import { ContactPhoneService } from './services/contact-phone.service';
+import { ContactPhoneTypeService } from './services/contact-phone-type.service';
+
 import { DataService } from './services/data.service';
 import { EntityService } from './services/entity.service';
 import { ExceptionService } from './services/exception.service';
@@ -205,6 +213,7 @@ import { CardComponent } from './components/base/card/card.component';
 import { ActionQuickEditComponent } from './components/widgets/action-quick-edit/action-quick-edit.component';
 import { CampaignQuickEditComponent } from './components/widgets/campaign-quick-edit/campaign-quick-edit.component';
 import { ViewBaseComponent } from './views/view-base/view-base.component';
+import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-details.component';
 
 @NgModule({
   imports: [
@@ -260,6 +269,7 @@ import { ViewBaseComponent } from './views/view-base/view-base.component';
     TagDetailsComponent,
     DateTimeDetailsComponent,
     UrlDetailsComponent,
+    PhoneDetailsComponent,
 
     AttachmentSummaryPipe,
     CompanySummaryPipe,
@@ -309,12 +319,15 @@ import { ViewBaseComponent } from './views/view-base/view-base.component';
     ActionQuickEditComponent,
     CampaignQuickEditComponent,
     ViewBaseComponent,
+    PhoneDetailsComponent,
   ],
   providers: [
-    AddressService, AttachmentService, DateTimeService, TagService, UrlService, ActionQuickEditService, CampaignQuickEditService,
+    AddressService, AttachmentService, DateTimeService, TagService, UrlService, PhoneService,
+    ActionQuickEditService, CampaignQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
     ActionClassificationOtherTypeService, CompanyUrlService, CompanyUrlTypeService, ContactUrlService, ContactUrlTypeService,
+    CompanyPhoneService, CompanyPhoneTypeService, ContactPhoneService, ContactPhoneTypeService,
     CompanyClassificationTypeService, CompanyAddressClassificationTypeService,
     ContactAddressClassificationTypeService, ContactClassificationTypeService, ContactTitleTypeService,
     CampaignClassificationTypeService, ScopeTypeService, EntityService, CompanyOrContactService,
@@ -325,6 +338,6 @@ import { ViewBaseComponent } from './views/view-base/view-base.component';
     }],
   bootstrap: [ AppComponent ],
   entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent,
-                  ActionQuickEditComponent, CampaignQuickEditComponent, UrlDetailsComponent]
+                  ActionQuickEditComponent, CampaignQuickEditComponent, UrlDetailsComponent, PhoneDetailsComponent]
 })
 export class AppModule { }

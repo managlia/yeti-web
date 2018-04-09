@@ -18,7 +18,7 @@
             </p>
           </div>
           <div class="col-md-4">
-            <input type="checkbox" id="removeCompany" name="removeCompany" (change)="removeCompany(aCompany)"> {{label.companies.remove}}
+            <mat-checkbox (click)="removeCompany(aCompany.companyId)"> {{label.companies.remove}}</mat-checkbox>
           </div>
         </div>
       </div>

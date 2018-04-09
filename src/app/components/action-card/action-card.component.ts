@@ -1,8 +1,9 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import * as _ from 'lodash';
 
-import { Action } from '../../classes/action';
-import { CardComponent } from '../base/card/card.component';
+import {Action} from '../../classes/action';
+import {CardComponent} from '../base/card/card.component';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-action-card',
@@ -28,42 +29,51 @@ export class ActionCardComponent extends CardComponent implements OnInit {
   }
 
   getActionsByCustomerId(): void {
-    this.actionService.getActionListByCompany( this.companyId )
-      .subscribe(actions => this.entities = actions );
+    this.actionService.getActionListByCompany(this.companyId)
+      .subscribe(actions => this.entities = actions);
   }
 
   getActionsByContactId(): void {
-    this.actionService.getActionListByContact( this.contactId )
-      .subscribe(actions => this.entities = actions );
+    this.actionService.getActionListByContact(this.contactId)
+      .subscribe(actions => this.entities = actions);
   }
 
   getActionsByCampaignId(): void {
-    this.actionService.getActionListByCampaign( this.campaignId )
-      .subscribe(actions => this.entities = actions );
+    this.actionService.getActionListByCampaign(this.campaignId)
+      .subscribe(actions => this.entities = actions);
   }
 
   onActionAdded(action: Action) {
-   this.onActionAssociatedToEntity.emit( {entities: this.entities, action} );
+    this.onActionAssociatedToEntity.emit(action);
+    this.suspendedUndoEvent  = new Observable<any>(observer => {
+      this.entities = this.entities.filter(e => e.actionId !== action.actionId);
+      observer.next('undone');
+      observer.complete();
+      return {unsubscribe() {}};
+    });
   }
 
-  removeAction(action: Action) {
-    this.onActionFlaggedForRemoval.emit( {entities: this.entities, action} );
-    _.remove(this.entities, {
-      actionId: action.actionId
+  removeAction(actionId: string) {
+    this.onActionFlaggedForRemoval.emit(actionId);
+    this.suspendedEvent = new Observable<any>(observer => {
+      this.entities = this.entities.filter(e => e.actionId !== actionId);
+      observer.next('success');
+      observer.complete();
+      return {unsubscribe() {}};
     });
   }
 
   createNewAction(): void {
     if (this.companyId) {
-      this.router.navigateByUrl( `/action/add/company/${this.companyId}` );
+      this.router.navigateByUrl(`/action/add/company/${this.companyId}`);
     } else if (this.contactId) {
-      this.router.navigateByUrl( `/action/add/contact/${this.contactId}` );
+      this.router.navigateByUrl(`/action/add/contact/${this.contactId}`);
     } else if (this.campaignId) {
-      this.router.navigateByUrl( `/action/add/campaign/${this.campaignId}` );
+      this.router.navigateByUrl(`/action/add/campaign/${this.campaignId}`);
     }
   }
 
   onSelectedAction($event, actionId): void {
-    this.router.navigateByUrl( `/action/${actionId}` );
+    this.router.navigateByUrl(`/action/${actionId}`);
   }
 }

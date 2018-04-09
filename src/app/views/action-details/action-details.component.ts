@@ -32,9 +32,13 @@ import {FormBuilder} from '@angular/forms';
 export class ActionDetailsComponent implements OnInit {
   @Input() action: Action;
   actionUpdated = false;
+  actionFailureUpdated = false;
   companyFlag = false;
   contactFlag = false;
   campaignFlag = false;
+  companyFailureFlag = false;
+  contactFailureFlag = false;
+  campaignFailureFlag = false;
   actionId: string;
   classificationTypes: Observable<ActionClassificationType[]>;
   classificationOtherTypes: Observable<ActionClassificationOtherType[]>;
@@ -154,18 +158,21 @@ export class ActionDetailsComponent implements OnInit {
     if ( this.action && company ) {
       this.actionService.addActionToCompany(company, this.action.actionId )
         .subscribe(response => {
-          console.log('addActionToCompany:: completed');
           this.showAssocationSuccessful('company');
+        }, error => {
+          this.handleAssociationFailure('company');
         } );
     }
   }
 
-  onCompanyFlaggedForRemoval(company: Company) {
-    if ( this.action && company ) {
-      this.actionService.removeActionFromCompany(company.companyId, this.action.actionId )
+  onCompanyFlaggedForRemoval(companyId: string) {
+    if ( this.action && companyId ) {
+      this.actionService.removeActionFromCompany(companyId, this.action.actionId )
         .subscribe(response => {
           console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('company');
+        }, error => {
+          this.handleAssociationFailure('company');
         } );
     }
   }
@@ -177,16 +184,20 @@ export class ActionDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onContactAssociatedToEntity:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
 
-  onContactFlaggedForRemoval(contact: Contact) {
-    if ( this.action && contact ) {
-      this.actionService.removeActionFromContact(contact.contactId, this.action.actionId )
+  onContactFlaggedForRemoval(contactId: string) {
+    if ( this.action && contactId ) {
+      this.actionService.removeActionFromContact(contactId, this.action.actionId )
         .subscribe(response => {
           console.log('onContactFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
@@ -198,16 +209,20 @@ export class ActionDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onCampaignAssociatedToEntity:: completed');
             this.showAssocationSuccessful('campaign');
+        }, error => {
+          this.handleAssociationFailure('campaign');
         } );
     }
   }
 
-  onCampaignFlaggedForRemoval(campaign: Campaign) {
-    if ( this.action && campaign ) {
-      this.actionService.removeActionFromCampaign(campaign.campaignId, this.action.actionId )
+  onCampaignFlaggedForRemoval(campaignId: string) {
+    if ( this.action && campaignId ) {
+      this.actionService.removeActionFromCampaign(campaignId, this.action.actionId )
         .subscribe(response => {
           console.log('onCampaignFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('campaign');
+        }, error => {
+          this.handleAssociationFailure('campaign');
         } );
     }
   }
@@ -216,7 +231,20 @@ export class ActionDetailsComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  showAssocationSuccessful(entity: string): void {
+  handleAssociationFailure(entity: string, response?: any): void {
+    if (entity === 'company') {
+      this.companyFailureFlag = true;
+    } else if (entity === 'campaign') {
+      this.campaignFailureFlag = true;
+    } else if (entity === 'contact') {
+      this.contactFailureFlag = true;
+    } else if ( entity === 'action' ) {
+      this.actionFailureUpdated = true;
+    }
+    this.waitAndReset(entity);
+  }
+
+  showAssocationSuccessful(entity: string, response?: any): void {
     if ( entity === 'company' ) {
       this.companyFlag = true;
     } else if ( entity === 'campaign' ) {
@@ -226,18 +254,25 @@ export class ActionDetailsComponent implements OnInit {
     } else if ( entity === 'action' ) {
       this.actionUpdated = true;
     }
+    this.waitAndReset(entity);
+  }
+
+  waitAndReset(entity: string): void {
     this.delay(4000).then(resolve => {
         if ( entity === 'company' ) {
           this.companyFlag = false;
+          this.companyFailureFlag = false;
         } else if ( entity === 'campaign' ) {
           this.campaignFlag = false;
+          this.campaignFailureFlag = false;
         } else if ( entity === 'contact' ) {
           this.contactFlag = false;
+          this.contactFailureFlag = false;
         } else if ( entity === 'action' ) {
           this.actionUpdated = false;
+          this.actionFailureUpdated = false;
         }
-    }
-    );
+    });
   }
 
   getScopeTypes(): void {

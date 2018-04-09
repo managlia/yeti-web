@@ -12,15 +12,19 @@ import { ActionService } from '../../services/action.service';
 import { Company } from '../../classes/company';
 import { EntityClassificationType } from '../../classes/types/entity-classification-type';
 import { AddressClassificationType } from '../../classes/types/address-classification-type';
-import { UrlType } from '../../classes/types/url-type';
 import { CompanyClassificationTypeService } from '../../services/company-classification-type.service';
 import { CompanyAddressClassificationTypeService } from '../../services/company-address-classification-type.service';
 import { CompanyUrlTypeService } from '../../services/company-url-type.service';
+import { CompanyPhoneTypeService } from '../../services/company-phone-type.service';
 import {Contact} from '../../classes/contact';
 import {Campaign} from '../../classes/campaign';
 import {Action} from '../../classes/action';
 import {Address} from '../../classes/common/address';
 import {AddressCardComponent} from '../../components/address-card/address-card.component';
+import {Url} from '../../classes/common/url';
+import { UrlType } from '../../classes/types/url-type';
+import {Phone} from '../../classes/common/phone';
+import { PhoneType } from '../../classes/types/phone-type';
 
 @Component({
   selector: 'app-company-details',
@@ -32,14 +36,21 @@ export class CompanyDetailsComponent implements OnInit {
   @ViewChild(AddressCardComponent) addressCard: AddressCardComponent;
 
   companyUpdated = false;
+  companyFailureUpdated = false;
   actionFlag = false;
   contactFlag = false;
   campaignFlag = false;
+  actionFailureFlag = false;
+  contactFailureFlag = false;
+  campaignFailureFlag = false;
   addressIsDirty = false;
+  urlsIsDirty = false;
+  phonesIsDirty = false;
 
   companyFormGroup: FormGroup;
   company: Company;
   urlTypes: UrlType[];
+  phoneTypes: PhoneType[];
   classificationTypes: EntityClassificationType[];
   addressClassificationTypes: AddressClassificationType[];
   entity: string;
@@ -53,6 +64,7 @@ export class CompanyDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private companyUrlTypeService: CompanyUrlTypeService,
+    private companyPhoneTypeService: CompanyPhoneTypeService,
     private companyClassificationTypeService: CompanyClassificationTypeService,
     private companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,
     private fb: FormBuilder
@@ -62,6 +74,7 @@ export class CompanyDetailsComponent implements OnInit {
     window.scrollTo(0, 0);
     this.getCompany();
     this.getCompanyUrlTypes();
+    this.getCompanyPhoneTypes();
     this.getCompanyTypes();
     this.getCompanyAddressTypes();
     this.createForm();
@@ -116,6 +129,16 @@ export class CompanyDetailsComponent implements OnInit {
           response => this.updateRoute(response.headers.get('Location')));
       }
     }
+  }
+
+  updateLinks = (urls: Url[]) => {
+    this.company.urls = urls;
+    this.urlsIsDirty = true;
+  }
+
+  updatePhones = (phones: Phone[]) => {
+    this.company.phones = phones;
+    this.phonesIsDirty = true;
   }
 
   completeAssociation( location: string, entity: string, entityId: string ) {
@@ -174,6 +197,12 @@ export class CompanyDetailsComponent implements OnInit {
       .subscribe(urlTypes => this.urlTypes = urlTypes);
   }
 
+  /** types **/
+  getCompanyPhoneTypes(): void {
+    this.companyPhoneTypeService.getPhoneTypeList()
+      .subscribe(phoneTypes => this.phoneTypes = phoneTypes);
+  }
+
   onContactAssociatedToEntity(contact: Contact): void {
     console.log('onContactAssociatedToEntity:: end');
     if ( this.company && contact ) {
@@ -181,16 +210,20 @@ export class CompanyDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onContactAssociatedToEntity:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
 
-  onContactFlaggedForRemoval(contact: Contact) {
-    if ( this.company && contact ) {
-      this.companyService.removeContactFromCompany(this.company.companyId, contact.contactId )
+  onContactFlaggedForRemoval(contactId: string) {
+    if ( this.company && contactId ) {
+      this.companyService.removeContactFromCompany(this.company.companyId, contactId )
         .subscribe(response => {
           console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('contact');
+        }, error => {
+          this.handleAssociationFailure('contact');
         } );
     }
   }
@@ -201,16 +234,20 @@ export class CompanyDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onCampaignAssociatedToEntity:: completed');
           this.showAssocationSuccessful('campaign');
+        }, error => {
+          this.handleAssociationFailure('campaign');
         } );
     }
   }
 
-  onCampaignFlaggedForRemoval(campaign: Campaign) {
-    if ( this.company && campaign ) {
-      this.companyService.removeCampaignFromCompany(this.company.companyId, campaign.campaignId )
+  onCampaignFlaggedForRemoval(campaignId: string) {
+    if ( this.company && campaignId ) {
+      this.companyService.removeCampaignFromCompany(this.company.companyId, campaignId )
         .subscribe(response => {
           console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('campaign');
+        }, error => {
+          this.handleAssociationFailure('campaign');
         } );
     }
   }
@@ -222,16 +259,20 @@ export class CompanyDetailsComponent implements OnInit {
         .subscribe(response => {
           console.log('onActionAssociatedToEntity:: completed');
           this.showAssocationSuccessful('action');
+        }, error => {
+          this.handleAssociationFailure('action');
         } );
     }
   }
 
-  onActionFlaggedForRemoval(action: Action) {
-    if ( this.company && action ) {
-      this.companyService.removeActionFromCompany(this.company.companyId, action.actionId )
+  onActionFlaggedForRemoval(actionId: string) {
+    if ( this.company && actionId ) {
+      this.companyService.removeActionFromCompany(this.company.companyId, actionId )
         .subscribe(response => {
           console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('action');
+        }, error => {
+          this.handleAssociationFailure('action');
         } );
     }
   }
@@ -240,7 +281,20 @@ export class CompanyDetailsComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  showAssocationSuccessful(entity: string): void {
+  handleAssociationFailure(entity: string, response?: any): void {
+    if (entity === 'campaign') {
+      this.campaignFailureFlag = true;
+    } else if (entity === 'contact') {
+      this.contactFailureFlag = true;
+    } else if (entity === 'action') {
+      this.actionFailureFlag = true;
+    } else if (entity === 'company') {
+      this.companyFailureUpdated = true;
+    }
+    this.waitAndReset(entity);
+  }
+
+  showAssocationSuccessful(entity: string, response?: any): void {
     if ( entity === 'company' ) {
       this.companyUpdated = true;
       this.addressCard.writeCopyFromOriginal();
@@ -251,15 +305,23 @@ export class CompanyDetailsComponent implements OnInit {
     } else if ( entity === 'action' ) {
       this.actionFlag = true;
     }
+    this.waitAndReset(entity);
+  }
+
+  waitAndReset(entity: string): void {
     this.delay(4000).then(resolve => {
         if ( entity === 'company' ) {
           this.companyUpdated = false;
+          this.companyFailureUpdated = false;
         } else if ( entity === 'campaign' ) {
           this.campaignFlag = false;
+          this.campaignFailureFlag = false;
         } else if ( entity === 'contact' ) {
           this.contactFlag = false;
+          this.contactFailureFlag = false;
         } else if ( entity === 'action' ) {
           this.actionFlag = false;
+          this.actionFailureFlag = false;
         }
       }
     );

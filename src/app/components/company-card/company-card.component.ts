@@ -3,6 +3,7 @@ import {Component, OnInit, EventEmitter, Output} from '@angular/core';
 import { CardComponent } from '../base/card/card.component';
 import { Company } from '../../classes/company';
 import * as _ from 'lodash';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'app-company-card',
@@ -14,7 +15,7 @@ export class CompanyCardComponent extends CardComponent implements OnInit {
 
   displayedColumns = ['companyId', 'name', 'description'];
 
-  @Output() onCompanyFlaggedForRemoval = new EventEmitter<Company>();
+  @Output() onCompanyFlaggedForRemoval = new EventEmitter<string>();
   @Output() onCompanyAssociatedToEntity = new EventEmitter<Company>();
 
   ngOnInit(): void {
@@ -38,12 +39,21 @@ export class CompanyCardComponent extends CardComponent implements OnInit {
 
   onCompanyAdded(company: Company) {
     this.onCompanyAssociatedToEntity.emit(company);
+    this.suspendedUndoEvent  = new Observable<any>(observer => {
+      this.entities = this.entities.filter(e => e.companyId !== company.companyId);
+      observer.next('undone');
+      observer.complete();
+      return {unsubscribe() {}};
+    });
   }
 
-  removeCompany(company: Company) {
-    this.onCompanyFlaggedForRemoval.emit(company);
-    _.remove(this.entities, {
-      companyId: company.companyId
+  removeCompany(companyId: string) {
+    this.onCompanyFlaggedForRemoval.emit(companyId);
+    this.suspendedEvent = new Observable<any> ( observer => {
+      this.entities = this.entities.filter( e => e.companyId !== companyId );
+      observer.next('success');
+      observer.complete();
+      return {unsubscribe() {}};
     });
   }
 

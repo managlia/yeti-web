@@ -99,7 +99,11 @@
                 </div>
                 <div class="col-6">
                   <!--beneath main content area-->
-                  <app-phone-card [contact]="contact"></app-phone-card>
+                  <app-phone-card
+                    [phones]="contact.phones"
+                    [phoneTypes]="phoneTypes"
+                    (phonesUpdated)="updatePhones($event)"
+                  ></app-phone-card>
                 </div>
 
               </div>
@@ -107,7 +111,11 @@
 
             </div>
             <div class="col-4">
-              <app-links-card [urls]="contact.urls" [urlTypes]="urlTypes"></app-links-card>
+              <app-links-card
+                [urls]="contact.urls"
+                [urlTypes]="urlTypes"
+                (linksUpdated)="updateLinks($event)"
+              ></app-links-card>
               <app-tag-card [tags]="contact.tags"></app-tag-card>
               <app-attachment-card [attachments]="contact.attachments"></app-attachment-card>
             </div>

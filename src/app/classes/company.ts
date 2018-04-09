@@ -1,5 +1,6 @@
 import {EntityClassificationType} from './types/entity-classification-type';
 import {Url} from './common/url';
+import {Phone} from './common/phone';
 import {Address} from './common/address';
 
 export class Company {
@@ -19,6 +20,7 @@ export class Company {
   attachments: any[];
   tags: any[];
   urls: Url[];
+  phones: Phone[];
 
   constructor() {
     this.classificationType = new EntityClassificationType();
@@ -26,5 +28,6 @@ export class Company {
     this.attachments = [];
     this.tags = [];
     this.urls = [];
+    this.phones = [];
   }
 }

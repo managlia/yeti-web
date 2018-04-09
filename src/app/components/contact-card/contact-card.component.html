@@ -6,7 +6,7 @@
       <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:indianred" *ngIf="associationFailure">{{label.confirm.failure}}</span>
     </div>
     <div class="card-body">
-      <div *ngFor="let aContact of entities">
+      <div *ngFor="let aContact of entities;">
         <div class="row">
           <div class="col-md-8">
             <p
@@ -18,7 +18,7 @@
             </p>
           </div>
           <div class="col-md-4">
-            <input type="checkbox" id="removeContact" name="removeContact" (change)="removeContact(aContact)"> {{label.contact.remove}}
+            <mat-checkbox (click)="removeContact(aContact.contactId)"> {{label.contact.remove}}</mat-checkbox>
           </div>
         </div>
       </div>

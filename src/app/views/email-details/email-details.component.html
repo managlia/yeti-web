@@ -41,7 +41,6 @@ Has Recipients {{ hasRecipients }}<br>
 
             <div class="col-12">
               <app-contact-email-card [actionId]="action.actionId"
-                                [associationSuccessful]="contactFlag"
                                 (onContactAddedAsRecipient)="onContactAddedAsRecipient($event)"
                                 (onContactRemovedAsRecipient)="onContactRemovedAsRecipient($event)"
               ></app-contact-email-card>

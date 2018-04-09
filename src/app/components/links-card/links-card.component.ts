@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
 import { UrlType } from '../../classes/types/url-type';
 import { Url } from '../../classes/common/url';
 import { UrlService } from '../widgets/url.service';
+import {CardComponent} from '../base/card/card.component';
 
 @Component({
   selector: 'app-links-card',
@@ -10,19 +11,28 @@ import { UrlService } from '../widgets/url.service';
   styleUrls: ['./links-card.component.css']
 })
 
-export class LinksCardComponent implements OnInit {
+export class LinksCardComponent extends CardComponent implements OnInit {
+
+  @Output() linksUpdated = new EventEmitter<Url[]>();
+
   @Input() urls: Url[];
   @Input() urlTypes: UrlType[];
-  constructor(
-    private urlService: UrlService
-  ) { }
 
   ngOnInit() {
   }
 
+  openUrl = (url: string) => {
+    window.open( url, '_blank', url);
+  };
+
   openUrlDialog(): void {
     this.urlService.openDialog(this.urls, this.urlTypes)
-      .subscribe( result => console.log('update complete') );
+      .subscribe( result => {
+        if (result) {
+          this.cardIsDirty = true;
+          this.urls = result;
+          this.linksUpdated.emit(result);
+        }
+      });
   }
-
 }

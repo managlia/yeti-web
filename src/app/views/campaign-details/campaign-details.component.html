@@ -158,6 +158,7 @@
       ></app-company-card>
       <app-contact-card [campaignId]="campaign.campaignId"
                         [associationSuccessful]="contactFlag"
+                        [associationFailure]="contacFailuretFlag"
                         (onContactAssociatedToEntity)="onContactAssociatedToEntity($event)"
                         (onContactFlaggedForRemoval)="onContactFlaggedForRemoval($event)"
       ></app-contact-card>
