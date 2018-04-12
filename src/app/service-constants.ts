@@ -41,6 +41,7 @@ export class ServiceConstants {
 
   public static EMAIL_URL = `${ServiceConstants.HOST}/yeti/Emails`;
   public static SCOPE_TYPE_URL = `${ServiceConstants.HOST}/yeti/ScopeTypes`;
+  public static TAG_URL = `${ServiceConstants.HOST}/yeti/Tags`;
 
   public static EXT_EVENTS_URL = `${ServiceConstants.EMAIL_HOST}/yetiemail/ExtEvents`;
   public static EXT_EMAIL_URL = `${ServiceConstants.EMAIL_HOST}/yetiemail/ExtEmails`;

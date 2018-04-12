@@ -67,8 +67,19 @@
     <div class="row" style="padding-top:5px;">
       <div class="col-12" align="center">
         <div class="modal-footer" align="center">
-          <button class="btn btn-primary" [mat-dialog-close]="data.address" tabindex="8">Ok</button>
-          <button class="btn btn-primary" (click)="onNoClick()" tabindex="-1">Cancel</button>
+
+          <div class="row" style="padding-top:5px;" style="width:100%;">
+            <div class="col-6" align="left">
+              <button type="button" class="btn btn-secondary" (click)="onNoClick()" tabindex="-1">Cancel</button>
+            </div>
+            <div class="col-6" align="right">
+              <button class="btn btn-primary" [mat-dialog-close]="data.address" tabindex="8">Done</button>
+            </div>
+          </div>
+
+
+
+
         </div>
       </div>
     </div>

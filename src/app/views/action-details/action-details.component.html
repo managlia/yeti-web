@@ -1,8 +1,4 @@
 <div *ngIf="action" id="search-component" class="animated fadeIn">
-
-  {{ action | json }}
-  <br/><br/><br/>
-
   <div class="row">
     <div class="col-6"><!-- first column -->
 
@@ -131,7 +127,11 @@
 
             </div>
             <div class="col-6">
-              <app-tag-card [tags]="action.tags"></app-tag-card>
+              <app-tag-card
+                [associationSuccessful]="actionUpdated"
+                [associationFailure]="actionFailureUpdated"
+                [tags]="action.tags"
+                (tagsUpdated)="updateTags($event)"></app-tag-card>
               <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
 
 

@@ -15,6 +15,7 @@ export const action = {
   addExisting: 'Add existing action',
   addNew: 'Add new action',
   remove: 'Remove',
+  find: 'Find an action',
   column: {
     name: 'Name',
     description: 'Description',
@@ -31,6 +32,7 @@ export const campaign = {
   addExisting: 'Add existing campaign',
   addNew: 'Add new campaign',
   remove: 'Remove',
+  find: 'Find a campaign',
   column: {
     name: 'Name',
     description: 'Description',
@@ -44,6 +46,7 @@ export const companies = {
   listTitle: 'Company List',
   addExisting: 'Add existing company',
   addNew: 'Add new company',
+  find: 'Find a company',
   remove: 'Remove',
   associatedTitle: 'Associated company',
   changeAssociation: 'Associate with different company'
@@ -54,6 +57,7 @@ export const contact = {
   listTitle: 'Contact List',
   addExisting: 'Add existing contact',
   addNew: 'Add new contact',
+  find: 'Find a contact',
   remove: 'Remove'
 };
 

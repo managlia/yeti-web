@@ -24,7 +24,10 @@
       </div>
       <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
         <div class="col-md-12">
-          <app-campaign-adder [existingCampaigns]="entities"  (onCampaignAdded)="onCampaignAdded($event)"></app-campaign-adder>
+          <app-campaign-adder
+            [existingEntities]="entities"
+            (onEntityAdded)="onCampaignAdded($event)"
+          ></app-campaign-adder>
           <button type="button" class="btn btn-primary btn-sm" (click)="createNewCampaign()">{{label.campaign.addNew}}</button>
         </div>
       </div>

@@ -32,6 +32,7 @@ export class AddressDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.data.address.countryId = this.data.address.countryId ? this.data.address.countryId : 'US';
   }
 
 }

@@ -80,9 +80,7 @@ export class UrlDetailsComponent implements OnInit {
   getTypeById = (id: string) => this.data.types.filter( e => e.urlTypeId === id)[0];
 
   processDone(): void {
-    // if ( this.urlForm.pristine ) {
-    //   this.dialogRef.close();
-    // } else {
+    if ( this.urlForm.valid ) {
       const updatedItems = this.urlForm.get('items').value;
       const newData = updatedItems.map( anItem => new Url(
         this.getTypeById(anItem.typeControl),
@@ -90,7 +88,7 @@ export class UrlDetailsComponent implements OnInit {
         'unused'
       ));
       this.dialogRef.close(newData);
-    // }
+    }
   }
 
   closeWithoutSaving(): void {

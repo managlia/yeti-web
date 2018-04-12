@@ -1,25 +1,40 @@
 <div class="modal-header">
   <h4 class="modal-title">Add and edit report tags</h4>
 </div>
-<div class="modal-body">
+<div class="modal-body" style="padding-bottom:60px;">
 
       <mat-form-field class="tag-chip-list">
         <mat-chip-list #chipList>
-          <mat-chip *ngFor="let tag of data" [selectable]="selectable"
+          <mat-chip *ngFor="let tag of currentTags" [selectable]="selectable"
                     [removable]="removable" (remove)="remove(tag)">
-            {{tag.name}}
+            {{tag}}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
           </mat-chip>
-          <input placeholder="New tag..."
-                 [matChipInputFor]="chipList"
-                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                 [matChipInputAddOnBlur]="addOnBlur"
-                 (matChipInputTokenEnd)="add($event)" />
-        </mat-chip-list>
-      </mat-form-field>
+          <!--<mat-autocomplete placeholder="New tag..."-->
+                 <!--[matChipInputFor]="chipList"-->
+                 <!--[matChipInputSeparatorKeyCodes]="separatorKeysCodes"-->
+                 <!--[matChipInputAddOnBlur]="addOnBlur"-->
+                 <!--(matChipInputTokenEnd)="add($event)" />-->
 
+          <input [matChipInputFor]="chipList" placeholder="New tag..."
+                 [matAutocomplete]="auto" autofocus
+                 #chipSearch id="search-box2"
+                 (matChipInputTokenEnd)="add(chipSearch.value)"
+                 (keyup)="search(chipSearch.value)"
+                 tabindex="1"
+          >
+
+        </mat-chip-list>
+          <mat-autocomplete #auto="matAutocomplete" #matAutocomplete >
+            <mat-option *ngFor="let aTagName of results$ | async" [value]="aTag" (onSelectionChange)="add(aTagName)">
+              <span>{{aTagName }}</span>
+            </mat-option>
+          </mat-autocomplete>
+      </mat-form-field>
+      <mat-error *ngIf="flagAsInvalid">The item is already tagged with that value.</mat-error>
+</div>
 <div class="modal-footer">
-  <button class="btn btn-primary" [mat-dialog-close]="data" tabindex="7">Done</button>
+  <button class="btn btn-primary" (click)="processDone()" tabindex="2">Done</button>
 </div>
 
 

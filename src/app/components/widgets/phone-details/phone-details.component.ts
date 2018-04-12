@@ -98,18 +98,16 @@ export class PhoneDetailsComponent implements OnInit {
   getTypeById = (id: string) => this.data.types.filter( e => e.phoneTypeId === id)[0];
 
   processDone(): void {
-    // if ( this.phoneForm.pristine ) {
-    //   this.dialogRef.close();
-    // } else {
-    const updatedItems = this.phoneForm.get('items').value;
-    const newData = updatedItems.map( anItem => new Phone(
-      this.getTypeById(
-        anItem.typeControl),
-        anItem.valueControl,
-        anItem.descriptionControl
-    ));
-    this.dialogRef.close(newData);
-    // }
+    if ( this.phoneForm.valid ) {
+      const updatedItems = this.phoneForm.get('items').value;
+      const newData = updatedItems.map( anItem => new Phone(
+        this.getTypeById(
+          anItem.typeControl),
+          anItem.valueControl,
+          anItem.descriptionControl
+      ));
+      this.dialogRef.close(newData);
+    }
   }
 
   closeWithoutSaving(): void {

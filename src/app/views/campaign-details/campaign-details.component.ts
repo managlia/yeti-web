@@ -18,6 +18,8 @@ import { ScopeTypeService } from '../../services/scope-type.service';
 import {Contact} from '../../classes/contact';
 import {Company} from '../../classes/company';
 import {Action} from '../../classes/action';
+import {Url} from '../../classes/common/url';
+import {Tag} from '../../classes/common/tag';
 
 @Component({
   selector: 'app-campaign-details',
@@ -33,6 +35,7 @@ export class CampaignDetailsComponent implements OnInit {
   companyFailureFlag = false;
   contactFailureFlag = false;
   actionFailureFlag = false;
+  tagsIsDirty = false;
 
   isLinear: true;
   campaign: Campaign;
@@ -226,6 +229,11 @@ export class CampaignDetailsComponent implements OnInit {
         } );
     }
   }
+
+  updateTags = (tags: Tag[]) => {
+    this.campaign.tags = tags;
+    this.tagsIsDirty = true;
+  };
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

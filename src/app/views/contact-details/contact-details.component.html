@@ -116,7 +116,13 @@
                 [urlTypes]="urlTypes"
                 (linksUpdated)="updateLinks($event)"
               ></app-links-card>
-              <app-tag-card [tags]="contact.tags"></app-tag-card>
+              <app-tag-card
+                [associationSuccessful]="contactUpdated"
+                [associationFailure]="contactFailureUpdated"
+                [tags]="contact.tags"
+                (tagsUpdated)="updateTags($event)"></app-tag-card>
+
+
               <app-attachment-card [attachments]="contact.attachments"></app-attachment-card>
             </div>
           </div>

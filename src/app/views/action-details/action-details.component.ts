@@ -22,6 +22,7 @@ import {Campaign} from '../../classes/campaign';
 import {ScopeTypeService} from '../../services/scope-type.service';
 import {HttpResponse} from '@angular/common/http';
 import {FormBuilder} from '@angular/forms';
+import {Tag} from '../../classes/common/tag';
 
 @Component({
   selector: 'app-action-details',
@@ -43,6 +44,7 @@ export class ActionDetailsComponent implements OnInit {
   classificationTypes: Observable<ActionClassificationType[]>;
   classificationOtherTypes: Observable<ActionClassificationOtherType[]>;
   scopeTypes: ScopeType[];
+  tagsIsDirty = false;
 
   entity: string;
   entityId: string;
@@ -226,6 +228,11 @@ export class ActionDetailsComponent implements OnInit {
         } );
     }
   }
+
+  updateTags = (tags: Tag[]) => {
+    this.action.tags = tags;
+    this.tagsIsDirty = true;
+  };
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

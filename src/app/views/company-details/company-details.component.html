@@ -1,8 +1,6 @@
 <div *ngIf="company" id="search-component" class="animated fadeIn">
   <div class="row">
     <div class="col-9">
-
-
       <div *ngIf="entity">
         <div class="col-sm-12 col-md-12">
           <div class="card text-white bg-primary text-center">
@@ -14,7 +12,6 @@
           </div>
         </div><!--/.col-->
       </div>
-
       <div class="col-sm-12 col-md-12">
         <div class="card text-white bg-success text-center animated fadeIn" *ngIf="companyUpdated">
           <div class="card-body">
@@ -24,8 +21,6 @@
           </div>
         </div>
       </div><!--/.col-->
-
-
       <div class="card">
         <div class="card-header">
           <strong>Company Details</strong>
@@ -33,11 +28,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col-8">
-
-
               <div class="row">
                 <div class="col-12">
-
                   <form [formGroup]="companyFormGroup" novalidate>
                     <div class="row">
                       <div class="col-md-5">
@@ -80,7 +72,6 @@
                       <app-prospect-card [company]="company"></app-prospect-card>
                     </div>
                   </form>
-
                 </div>
               </div>
               <div>
@@ -104,19 +95,18 @@
                       [urlTypes]="urlTypes"
                       (linksUpdated)="updateLinks($event)"
                     ></app-links-card>
+                    `
                   </div>
                 </div>
               </div>
-
-
             </div>
             <div class="col-4">
-
-
-              <app-tag-card [tags]="company.tags"></app-tag-card>
+              <app-tag-card
+                [associationSuccessful]="companyUpdated"
+                [associationFailure]="companyFailureUpdated"
+                [tags]="company.tags"
+                (tagsUpdated)="updateTags($event)"></app-tag-card>
               <app-attachment-card [attachments]="company.attachments"></app-attachment-card>
-
-
             </div>
           </div>
           <div class="row">
@@ -131,7 +121,6 @@
           </div>
         </div>
       </div>
-
     </div>
     <div class="col-3">
       <div *ngIf="company?.companyId">

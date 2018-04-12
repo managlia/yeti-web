@@ -121,7 +121,11 @@
             </div>
             <div class="col-6">
 
-              <app-tag-card [tags]="campaign.tags"></app-tag-card>
+              <app-tag-card
+                [associationSuccessful]="campaignUpdated"
+                [associationFailure]="campaignFailureUpdated"
+                [tags]="campaign.tags"
+                (tagsUpdated)="updateTags($event)"></app-tag-card>
 
             </div>
           </div>

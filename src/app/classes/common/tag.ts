@@ -5,12 +5,10 @@ export class Tag {
   description: string;
 
   constructor(
-    tagId: string,
     creatorId: string,
     name: string,
     description: string
   ) {
-    this.tagId = tagId;
     this.creatorId = creatorId;
     this.name = name;
     this.description = description;

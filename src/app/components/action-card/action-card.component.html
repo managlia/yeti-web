@@ -24,7 +24,10 @@
       </div>
       <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
         <div class="col-md-12">
-          <app-action-adder [existingActions]="entities"  (onActionAdded)="onActionAdded($event)"></app-action-adder>
+          <app-action-adder
+            [existingEntities]="entities"
+            (onEntityAdded)="onActionAdded($event)"
+          ></app-action-adder>
           <button type="button" class="btn btn-primary btn-sm" (click)="createNewAction()">{{label.action.addNew}}</button>
         </div>
       </div>

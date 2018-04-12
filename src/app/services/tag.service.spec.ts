@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { TagService } from './tag.service';
 
-describe('TagService', () => {
+describe('TaggingService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [TagService]

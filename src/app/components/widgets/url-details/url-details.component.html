@@ -3,7 +3,7 @@
 </div>
 
 <div class="modal-body">
-  <form [formGroup]="urlForm" (ngSubmit)="submit(urlForm)">
+  <form [formGroup]="urlForm" (ngSubmit)="processDone()">
 
     <div formArrayName="items"
          *ngFor="let item of urlForm.get('items').controls; let i = index;">

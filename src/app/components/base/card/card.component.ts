@@ -9,6 +9,9 @@ import {ContactService} from '../../../services/contact.service';
 import {PhoneService} from '../../widgets/phone.service';
 import {UrlService} from '../../widgets/url.service';
 import {Observable} from 'rxjs/Observable';
+import {TagService} from '../../../services/tag.service';
+import {TaggingService} from '../../widgets/tagging.service';
+import {DataStore} from '../../../classes/data-store';
 
 @Component({
   selector: 'app-card',
@@ -46,13 +49,20 @@ export class CardComponent implements OnChanges {
     public phoneService: PhoneService,
     public urlService: UrlService,
     public renderer: Renderer2,
-    public router: Router
+    public router: Router,
+    public taggingService: TaggingService,
+    public tagService: TagService,
+    public dataStore: DataStore,
   ) {}
+
+
+  refreshSupportingData = () => console.log('function that should be overridden');
 
   ngOnChanges(changes: SimpleChanges) {
     if ( changes.associationSuccessful && changes.associationSuccessful.currentValue ) {
       this.cardIsDirty = false;
       this.suspendedUndoEvent = null;
+      this.refreshSupportingData();
       if ( this.suspendedEvent ) {
         this.suspendedEvent.subscribe( result => {
           console.log(':::: CARD HAS BEEN UPDATED AFTER ENTITY UPDATE IS COMPLETE::::', result);

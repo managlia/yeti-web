@@ -3,7 +3,7 @@
 </div>
 
 <div class="modal-body">
-  <form [formGroup]="phoneForm" (ngSubmit)="submit(phoneForm)">
+  <form [formGroup]="phoneForm"  (ngSubmit)="processDone()">
 
     <div formArrayName="items"
          *ngFor="let item of phoneForm.get('items').controls; let i = index;">

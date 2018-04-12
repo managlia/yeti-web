@@ -2,15 +2,21 @@
 
   <form class="example-form">
     <mat-form-field class="example-full-width">
-      <input type="text" placeholder="Find a contact" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
-             #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)">
+      <input type="text"
+             #entitySearch
+             [placeholder]="label.contact.find"
+             aria-label="Number"
+             matInput [formControl]="myControl"
+             [matAutocomplete]="auto"
+             (keyup)="search(entitySearch.value)"
+      >
       <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let coc of results" [value]="coc.matchTerm" (onSelectionChange)="onOptionSelected(coc)">
-          {{ coc.matchTerm }}
+        <mat-option *ngFor="let anItem of results" [value]="anItem.matchTerm" (onSelectionChange)="onOptionSelected(anItem)">
+          {{ anItem.matchTerm }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
   </form>
 
 </div>
-<button type="button" class="btn btn-primary btn-sm" (click)="addNewContact()">Add existing contact</button>
+<button type="button" class="btn btn-primary btn-sm" (click)="addNewEntity()">{{label.contact.addExisting}}</button>

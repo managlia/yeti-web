@@ -109,7 +109,7 @@ Has Recipients {{ hasRecipients }}<br>
           <!-- ROW -->
           <div class="row">
             <div class="col-6">
-              <app-tag-card [tags]="action.tags"></app-tag-card>
+              <app-tag-card [tags]="action.tags" (tagsUpdated)="updateTags"></app-tag-card>
             </div>
             <div class="col-6">
               <app-attachment-card [attachments]="action.attachments"></app-attachment-card>

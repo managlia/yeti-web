@@ -1,30 +1,31 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import * as stringify from 'json-stringify-safe';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 
-import { CompanyService } from '../../services/company.service';
-import { ContactService } from '../../services/contact.service';
-import { CampaignService } from '../../services/campaign.service';
-import { ActionService } from '../../services/action.service';
+import {CompanyService} from '../../services/company.service';
+import {ContactService} from '../../services/contact.service';
+import {CampaignService} from '../../services/campaign.service';
+import {ActionService} from '../../services/action.service';
 
-import { Company } from '../../classes/company';
-import { EntityClassificationType } from '../../classes/types/entity-classification-type';
-import { AddressClassificationType } from '../../classes/types/address-classification-type';
-import { CompanyClassificationTypeService } from '../../services/company-classification-type.service';
-import { CompanyAddressClassificationTypeService } from '../../services/company-address-classification-type.service';
-import { CompanyUrlTypeService } from '../../services/company-url-type.service';
-import { CompanyPhoneTypeService } from '../../services/company-phone-type.service';
-import {Contact} from '../../classes/contact';
-import {Campaign} from '../../classes/campaign';
+import {EntityClassificationType} from '../../classes/types/entity-classification-type';
+import {AddressClassificationType} from '../../classes/types/address-classification-type';
+import {CompanyClassificationTypeService} from '../../services/company-classification-type.service';
+import {CompanyAddressClassificationTypeService} from '../../services/company-address-classification-type.service';
+import {CompanyUrlTypeService} from '../../services/company-url-type.service';
+import {CompanyPhoneTypeService} from '../../services/company-phone-type.service';
+
 import {Action} from '../../classes/action';
+import {Campaign} from '../../classes/campaign';
+import {Company} from '../../classes/company';
+import {Contact} from '../../classes/contact';
 import {Address} from '../../classes/common/address';
 import {AddressCardComponent} from '../../components/address-card/address-card.component';
 import {Url} from '../../classes/common/url';
-import { UrlType } from '../../classes/types/url-type';
+import {UrlType} from '../../classes/types/url-type';
 import {Phone} from '../../classes/common/phone';
-import { PhoneType } from '../../classes/types/phone-type';
+import {PhoneType} from '../../classes/types/phone-type';
+import {Tag} from '../../classes/common/tag';
 
 @Component({
   selector: 'app-company-details',
@@ -46,6 +47,7 @@ export class CompanyDetailsComponent implements OnInit {
   addressIsDirty = false;
   urlsIsDirty = false;
   phonesIsDirty = false;
+  tagsIsDirty = false;
 
   companyFormGroup: FormGroup;
   company: Company;
@@ -55,6 +57,18 @@ export class CompanyDetailsComponent implements OnInit {
   addressClassificationTypes: AddressClassificationType[];
   entity: string;
   entityId: string;
+  updateLinks = (urls: Url[]) => {
+    this.company.urls = urls;
+    this.urlsIsDirty = true;
+  };
+  updatePhones = (phones: Phone[]) => {
+    this.company.phones = phones;
+    this.phonesIsDirty = true;
+  };
+  updateTags = (tags: Tag[]) => {
+    this.company.tags = tags;
+    this.tagsIsDirty = true;
+  };
 
   constructor(
     private companyService: CompanyService,
@@ -68,7 +82,8 @@ export class CompanyDetailsComponent implements OnInit {
     private companyClassificationTypeService: CompanyClassificationTypeService,
     private companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,
     private fb: FormBuilder
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     window.scrollTo(0, 0);
@@ -89,40 +104,31 @@ export class CompanyDetailsComponent implements OnInit {
     });
   }
 
-  /** get company **/
   getCompany(): void {
     const companyId = this.route.snapshot.paramMap.get('id');
-    if ( companyId ) {
+    if (companyId) {
       this.companyService.getCompany(companyId)
-        .subscribe(company => this.company = company);
+        .subscribe(company => {
+          this.company = company;
+          this.company.tags = _.sortBy(this.company.tags, ['name']);
+        });
     } else {
       this.company = new Company();
       this.entity = this.route.snapshot.paramMap.get('entity');
       this.entityId = this.route.snapshot.paramMap.get('entityId');
-      if ( this.entity ) {
-        if ( this.entity === 'contact' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        } else if ( this.entity === 'campaign' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        } else if ( this.entity === 'action' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        }
-      }
     }
   }
 
-  /** add update company **/
   addUpdateCompany() {
     const companyId = this.company.companyId;
-    if ( companyId ) {
-      console.log(`This is an update because company id is ${companyId}`);
+    if (companyId) {
       this.companyService.updateCompany(this.company).subscribe(result => {
-          console.log('what is the result of the updated company???', result);
-          this.showAssocationSuccessful('company');
+        this.showAssocationSuccessful('company');
+        // getting fresh data to make sure updates are working
+        this.getCompany();
       });
     } else {
-      console.log(`This is an ADD because company id is ${companyId}`);
-      if ( this.entity && this.entityId ) {
+      if (this.entity && this.entityId) {
         this.addCompanyAndAssociation(this.company, this.entity, this.entityId);
       } else {
         this.companyService.addCompany(this.company).subscribe(
@@ -131,34 +137,24 @@ export class CompanyDetailsComponent implements OnInit {
     }
   }
 
-  updateLinks = (urls: Url[]) => {
-    this.company.urls = urls;
-    this.urlsIsDirty = true;
-  }
-
-  updatePhones = (phones: Phone[]) => {
-    this.company.phones = phones;
-    this.phonesIsDirty = true;
-  }
-
-  completeAssociation( location: string, entity: string, entityId: string ) {
-    const locattionNodes = _.split( location, '/' );
+  completeAssociation(location: string, entity: string, entityId: string) {
+    const locattionNodes = _.split(location, '/');
     const newId = _.last(locattionNodes);
-    if ( entity === 'action' ) {
+    if (entity === 'action') {
       this.actionService.getAction(entityId).toPromise().then(
-        action => this.companyService.addActionToCompany( newId, action ).subscribe(
+        action => this.companyService.addActionToCompany(newId, action).subscribe(
           response => this.updateRoute(location)
         )
       );
-    } else if ( entity === 'contact' ) {
+    } else if (entity === 'contact') {
       this.contactService.getContact(entityId).toPromise().then(
-        contact => this.companyService.addContactToCompany( newId, contact ).subscribe(
+        contact => this.companyService.addContactToCompany(newId, contact).subscribe(
           response => this.updateRoute(location)
         )
       );
-    } else if ( entity === 'campaign' ) {
+    } else if (entity === 'campaign') {
       this.campaignService.getCampaign(entityId).toPromise().then(
-        campaign => this.companyService.addCampaignToCompany( newId, campaign ).subscribe(
+        campaign => this.companyService.addCampaignToCompany(newId, campaign).subscribe(
           response => this.updateRoute(location)
         )
       );
@@ -166,16 +162,16 @@ export class CompanyDetailsComponent implements OnInit {
   }
 
   addCompanyAndAssociation(company: Company, entity: string, entityId: string) {
-    const simpleHeaders = { responseType: 'text', observe: 'response' };
+    const simpleHeaders = {responseType: 'text', observe: 'response'};
     this.companyService.addCompany(company).toPromise().then(
       response => this.completeAssociation(response.headers.get('Location'), entity, entityId)
     );
   }
 
-  updateRoute( location: string ) {
-    const locattionNodes = _.split( location, '/' );
+  updateRoute(location: string) {
+    const locattionNodes = _.split(location, '/');
     const newId = _.last(locattionNodes);
-    this.router.navigateByUrl( `/company/${newId}` );
+    this.router.navigateByUrl(`/company/${newId}`);
     this.showAssocationSuccessful('company');
   }
 
@@ -204,77 +200,73 @@ export class CompanyDetailsComponent implements OnInit {
   }
 
   onContactAssociatedToEntity(contact: Contact): void {
-    console.log('onContactAssociatedToEntity:: end');
-    if ( this.company && contact ) {
-      this.companyService.addContactToCompany(this.company.companyId, contact )
+    if (this.company && contact) {
+      this.companyService.addContactToCompany(this.company.companyId, contact)
         .subscribe(response => {
-          console.log('onContactAssociatedToEntity:: completed');
           this.showAssocationSuccessful('contact');
         }, error => {
           this.handleAssociationFailure('contact');
-        } );
+        });
     }
   }
 
   onContactFlaggedForRemoval(contactId: string) {
-    if ( this.company && contactId ) {
-      this.companyService.removeContactFromCompany(this.company.companyId, contactId )
+    if (this.company && contactId) {
+      this.companyService.removeContactFromCompany(this.company.companyId, contactId)
         .subscribe(response => {
-          console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('contact');
         }, error => {
           this.handleAssociationFailure('contact');
-        } );
+        });
     }
   }
+
   onCampaignAssociatedToEntity(campaign: Campaign): void {
-    console.log('onCampaignAssociatedToEntity:: end');
-    if ( this.company && campaign ) {
-      this.companyService.addCampaignToCompany(this.company.companyId, campaign )
+    if (this.company && campaign) {
+      this.companyService.addCampaignToCompany(this.company.companyId, campaign)
         .subscribe(response => {
-          console.log('onCampaignAssociatedToEntity:: completed');
           this.showAssocationSuccessful('campaign');
         }, error => {
           this.handleAssociationFailure('campaign');
-        } );
+        });
     }
   }
 
   onCampaignFlaggedForRemoval(campaignId: string) {
-    if ( this.company && campaignId ) {
-      this.companyService.removeCampaignFromCompany(this.company.companyId, campaignId )
+    if (this.company && campaignId) {
+      this.companyService.removeCampaignFromCompany(this.company.companyId, campaignId)
         .subscribe(response => {
-          console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('campaign');
         }, error => {
           this.handleAssociationFailure('campaign');
-        } );
+        });
     }
   }
 
   onActionAssociatedToEntity(action: Action): void {
-    console.log('onActionAssociatedToEntity:: end');
-    if ( this.company && action ) {
-      this.companyService.addActionToCompany(this.company.companyId, action )
+    if (this.company && action) {
+      this.companyService.addActionToCompany(this.company.companyId, action)
         .subscribe(response => {
-          console.log('onActionAssociatedToEntity:: completed');
           this.showAssocationSuccessful('action');
         }, error => {
           this.handleAssociationFailure('action');
-        } );
+        });
     }
   }
 
   onActionFlaggedForRemoval(actionId: string) {
-    if ( this.company && actionId ) {
-      this.companyService.removeActionFromCompany(this.company.companyId, actionId )
+    if (this.company && actionId) {
+      this.companyService.removeActionFromCompany(this.company.companyId, actionId)
         .subscribe(response => {
-          console.log('onCompanyFlaggedForRemoval:: completed');
           this.showAssocationSuccessful('action');
         }, error => {
           this.handleAssociationFailure('action');
-        } );
+        });
     }
+  }
+
+  addressesChanged(addresses: Address[]): void {
+    this.addressIsDirty = true;
   }
 
   delay(ms: number) {
@@ -295,14 +287,14 @@ export class CompanyDetailsComponent implements OnInit {
   }
 
   showAssocationSuccessful(entity: string, response?: any): void {
-    if ( entity === 'company' ) {
+    if (entity === 'company') {
       this.companyUpdated = true;
       this.addressCard.writeCopyFromOriginal();
-    } else if ( entity === 'campaign' ) {
+    } else if (entity === 'campaign') {
       this.campaignFlag = true;
-    } else if ( entity === 'contact' ) {
+    } else if (entity === 'contact') {
       this.contactFlag = true;
-    } else if ( entity === 'action' ) {
+    } else if (entity === 'action') {
       this.actionFlag = true;
     }
     this.waitAndReset(entity);
@@ -310,16 +302,16 @@ export class CompanyDetailsComponent implements OnInit {
 
   waitAndReset(entity: string): void {
     this.delay(4000).then(resolve => {
-        if ( entity === 'company' ) {
+        if (entity === 'company') {
           this.companyUpdated = false;
           this.companyFailureUpdated = false;
-        } else if ( entity === 'campaign' ) {
+        } else if (entity === 'campaign') {
           this.campaignFlag = false;
           this.campaignFailureFlag = false;
-        } else if ( entity === 'contact' ) {
+        } else if (entity === 'contact') {
           this.contactFlag = false;
           this.contactFailureFlag = false;
-        } else if ( entity === 'action' ) {
+        } else if (entity === 'action') {
           this.actionFlag = false;
           this.actionFailureFlag = false;
         }
@@ -327,8 +319,4 @@ export class CompanyDetailsComponent implements OnInit {
     );
   }
 
-  addressesChanged(addresses: Address[]): void {
-    console.log('making the addresses dirty!!!');
-    this.addressIsDirty = true;
-  }
 }

@@ -19,7 +19,7 @@ export class UrlService {
 
   openDialog(urls: Url[], types: UrlType[]): Observable<Url[]> {
     const data = {
-      urls:  (urls ? urls : this.urls),
+      urls:  urls && urls.length > 0 ? urls : this.urls,
       types: types
     };
     const dialogRef = this.dialog.open(UrlDetailsComponent, {

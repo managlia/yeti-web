@@ -1,8 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import {Component, OnInit, Inject, ViewChild, ElementRef, ComponentRef, AfterViewInit} from '@angular/core';
+import {MatDialogRef, MAT_DIALOG_DATA, MatAutocomplete, MatAutocompleteTrigger, MatFormField} from '@angular/material';
 import {MatChipInputEvent} from '@angular/material';
 import {ENTER, COMMA} from '@angular/cdk/keycodes';
-import { DataStore } from '../../../classes/data-store';
+import * as _ from 'lodash';
+
+import {DataStore} from '../../../classes/data-store';
+import {Tag} from '../../../classes/common/tag';
+import {Observable} from 'rxjs/Observable';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-tag-details',
@@ -11,10 +17,19 @@ import { DataStore } from '../../../classes/data-store';
 })
 export class TagDetailsComponent implements OnInit {
 
-  visible: boolean = true;
-  selectable: boolean = true;
-  removable: boolean = true;
-  addOnBlur: boolean = true;
+  @ViewChild('chipSearch') input: ElementRef;
+  @ViewChild('chipSearch', {read: MatAutocompleteTrigger}) autoComplete: MatAutocompleteTrigger;
+
+
+  visible = true;
+  selectable = true;
+  removable = true;
+  addOnBlur = true;
+  wholeTagList: Tag[];
+  currentTags: string[];
+  results$: Observable<string[]>;
+  private searchTerms = new Subject<string>();
+  flagAsInvalid = false;
 
   // Enter, comma
   separatorKeysCodes = [ENTER, COMMA];
@@ -23,41 +38,83 @@ export class TagDetailsComponent implements OnInit {
     private dataStore: DataStore,
     public dialogRef: MatDialogRef<TagDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  ) {
+    this.wholeTagList = this.data.wholeTagList;
+    this.currentTags = _.cloneDeep(this.data.tags.map(aTag => aTag.name)).sort();
+  }
 
-  add(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
+  ngOnInit() {
+    this.results$ = this.searchTerms.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => this.searchForTags(term)),
+    );
+  }
 
-    if ((value || '').trim()) {
-      this.data.push({
-        name: value.trim(),
-        description: value.trim(),
-        creatorId: this.dataStore.userId
-      });
+  searchForTags(term: string): Observable<string[]> {
+    return new Observable<string[]>(observer => {
+      if (term && term.length > 0) {
+        let wholeList =
+          this.wholeTagList.map(e => e.name).filter(g => g.toLowerCase().startsWith(term.toLowerCase()));
+        wholeList =
+          wholeList.filter( e =>  !this.currentTags.includes(e));
+        observer.next(wholeList);
+      }
+      observer.complete();
+      return {
+        unsubscribe() {
+        }
+      };
+    });
+  }
+
+  search(term: string): void {
+    if (term && term.length > 0) {
+      this.flagAsInvalid = false;
     }
-    if (input) {
-      input.value = '';
+    this.searchTerms.next(term);
+  }
+
+  add(existingValue: string): void {
+    console.log(`===========>>>>>>>>>>>>>>>>>>>>${existingValue}<<<<<<<<<<<<<<<<<<<=================`);
+    if (existingValue && existingValue.trim().length > 1) {
+      existingValue = existingValue.trim();
+      const foundIndex = this.wholeTagList.findIndex(e => e.name.toLowerCase() === existingValue.toLowerCase());
+      existingValue = (foundIndex > 0) ? this.wholeTagList[foundIndex].name : existingValue;
+
+      if (this.currentTags.findIndex(e => e.toLowerCase() === existingValue.toLowerCase()) > 0) {
+        console.log('do not add since it is here already');
+        this.flagAsInvalid = true;
+      } else {
+        this.currentTags.push(existingValue);
+        this.currentTags = this.currentTags.sort();
+      }
+      this.input.nativeElement.value = '';
+
+      console.log('--------------- CLOSING PANEL ----------------');
+      this.input.nativeElement.focus();
+      this.autoComplete.closePanel();
+      console.log('--------------- CLOSED PANEL ----------------');
     }
   }
 
-  remove(tag: any): void {
-    console.log('trying to remove ' + tag );
-    console.log(tag + ' index is ' +  this.data.indexOf(tag));
-
-    const index = this.data.indexOf(tag);
-
-    if (this.data.length >= 0) {
-      console.log('in the if');
-      this.data.splice(index, 1);
-    }
+  remove(tag: string): void {
+    console.log('want to remove', tag);
+    this.currentTags = this.currentTags.filter(e => e !== tag);
+    console.log('want to this.currentTags', this.currentTags);
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  ngOnInit() {
+
+  processDone(): void {
+    console.log('---------------------- RETURNING -----------------------------------', this.currentTags);
+    this.dialogRef.close(this.currentTags.sort());
   }
 
+  closeWithoutSaving(): void {
+    this.dialogRef.close();
+  }
 }

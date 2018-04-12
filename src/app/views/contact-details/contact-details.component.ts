@@ -28,6 +28,7 @@ import {Campaign} from '../../classes/campaign';
 import {Action} from '../../classes/action';
 import {Address} from '../../classes/common/address';
 import {AddressCardComponent} from '../../components/address-card/address-card.component';
+import {Tag} from '../../classes/common/tag';
 
 @Component({
   selector: 'app-contact-details',
@@ -45,6 +46,7 @@ export class ContactDetailsComponent implements OnInit {
   addressIsDirty = false;
   urlsIsDirty = false;
   phonesIsDirty = false;
+  tagsIsDirty = false;
 
   contactFailureUpdated = false;
   companyFailureFlag = false;
@@ -134,6 +136,11 @@ export class ContactDetailsComponent implements OnInit {
     this.contact.phones = phones;
     this.phonesIsDirty = true;
   }
+
+  updateTags = (tags: Tag[]) => {
+    this.contact.tags = tags;
+    this.tagsIsDirty = true;
+  };
 
   completeAssociation( location: string, entity: string, entityId: string ) {
     const locattionNodes = _.split( location, '/' );

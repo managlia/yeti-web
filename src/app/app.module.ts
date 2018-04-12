@@ -128,7 +128,7 @@ import { DataStore } from './classes/data-store';
 import { AddressService } from './components/widgets/address.service';
 import { AttachmentService } from './components/widgets/attachment.service';
 import { DateTimeService } from './components/widgets/date-time.service';
-import { TagService } from './components/widgets/tag.service';
+import { TaggingService } from './components/widgets/tagging.service';
 import { UrlService } from './components/widgets/url.service';
 import { PhoneService } from './components/widgets/phone.service';
 import { ActionQuickEditService } from './components/widgets/action-quick-edit.service';
@@ -166,6 +166,7 @@ import { EntityService } from './services/entity.service';
 import { ExceptionService } from './services/exception.service';
 import { LoggerService } from './services/logger.service';
 import { ScopeTypeService } from './services/scope-type.service';
+import { TagService } from './services/tag.service';
 
 import { ElectronService } from 'ngx-electron';
 
@@ -214,6 +215,8 @@ import { ActionQuickEditComponent } from './components/widgets/action-quick-edit
 import { CampaignQuickEditComponent } from './components/widgets/campaign-quick-edit/campaign-quick-edit.component';
 import { ViewBaseComponent } from './views/view-base/view-base.component';
 import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-details.component';
+import { AdderComponent } from './components/base/adder/adder.component';
+import { ViewComponent } from './components/base/view/view.component';
 
 @NgModule({
   imports: [
@@ -320,9 +323,11 @@ import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-
     CampaignQuickEditComponent,
     ViewBaseComponent,
     PhoneDetailsComponent,
+    AdderComponent,
+    ViewComponent,
   ],
   providers: [
-    AddressService, AttachmentService, DateTimeService, TagService, UrlService, PhoneService,
+    AddressService, AttachmentService, DateTimeService, TaggingService, UrlService, PhoneService,
     ActionQuickEditService, CampaignQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
@@ -330,7 +335,7 @@ import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-
     CompanyPhoneService, CompanyPhoneTypeService, ContactPhoneService, ContactPhoneTypeService,
     CompanyClassificationTypeService, CompanyAddressClassificationTypeService,
     ContactAddressClassificationTypeService, ContactClassificationTypeService, ContactTitleTypeService,
-    CampaignClassificationTypeService, ScopeTypeService, EntityService, CompanyOrContactService,
+    CampaignClassificationTypeService, ScopeTypeService, TagService, EntityService, CompanyOrContactService,
     CampaignOrActionService, ActionContactService, DataStore, ElectronService,
     {
       provide: LocationStrategy,
