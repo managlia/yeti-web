@@ -1,8 +1,8 @@
-<div *ngIf="company" id="search-component" class="animated fadeIn">
+<div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
   <div class="row">
     <div class="col-9">
       <div *ngIf="entity">
-        <div class="col-sm-12 col-md-12">
+        <div class="col-sm-12 col-12">
           <div class="card text-white bg-primary text-center">
             <div class="card-body">
               <blockquote class="card-bodyquote">
@@ -12,8 +12,8 @@
           </div>
         </div><!--/.col-->
       </div>
-      <div class="col-sm-12 col-md-12">
-        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="companyUpdated">
+      <div class="col-sm-12 col-12">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="companyFlag">
           <div class="card-body">
             <blockquote class="card-bodyquote">
               <p>Your update has been saved.</p>
@@ -28,97 +28,149 @@
         <div class="card-body">
           <div class="row">
             <div class="col-8">
-              <div class="row">
-                <div class="col-12">
-                  <form [formGroup]="companyFormGroup" novalidate>
+
+
+              <!--<div class="row">-->
+                <!--<div class="col-12">-->
+                  <form [formGroup]="entityFormGroup" novalidate>
+                    <!--<div class="row" style="background-color: red;">-->
                     <div class="row">
-                      <div class="col-md-5">
-                        <mat-form-field class="mid-sized">
-                          <input matInput formControlName="companyName" [(ngModel)]="company.name"
+                      <div class="col-5" style="padding-top:7px; padding-bottom:7px;">
+
+                        <mat-form-field style="width:90%;">
+                          <input matInput formControlName="companyName"
                                  placeholder="Company Name">
+                          <mat-error *ngIf="companyName.hasError('required')">
+                            Company name is required.
+                          </mat-error>
                         </mat-form-field>
+
                       </div>
-                      <div class="col-md-3">
-                        <mat-form-field class="small-sized">
-                          <input matInput formControlName="externalId" [(ngModel)]="company.externalId"
+                      <div class="col-3" style="padding-top:7px; padding-bottom:7px;">
+
+                        <mat-form-field style="width:90%;">
+                          <input matInput formControlName="externalId"
                                  placeholder="External Customer Id">
+                          <mat-error *ngIf="externalId.hasError('required')">
+                            External ID is required.
+                          </mat-error>
                         </mat-form-field>
+
                       </div>
-                      <div class="col-md-4">
-                        <mat-form-field class="small-sized" style="padding-left:20px;">
-                          <mat-select placeholder="Classification Type" formControlName="companyClassification"
-                                      [(ngModel)]="company.classificationType.classificationTypeId">
+                      <div class="col-4" style="padding-top:7px; padding-bottom:7px;">
+
+
+                        <mat-form-field style="width:90%;">
+                          <mat-select
+                            placeholder="Classification Type"
+                            formControlName="classificationTypeId"
+                          >
                             <mat-option *ngFor="let classificationType of classificationTypes"
                                         [value]="classificationType.classificationTypeId">
                               {{ classificationType.name }}
                             </mat-option>
                           </mat-select>
+                          <mat-error *ngIf="classificationTypeId.hasError('required')">
+                            Company Classification is required.
+                          </mat-error>
                         </mat-form-field>
+
+
                       </div>
                     </div>
+
+
+
+
+                    <!--<div class="row"  style="background-color: orange;">-->
                     <div class="row">
-                      <div class="col-md-8">
-                        <mat-form-field class="mid-to-large-sized">
-                   <textarea matInput placeholder="Company Description (field will autosize as needed)"
-                             matTextareaAutosize matAutosizeMinRows="4"
-                             matAutosizeMaxRows="10" formControlName="description"
-                             [(ngModel)]="company.description"></textarea>
+                      <div class="col-8" style="padding-top:7px; padding-bottom:7px;">
+
+
+                        <mat-form-field style="width:90%;">
+                           <textarea matInput
+                                     placeholder="Company Description (field will autosize as needed)"
+                                     matTextareaAutosize matAutosizeMinRows="4"
+                                     matAutosizeMaxRows="10" formControlName="description"
+                           ></textarea>
+                          <mat-error *ngIf="description.hasError('required')">
+                            Company description is required.
+                          </mat-error>
                         </mat-form-field>
+
+
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-4">
                       </div>
                     </div>
                     <div *ngIf="company?.classificationType?.classificationTypeId === 'PR'">
                       <app-prospect-card [company]="company"></app-prospect-card>
                     </div>
                   </form>
-                </div>
-              </div>
+                <!--</div>-->
+              <!--</div>-->
+
+
+
               <div>
+                <!--<div class="row" style="background-color: green;">-->
                 <div class="row">
                   <div class="col-6">
-                    <app-address-card [addresses]="company.addresses"
-                                      [addressTypes]="addressClassificationTypes"
-                                      (addressesChangedInCard)="addressesChanged($event)"
+                    <app-address-card
+                      [associationSuccessful]="companyFlag"
+                      [associationFailure]="companyFailureFlag"
+                      [addresses]="company.addresses"
+                      [addressTypes]="addressClassificationTypes"
+                      (addressesChangedInCard)="addressesChanged($event)"
                     ></app-address-card>
                   </div>
                   <div class="col-6">
                     <app-phone-card
+                      [associationSuccessful]="companyFlag"
+                      [associationFailure]="companyFailureFlag"
                       [phones]="company.phones"
                       [phoneTypes]="phoneTypes"
                       (phonesUpdated)="updatePhones($event)"
                     ></app-phone-card>
-
-
-                    <app-links-card
+                   <app-links-card
+                      [associationSuccessful]="companyFlag"
+                      [associationFailure]="companyFailureFlag"
                       [urls]="company.urls"
                       [urlTypes]="urlTypes"
                       (linksUpdated)="updateLinks($event)"
                     ></app-links-card>
-                    `
                   </div>
                 </div>
               </div>
+
+
+
+
             </div>
+            <!--<div class="col-4" style="background-color: chartreuse;">-->
             <div class="col-4">
               <app-tag-card
-                [associationSuccessful]="companyUpdated"
-                [associationFailure]="companyFailureUpdated"
+                [associationSuccessful]="companyFlag"
+                [associationFailure]="companyFailureFlag"
                 [tags]="company.tags"
                 (tagsUpdated)="updateTags($event)"></app-tag-card>
               <app-attachment-card [attachments]="company.attachments"></app-attachment-card>
             </div>
           </div>
+
+
+          <!--<div class="row" style="background-color: yellow;">-->
           <div class="row">
-            <div class="col-12">
-
-              <div class="col-12" style="text-align:right">
-                <button type="button" class="btn btn-warning" (click)="addUpdateCompany()">Click to save
-                </button>
-              </div>
-
+            <div class="col-6" style="text-align:left">
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+            </div>
+            <div class="col-6" style="text-align:right">
+              <button type="button" class="btn btn-warning" (click)="addUpdateCompany()" [disabled]="unreadyToSave()">
+                Click to save
+              </button>
             </div>
           </div>
+
         </div>
       </div>
     </div>

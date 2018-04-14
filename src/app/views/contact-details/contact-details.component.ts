@@ -119,7 +119,12 @@ export class ContactDetailsComponent implements OnInit {
       this.contactService.updateContact(this.contact).subscribe(feedback => this.showAssocationSuccessful('contact'));
     } else {
       if ( this.entity && this.entityId ) {
-        this.addContactAndAssociation(this.contact, this.entity, this.entityId);
+
+        this.contactService.addContact(this.contact).toPromise().then(
+          response => this.completeAssociation(response.headers.get('Location'), this.entity, this.entityId)
+        );
+
+
       } else {
         this.contactService.addContact(this.contact).subscribe(
           response => this.updateRoute(response.headers.get('Location')));
@@ -168,12 +173,6 @@ export class ContactDetailsComponent implements OnInit {
     }
   }
 
-  addContactAndAssociation(contact: Contact, entity: string, entityId: string) {
-    const simpleHeaders = { responseType: 'text', observe: 'response' };
-    this.contactService.addContact(contact).toPromise().then(
-      response => this.completeAssociation(response.headers.get('Location'), entity, entityId)
-    );
-  }
 
   updateRoute( location: string ) {
     const locattionNodes = _.split( location, '/' );

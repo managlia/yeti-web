@@ -4,7 +4,7 @@ import { Subject } from 'rxjs/Subject';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 
-import { ViewBaseComponent} from '../view-base/view-base.component';
+import { BaseViewComponent } from '../../components/base/base-view/base-view.component';
 import { CompanyOrContact } from '../../classes/common/company-or-contact';
 
 @Component({
@@ -12,7 +12,7 @@ import { CompanyOrContact } from '../../classes/common/company-or-contact';
   templateUrl: './dashboard-landing.component.html',
   styleUrls: ['./dashboard-landing.component.css']
 })
-export class DashboardLandingComponent extends ViewBaseComponent implements OnInit {
+export class DashboardLandingComponent extends BaseViewComponent implements OnInit {
 
   myControl: FormControl;
   results$: Observable<CompanyOrContact[]>;
@@ -41,7 +41,7 @@ export class DashboardLandingComponent extends ViewBaseComponent implements OnIn
   }
 
   /* This will tell us if and when we can load the cards in the template. */
-  entityLoaded(): boolean {
+  searchEntityLoaded(): boolean {
     const entityDesired = this.companyLoaded || this.contactLoaded;
     const entityLoaded = this.loadedCompany || this.loadedContact;
     return entityDesired && entityLoaded;

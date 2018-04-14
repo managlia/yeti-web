@@ -1,8 +1,8 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges} from '@angular/core';
+import * as _ from 'lodash';
 
 import { UrlType } from '../../classes/types/url-type';
 import { Url } from '../../classes/common/url';
-import { UrlService } from '../widgets/url.service';
 import {CardComponent} from '../base/card/card.component';
 
 @Component({
@@ -11,7 +11,7 @@ import {CardComponent} from '../base/card/card.component';
   styleUrls: ['./links-card.component.css']
 })
 
-export class LinksCardComponent extends CardComponent implements OnInit {
+export class LinksCardComponent extends CardComponent implements OnInit, OnChanges {
 
   @Output() linksUpdated = new EventEmitter<Url[]>();
 
@@ -19,7 +19,21 @@ export class LinksCardComponent extends CardComponent implements OnInit {
   @Input() urlTypes: UrlType[];
 
   ngOnInit() {
+    this.cardName = 'links';
+    this.storePristineElements();
   }
+
+  ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+    if ( changes.urls && this.pristineElements ) {
+      if ( _.differenceWith(changes.urls.currentValue, this.pristineElements, _.isEqual).length === 0 ) {
+        // exclusively for reset button on the parent
+        this.cardIsDirty = false;
+      }
+    }
+  }
+
+  storePristineElements = () => this.pristineElements = _.cloneDeep(this.urls);
 
   openUrl = (url: string) => {
     window.open( url, '_blank', url);

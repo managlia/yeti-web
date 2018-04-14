@@ -213,10 +213,9 @@ import { MoreSimpleDatePickerComponent } from './components/widgets/more-simple-
 import { CardComponent } from './components/base/card/card.component';
 import { ActionQuickEditComponent } from './components/widgets/action-quick-edit/action-quick-edit.component';
 import { CampaignQuickEditComponent } from './components/widgets/campaign-quick-edit/campaign-quick-edit.component';
-import { ViewBaseComponent } from './views/view-base/view-base.component';
 import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-details.component';
 import { AdderComponent } from './components/base/adder/adder.component';
-import { ViewComponent } from './components/base/view/view.component';
+import { BaseViewComponent } from './components/base/base-view/base-view.component';
 
 @NgModule({
   imports: [
@@ -321,10 +320,9 @@ import { ViewComponent } from './components/base/view/view.component';
     CardComponent,
     ActionQuickEditComponent,
     CampaignQuickEditComponent,
-    ViewBaseComponent,
     PhoneDetailsComponent,
     AdderComponent,
-    ViewComponent,
+    BaseViewComponent,
   ],
   providers: [
     AddressService, AttachmentService, DateTimeService, TaggingService, UrlService, PhoneService,

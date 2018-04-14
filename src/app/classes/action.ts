@@ -20,6 +20,8 @@ export class Action {
   name: string;
   targetValuation: string;
   targetCompletionDate: Date;
+  actualValuation: string;
+  actualCompletionDate: Date;
   classificationType: ActionClassificationType;
   classificationOtherType: ActionClassificationOtherType;
   scopeType: ScopeType;

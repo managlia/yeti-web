@@ -20,7 +20,6 @@ export class TagDetailsComponent implements OnInit {
   @ViewChild('chipSearch') input: ElementRef;
   @ViewChild('chipSearch', {read: MatAutocompleteTrigger}) autoComplete: MatAutocompleteTrigger;
 
-
   visible = true;
   selectable = true;
   removable = true;
@@ -76,7 +75,6 @@ export class TagDetailsComponent implements OnInit {
   }
 
   add(existingValue: string): void {
-    console.log(`===========>>>>>>>>>>>>>>>>>>>>${existingValue}<<<<<<<<<<<<<<<<<<<=================`);
     if (existingValue && existingValue.trim().length > 1) {
       existingValue = existingValue.trim();
       const foundIndex = this.wholeTagList.findIndex(e => e.name.toLowerCase() === existingValue.toLowerCase());
@@ -91,26 +89,20 @@ export class TagDetailsComponent implements OnInit {
       }
       this.input.nativeElement.value = '';
 
-      console.log('--------------- CLOSING PANEL ----------------');
       this.input.nativeElement.focus();
       this.autoComplete.closePanel();
-      console.log('--------------- CLOSED PANEL ----------------');
     }
   }
 
   remove(tag: string): void {
-    console.log('want to remove', tag);
     this.currentTags = this.currentTags.filter(e => e !== tag);
-    console.log('want to this.currentTags', this.currentTags);
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-
   processDone(): void {
-    console.log('---------------------- RETURNING -----------------------------------', this.currentTags);
     this.dialogRef.close(this.currentTags.sort());
   }
 

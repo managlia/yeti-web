@@ -1,4 +1,4 @@
-<div *ngIf="action" id="search-component" class="animated fadeIn">
+<div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
   <div class="row">
     <div class="col-6"><!-- first column -->
 
@@ -14,7 +14,7 @@
         </div><!--/.col-->
       </div>
       <div class="col-sm-12 col-md-12">
-        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="actionUpdated">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="actionFlag">
           <div class="card-body">
             <blockquote class="card-bodyquote">
               <p>Your update has been saved.</p>
@@ -24,132 +24,155 @@
       </div><!--/.col-->
 
       <div class="card">
-        <div class="card-header">
+        <div class="card-header" [style.backgroundColor]="readyToSaveColor()">
           <strong>Action Details</strong>
         </div>
         <div class="card-body">
+          <form [formGroup]="entityFormGroup" novalidate>
+
+            <!--<div class="row" style="background-color: red;">-->
+            <div class="row">
+              <div class="col-6">
 
 
-          <div class="row">
-            <div class="col-6">
-
-              <mat-form-field style="width:100%">
-                <input matInput [(ngModel)]="action.name" placeholder="Action Name">
-              </mat-form-field>
-
-            </div>
-            <div class="col-6">
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <input matInput formControlName="actionName" placeholder="Action Name">
+                  <mat-error *ngIf="actionName.hasError('required')">
+                   Action name is required.
+                  </mat-error>
+                </mat-form-field>
 
 
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px; vertical-align: bottom">
+                 <textarea matInput
+                           formControlName="actionDescription"
+                           placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
+                           matAutosizeMinRows="5"
+                           matAutosizeMaxRows="15"></textarea>
+                  <mat-error *ngIf="actionDescription.hasError('required')">
+                    Action description is required.
+                  </mat-error>
+                </mat-form-field>
 
-              <mat-form-field  style="width:100%;">
-                <mat-select placeholder="Action Type" [(ngModel)]="action.classificationType.actionClassificationTypeId">
-                  <mat-option *ngFor="let classificationType of classificationTypes | async" [value]="classificationType.actionClassificationTypeId">
-                    {{ classificationType.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
 
-              <div *ngIf="action.classificationType.actionClassificationTypeId === 'OT'">
-                <mat-form-field style="width:100%;">
-                  <mat-select placeholder="Other Type">
-                    <mat-option *ngFor="let classificationOtherType of classificationOtherTypes | async" [value]="classificationOtherType.actionClassificationOtherTypeId">
-                      {{ classificationOtherType.name }}
+              </div>
+              <div class="col-6">
+                <mat-form-field  style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <mat-select
+                    placeholder="Action Type"
+                    formControlName="actionClassificationTypeId"
+                    (selectionChange)="disableOther()"
+                  >
+                    <mat-option *ngFor="let classificationType of classificationTypes"
+                                [value]="classificationType.actionClassificationTypeId">
+                      {{ classificationType.name }}
                     </mat-option>
                   </mat-select>
+                  <mat-error *ngIf="actionClassificationTypeId.hasError('required')">
+                    Action classification is required.
+                  </mat-error>
+                </mat-form-field>
+                  <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+
+                    <mat-select
+                      formControlName="actionClassificationOtherTypeId"
+                      placeholder="Other Type"
+                    >
+                      <mat-option *ngFor="let classificationOtherType of classificationOtherTypes"
+                                  [value]="classificationOtherType.actionClassificationOtherTypeId">
+                        {{ classificationOtherType.name }}
+                      </mat-option>
+                    </mat-select>
+
+                  </mat-form-field>
+
+
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <mat-select
+                    formControlName="scopeTypeId"
+                    placeholder="Scope"
+                  >
+                    <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+                      {{ scopeType.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="scopeTypeId.hasError('required')">
+                    Action scope is required.
+                  </mat-error>
                 </mat-form-field>
               </div>
-
-
             </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
 
-              <mat-form-field style="width:100%">
-               <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
-                         matAutosizeMinRows="4"
-                         matAutosizeMaxRows="10" [(ngModel)]="action.description"></textarea>
-              </mat-form-field>
 
-            </div>
-            <div class="col-6">
-
-              <mat-form-field style="width:100%">
-                <mat-select placeholder="Scope" [(ngModel)]="action.scopeType.scopeTypeId">
-                  <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
-                    {{ scopeType.name }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6">
-              <div class="card">
+            <div class="row">
+              <div class="col-6">
+                <div class="card" style="min-width:350px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
                 <div class="card-header">
-                  <strong>Target valuation</strong>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <mat-form-field style="width:100%">
-                        <input matInput [(ngModel)]="action.targetValuation" placeholder="Target Valuation">
-                      </mat-form-field>
+                    <strong>Target valuation</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <mat-form-field style="width:100%">
+
+
+                          <input matInput
+                                 formControlName="targetValuation"
+                                 placeholder="Target Valuation"
+                          >
+
+                        </mat-form-field>
+                        <app-simple-date-picker [theDate]="action.targetCompletionDate"
+                                                [keyPhrase]="targetStatement"></app-simple-date-picker>
+                      </div>
                     </div>
-                    <div>
-                      <app-simple-date-picker [theDate]="action.targetCompletionDate"
-                                              [keyPhrase]="targetStatement"></app-simple-date-picker>
+                  </div>
+                </div>
+                <div class="card" style="min-width:350px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
+                  <div class="card-header">
+                    <strong>Actual valuation</strong>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <mat-form-field style="width:100%">
+                          <input matInput
+                                 formControlName="actualValuation"
+                                 placeholder="Actual Valuation"
+                          >
+                        </mat-form-field>
+                        <app-simple-date-picker [theDate]="action.actualCompletionDate"
+                                                [keyPhrase]="actualStatement"></app-simple-date-picker>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-header">
-                  <strong>Actual valuation</strong>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <mat-form-field style="width:100%">
-                        <input matInput [(ngModel)]="action.actualValuation" placeholder="Actual Valuation">
-                      </mat-form-field>
-                    </div>
-                    <div>
-                      <app-simple-date-picker [theDate]="action.actualCompletionDate"
-                                              [keyPhrase]="actualStatement"></app-simple-date-picker>
-                    </div>
-                  </div>
-                </div>
+              <div class="col-6">
+                <app-tag-card #tagsCard id="tagsCard"
+                  [associationSuccessful]="actionFlag"
+                  [associationFailure]="actionFailureFlag"
+                  [tags]="action.tags"
+                  (tagsUpdated)="updateTags($event)"></app-tag-card>
+                <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
               </div>
-
-
             </div>
-            <div class="col-6">
-              <app-tag-card
-                [associationSuccessful]="actionUpdated"
-                [associationFailure]="actionFailureUpdated"
-                [tags]="action.tags"
-                (tagsUpdated)="updateTags($event)"></app-tag-card>
-              <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
 
 
-
+            <div class="row">
+              <div class="col-6" style="text-align:left">
+                <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+              </div>
+              <div class="col-6" style="text-align:right">
+                <button type="button" class="btn btn-warning" (click)="addUpdateAction()" [disabled]="unreadyToSave()">Click to save</button>
+              </div>
             </div>
-          </div>
 
-
-
-          <div class="row">
-            <div class="col-12" style="text-align:right">
-              <button type="button" class="btn btn-warning" (click)="addUpdateAction()">Click to save</button>
-            </div>
-          </div>
-
-
+          </form>
         </div>
       </div>
+
+
     </div>
     <div class="col-3"><!-- second column -->
       <!--beneath main content area-->

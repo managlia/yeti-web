@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import {Component, OnInit, Input, EventEmitter, Output, OnChanges, SimpleChanges} from '@angular/core';
 import * as _ from 'lodash';
 
 import { Tag } from '../../classes/common/tag';
@@ -10,22 +10,32 @@ import {Observable} from 'rxjs/Observable';
   templateUrl: './tag-card.component.html',
   styleUrls: ['./tag-card.component.css']
 })
-export class TagCardComponent extends CardComponent implements OnInit {
+export class TagCardComponent extends CardComponent implements OnInit, OnChanges {
 
   @Output() tagsUpdated = new EventEmitter<Tag[]>();
   @Input() tags: Tag[];
   allTagList: Tag[];
-  pristineTags: Tag[];
 
   ngOnInit() {
+    this.cardName = 'tag';
     this.refreshSupportingData();
-    this.storePristineTags();
+    this.storePristineElements();
     this.tags = _.sortBy(this.tags, ['name']);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    super.ngOnChanges(changes);
+    if ( changes.tags && this.pristineElements ) {
+      if ( _.differenceWith(changes.tags.currentValue, this.pristineElements, _.isEqual).length === 0 ) {
+        // exclusively for reset button on the parent
+        this.cardIsDirty = false;
+      }
+    }
   }
 
   refreshSupportingData = () => this.tagService.getTagList().subscribe(allTagList => this.allTagList = allTagList);
 
-  storePristineTags = () => this.pristineTags = _.cloneDeep(this.tags);
+  storePristineElements = () => this.pristineElements = _.cloneDeep(this.tags);
 
   openTagsDialog(): void {
     this.taggingService.openDialog( { tags: this.tags, wholeTagList: this.allTagList} )
@@ -47,7 +57,7 @@ export class TagCardComponent extends CardComponent implements OnInit {
             console.log('::newTags ---------->>>>> ', this.tags);
             this.cardIsDirty = true;
             this.suspendedUndoEvent  = new Observable<any>(observer => {
-              this.tags = _.cloneDeep(this.storePristineTags);
+              this.tags = _.cloneDeep(this.storePristineElements);
               observer.next('undone');
               observer.complete();
               return {unsubscribe() {}};

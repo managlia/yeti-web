@@ -70,5 +70,13 @@ export const address = {
   add: 'Add new address'
 };
 
+export const dashboard = {
+  title: 'Company and Contact Search',
+  searchPlaceholder: 'Enter your search',
+  clear: 'Clear',
+  company: 'Company Loaded',
+  contact: 'Contact Loaded'
+};
+
 
 

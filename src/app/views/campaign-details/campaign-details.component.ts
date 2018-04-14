@@ -1,312 +1,181 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
-import { MatStepper } from '@angular/material';
 
-import { DataStore } from '../../classes/data-store';
-import { CompanyService } from '../../services/company.service';
-import { ContactService } from '../../services/contact.service';
-import { CampaignService } from '../../services/campaign.service';
-import { ActionService } from '../../services/action.service';
-import { EntityService } from '../../services/entity.service';
-import { Campaign } from '../../classes/campaign';
-import { CampaignClassificationType } from '../../classes/types/campaign-classification-type';
-import { CampaignClassificationTypeService } from '../../services/campaign-classification-type.service';
-
-import { ScopeType } from '../../classes/types/scope-type';
-import { ScopeTypeService } from '../../services/scope-type.service';
-import {Contact} from '../../classes/contact';
+import {Campaign} from '../../classes/campaign';
+import {CampaignClassificationType} from '../../classes/types/campaign-classification-type';
+import {ScopeType} from '../../classes/types/scope-type';
 import {Company} from '../../classes/company';
+import {Contact} from '../../classes/contact';
 import {Action} from '../../classes/action';
-import {Url} from '../../classes/common/url';
+
 import {Tag} from '../../classes/common/tag';
+import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
 
 @Component({
   selector: 'app-campaign-details',
   templateUrl: './campaign-details.component.html',
   styleUrls: ['./campaign-details.component.css']
 })
-export class CampaignDetailsComponent implements OnInit {
-  campaignUpdated = false;
-  campaignFailureUpdated = false;
-  companyFlag = false;
-  contactFlag = false;
-  actionFlag = false;
-  companyFailureFlag = false;
-  contactFailureFlag = false;
-  actionFailureFlag = false;
-  tagsIsDirty = false;
 
-  isLinear: true;
+export class CampaignDetailsComponent extends BaseViewComponent implements OnInit {
+
   campaign: Campaign;
-  campaigns: Campaign[];
+
+  campaignId: string;
   scopeTypes: ScopeType[];
-  classificationTypes: CampaignClassificationType[];
-  targetStatement = 'Target Completion';
-  actualStatement = 'Actual Completion';
-  @ViewChild('stepper') stepper: MatStepper;
+  tagsIsDirty = false;
 
   entity: string;
   entityId: string;
-
-  constructor(
-    private dataStore: DataStore,
-    private companyService: CompanyService,
-    private contactService: ContactService,
-    private campaignService: CampaignService,
-    private actionService: ActionService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private entityService: EntityService,
-    private scopeTypeService: ScopeTypeService,
-    private campaignClassificationTypeService: CampaignClassificationTypeService
-  ) {
-    this.getCampaign()
-    this.getScopeTypes();
-    this.getCampaignClassificationTypes();
-  }
-
-  ngOnInit() {
-    window.scrollTo(0, 0);
-  }
-
-  getCampaign(): void {
-    const campaignId = this.route.snapshot.paramMap.get('id');
-    if( campaignId ) {
-      this.campaignService.getCampaign(campaignId)
-        .subscribe(campaign => this.completeCampaign(campaign));
-    } else {
-      this.campaign = new Campaign();
-      this.entity = this.route.snapshot.paramMap.get('entity');
-      this.entityId = this.route.snapshot.paramMap.get('entityId');
-      if ( this.entity ) {
-        if ( this.entity === 'company' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        } else if ( this.entity === 'contact' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        } else if ( this.entity === 'action' ) {
-          console.log(`------------------------------->>>>>:: entity & entityId ${this.entity} and ${this.entityId}`);
-        }
-      }
-    }
-  }
-
-  completeCampaign(campaign: Campaign): void {
-    this.campaign = campaign;
-    if ( this.campaign.ownerId ) {
-      this.entityService.getContactById(this.campaign.ownerId)
-        .subscribe(contact => this.campaign.owner = contact);
-    }
-  }
-
-  /** add update campaign **/
-  addUpdateCampaign() {
-    const campaignId = this.campaign.campaignId;
-    if ( campaignId ) {
-      console.log(`This is an update because campaign id is ${campaignId}`);
-      this.campaignService.updateCampaign(this.campaign).subscribe(feedback => this.showAssocationSuccessful('campaign')  );
-    } else {
-      console.log(`This is an ADD because campaign id is ${campaignId}`);
-      this.campaign.ownerId = this.dataStore.userId;
-      if ( this.entity && this.entityId ) {
-        this.addCampaignAndAssociation(this.campaign, this.entity, this.entityId);
-      } else {
-        this.campaignService.addCampaign(this.campaign).subscribe(
-          response => this.updateRoute(response.headers.get('Location')) );
-      }
-    }
-  }
-
-  completeAssociation( location: string, entity: string, entityId: string ) {
-    const locattionNodes = _.split( location, '/' );
-    const newId = _.last(locattionNodes);
-    if ( entity === 'company' ) {
-      this.companyService.getCompany(entityId).toPromise().then(
-        company => this.campaignService.addCampaignToCompany( company, newId ).subscribe(
-          response => this.updateRoute(location)
-        )
-      );
-    } else if ( entity === 'contact' ) {
-      this.contactService.getContact(entityId).toPromise().then(
-        contact => this.campaignService.addCampaignToContact( contact, newId ).subscribe(
-          response => this.updateRoute(location)
-        )
-      );
-    } else if ( entity === 'action' ) {
-      this.actionService.getAction(entityId).toPromise().then(
-        action => this.campaignService.addCampaignToAction( action, newId ).subscribe(
-          response => this.updateRoute(location)
-        )
-      );
-    }
-  }
-
-  addCampaignAndAssociation(campaign: Campaign, entity: string, entityId: string) {
-    const simpleHeaders = { responseType: 'text', observe: 'response' };
-    this.campaignService.addCampaign(campaign).toPromise().then(
-      response => this.completeAssociation(response.headers.get('Location'), entity, entityId)
-    );
-  }
-
-  updateRoute( location: string ) {
-    const locattionNodes = _.split( location, '/' );
-    const newId = _.last(locattionNodes);
-    this.router.navigateByUrl( `/campaign/${newId}` );
-    this.showAssocationSuccessful('campaign');
-  }
-
-  onCompanyAssociatedToEntity(company: Company) {
-    console.log('onCompanyAssociatedToEntity:: end');
-    if ( this.campaign && company ) {
-      this.campaignService.addCampaignToCompany(company, this.campaign.campaignId )
-        .subscribe(response => {
-          console.log('addCampaignToCompany:: completed');
-          this.showAssocationSuccessful('company');
-        }, error => {
-          this.handleAssociationFailure('company');
-        } );
-    }
-  }
-
-  onCompanyFlaggedForRemoval(companyId: string) {
-    if ( this.campaign && companyId ) {
-      this.campaignService.removeCampaignFromCompany(companyId, this.campaign.campaignId )
-        .subscribe(response => {
-          console.log('onCompanyFlaggedForRemoval:: completed');
-          this.showAssocationSuccessful('company');
-        }, error => {
-          this.handleAssociationFailure('company');
-        } );
-    }
-  }
-
-  onContactAssociatedToEntity(contact: Contact) {
-    console.log('onContactAssociatedToEntity:: end');
-    if ( this.campaign && contact ) {
-      this.campaignService.addCampaignToContact(contact, this.campaign.campaignId )
-        .subscribe(response => {
-          console.log('addCampaignToContact:: completed');
-          this.showAssocationSuccessful('contact');
-        }, error => {
-          this.handleAssociationFailure('contact');
-        } );
-    }
-  }
-
-  onContactFlaggedForRemoval(contactId: string) {
-    if ( this.campaign && contactId ) {
-      this.campaignService.removeCampaignFromContact(contactId, this.campaign.campaignId )
-        .subscribe(response => {
-          console.log('onContactFlaggedForRemoval:: completed');
-          this.showAssocationSuccessful('contact');
-        }, error => {
-          this.handleAssociationFailure('contact');
-        } );
-    }
-  }
-
-  onActionAssociatedToEntity(action: Action): void {
-    console.log('onActionAssociatedToEntity:: end');
-    if ( this.campaign && action ) {
-      this.campaignService.addCampaignToAction(action, this.campaign.campaignId)
-        .subscribe(response => {
-          console.log('onActionAssociatedToEntity:: completed');
-          this.showAssocationSuccessful('action');
-        }, error => {
-          this.handleAssociationFailure('action');
-        } );
-    }
-  }
-
-  onActionFlaggedForRemoval(actionId: string) {
-    if ( this.campaign && actionId ) {
-      this.campaignService.removeCampaignFromAction(actionId, this.campaign.campaignId)
-        .subscribe(response => {
-          console.log('onCampaignFlaggedForRemoval:: completed');
-          this.showAssocationSuccessful('action');
-        }, error => {
-          this.handleAssociationFailure('action');
-        } );
-    }
-  }
 
   updateTags = (tags: Tag[]) => {
     this.campaign.tags = tags;
     this.tagsIsDirty = true;
   };
 
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  ngOnInit() {
+    this.entityName = 'campaign';
+    window.scrollTo(0, 0);
+    this.getCampaign();
+    this.loadTypes();
   }
 
-  handleAssociationFailure(entity: string, response?: any): void {
-    if (entity === 'company') {
-      this.companyFailureFlag = true;
-    } else if (entity === 'contact') {
-      this.contactFailureFlag = true;
-    } else if (entity === 'action') {
-      this.actionFailureFlag = true;
-    } else if ( entity === 'campaign' ) {
-      this.campaignFailureUpdated = true;
-    }
-    this.waitAndReset(entity);
+  resetForm = () => {
+    this.entityFormGroup.reset();
+    this.resetTheDirty();
+    this.getCampaign();
   }
 
-  showAssocationSuccessful(entity: string, response?: any): void {
-    if ( entity === 'company' ) {
-      this.companyFlag = true;
-    } else if ( entity === 'campaign' ) {
-      this.campaignUpdated = true;
-    } else if ( entity === 'contact' ) {
-      this.contactFlag = true;
-    } else if ( entity === 'action' ) {
-      this.actionFlag = true;
-    }
-    this.waitAndReset(entity);
-  }
-
-  waitAndReset(entity: string): void {
-    this.delay(4000).then(resolve => {
-        if ( entity === 'company' ) {
-          this.companyFlag = false;
-          this.companyFailureFlag = false;
-        } else if ( entity === 'campaign' ) {
-          this.campaignUpdated = false;
-          this.campaignFailureUpdated = false;
-        } else if ( entity === 'contact' ) {
-          this.contactFlag = false;
-          this.contactFailureFlag = false;
-        } else if ( entity === 'action' ) {
-          this.actionFlag = false;
-          this.actionFailureFlag = false;
-        }
+  createForm = () => {
+    if (!this.campaign.scopeType) { this.campaign.scopeType = new ScopeType(); }
+    if (!this.campaign.classificationType) { this.campaign.classificationType = new CampaignClassificationType(); }
+    this.entityFormGroup = new FormGroup({
+      campaignName: new FormControl(this.campaign.name, [Validators.required]),
+      campaignDescription: new FormControl(this.campaign.description, [Validators.required]),
+      campaignClassificationTypeId: new FormControl(this.campaign.classificationType.campaignClassificationTypeId, [Validators.required]),
+      scopeTypeId: new FormControl(this.campaign.scopeType.scopeTypeId, [Validators.required]),
+      targetValuation: new FormControl(this.campaign.targetValuation),
+      actualValuation: new FormControl(this.campaign.actualValuation)
     });
+    this.entityLoaded = true;
+  };
+
+  get campaignName() { return this.entityFormGroup.get('campaignName'); }
+  get campaignDescription() { return this.entityFormGroup.get('campaignDescription'); }
+  get campaignClassificationTypeId() { return this.entityFormGroup.get('campaignClassificationTypeId'); }
+  get scopeTypeId() { return this.entityFormGroup.get('scopeTypeId'); }
+  get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
+  get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
+
+  copyFormToCampaign = () => {
+    this.campaign.name = this.campaignName.value;
+    this.campaign.description = this.campaignDescription.value;
+    this.campaign.targetValuation = this.targetValuation.value;
+    this.campaign.actualValuation = this.actualValuation.value;
+    this.campaign.scopeType = this.scopeTypes.filter(
+      e => e.scopeTypeId === this.scopeTypeId.value)[0];
+    this.campaign.classificationType = this.classificationTypes.filter(
+      e => e.campaignClassificationTypeId === this.campaignClassificationTypeId.value)[0];
+  };
+
+  getCampaign(): void {
+    this.campaignId = this.route.snapshot.paramMap.get('id');
+    if (this.campaignId) {
+      console.log('campaignId ' + this.campaignId);
+      this.campaignService.getCampaign(this.campaignId)
+        .subscribe(campaign => {
+          this.campaign = campaign;
+          this.createForm();
+        });
+    } else {
+      this.campaign = new Campaign();
+      this.entity = this.route.snapshot.paramMap.get('entity');
+      this.entityId = this.route.snapshot.paramMap.get('entityId');
+      this.createForm();
+    }
   }
 
-  getScopeTypes(): void {
-    this.scopeTypeService.getScopeTypeList()
-      .subscribe(scopeTypes => this.scopeTypes = scopeTypes);
+  addUpdateCampaign() {
+    const campaignId = this.campaign.campaignId;
+    this.copyFormToCampaign();
+    if (campaignId) {
+      this.campaignService.updateCampaign(this.campaign).subscribe(feedback => {
+        this.showAssocationSuccessful('campaign');
+        this.getCampaign();
+      });
+    } else {
+      this.campaign.ownerId = this.dataStore.userId;
+      if (this.entity && this.entityId) {
+        this.campaignService.addCampaign(this.campaign).toPromise()
+          .then(response => this.completeAssociation(response.headers.get('Location'), this.entity, this.entityId))
+          .then(response => this.getCampaign());
+      } else {
+        this.campaignService.addCampaign(this.campaign).subscribe(response => {
+          this.updateRoute(response.headers.get('Location'));
+          this.getCampaign();
+        });
+      }
+    }
   }
 
-  getCampaignClassificationTypes(): void {
+  completeAssociation(location: string, entity: string, entityId: string) {
+    const newId = _.last(_.split(location, '/'));
+    if (entity === 'company') {
+      this.companyService.getCompany(entityId).toPromise().then(
+        company => this.campaignService.addCampaignToCompany(company, newId).subscribe(
+          response => this.updateRoute(location)));
+    } else if (entity === 'contact') {
+      this.contactService.getContact(entityId).toPromise().then(
+        contact => this.campaignService.addCampaignToContact(contact, newId).subscribe(
+          response => this.updateRoute(location)));
+    } else if (entity === 'action') {
+      this.actionService.getAction(entityId).toPromise().then(
+        action => this.campaignService.addCampaignToAction(action, newId).subscribe(
+          response => this.updateRoute(location)));
+    }
+  }
+
+  loadTypes(): void {
     this.campaignClassificationTypeService.getCampaignClassificationTypeList()
-      .subscribe(classificationTypes => this.classificationTypes = classificationTypes);
+      .subscribe(results => this.classificationTypes = results);
+    this.scopeTypeService.getScopeTypeList()
+      .subscribe(results => this.scopeTypes = results);
   }
 
-  addNewContactToAction(event): void {
-    console.log('placeholder: add new contact to action trigger', event);
+  onCompanyAssociatedToEntity(company: Company) {
+    this.campaignService.addCampaignToCompany(company, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('company'),
+      error => this.handleAssociationFailure('company'));
   }
 
-  createAndLinkAction(event): void {
-    if ( event.checked ) {
-      console.log('placeholder: create new action and link it to this campaign', event);
-    }
+  onCompanyFlaggedForRemoval(companyId: string) {
+    this.campaignService.removeCampaignFromCompany(companyId, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('company'),
+      error => this.handleAssociationFailure('company'));
   }
 
-  linkToExistingAction(event): void {
-    if ( event.checked ) {
-      console.log('placeholder: link this campaign to existing action', event);
-    }
+  onContactAssociatedToEntity(contact: Contact): void {
+    this.campaignService.addCampaignToContact(contact, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('contact'),
+      error => this.handleAssociationFailure('contact'));
   }
 
+  onContactFlaggedForRemoval(contactId: string) {
+    this.campaignService.removeCampaignFromContact(contactId, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('contact'),
+      error => this.handleAssociationFailure('contact'));
+  }
+
+  onActionAssociatedToEntity(action: Action): void {
+    this.campaignService.addCampaignToAction(action, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('action'),
+      error => this.handleAssociationFailure('action'));
+  }
+
+  onActionFlaggedForRemoval(actionId: string) {
+    this.campaignService.removeCampaignFromAction(actionId, this.campaign.campaignId).subscribe(
+      response => this.showAssocationSuccessful('action'),
+      error => this.handleAssociationFailure('action'));
+  }
 }

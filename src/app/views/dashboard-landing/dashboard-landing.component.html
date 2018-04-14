@@ -28,7 +28,7 @@
             </div>
           </form>
 
-          <div *ngIf="entityLoaded()">
+          <div *ngIf="searchEntityLoaded()">
             <div class="row">
               <div class="col-sm-6 col-md-4">
                 <div class="card card-accent-primary">
@@ -62,7 +62,7 @@
 
             <div class="row">
 
-              <div *ngIf="entityLoaded(); then actionAndCampaign; else actionOnly"></div>
+              <div *ngIf="searchEntityLoaded(); then actionAndCampaign; else actionOnly"></div>
 
               <ng-template #actionAndCampaign>
                 <div class="col-md-6">

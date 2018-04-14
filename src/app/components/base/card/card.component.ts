@@ -1,5 +1,7 @@
 import { Component, Input, Renderer2, SimpleChanges, OnChanges } from '@angular/core';
 import {Router} from '@angular/router';
+import * as _ from 'lodash';
+
 import {ActionService} from '../../../services/action.service';
 import * as label from '../../labels';
 import {CampaignService} from '../../../services/campaign.service';
@@ -12,6 +14,8 @@ import {Observable} from 'rxjs/Observable';
 import {TagService} from '../../../services/tag.service';
 import {TaggingService} from '../../widgets/tagging.service';
 import {DataStore} from '../../../classes/data-store';
+import {AddressService} from '../../widgets/address.service';
+import {Company} from '../../../classes/company';
 
 @Component({
   selector: 'app-card',
@@ -19,6 +23,9 @@ import {DataStore} from '../../../classes/data-store';
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnChanges {
+
+  public pristineElements: any = [];
+  cardName = 'overwrite in the extending class';
 
   @Input() companyId: string;
   @Input() contactId: string;
@@ -33,7 +40,7 @@ export class CardComponent implements OnChanges {
 
   public headerColor = '#f0f3f5';
   public fontColor = 'black';
-  public dirtyCardColor = 'deeppink'
+  public dirtyCardColor = 'deeppink';
   public mouseOverColor = 'pink';
   public readonly label = label;
   public cardIsDirty = false;
@@ -51,6 +58,7 @@ export class CardComponent implements OnChanges {
     public renderer: Renderer2,
     public router: Router,
     public taggingService: TaggingService,
+    public addressService: AddressService,
     public tagService: TagService,
     public dataStore: DataStore,
   ) {}
@@ -59,6 +67,12 @@ export class CardComponent implements OnChanges {
   refreshSupportingData = () => console.log('function that should be overridden');
 
   ngOnChanges(changes: SimpleChanges) {
+
+    console.log(`----------------START::: ${this.cardName} -----------------`)
+    console.log(`${this.cardName} CHANGES:: `, changes);
+    console.log(`${this.cardName} associationSuccessful:: `, changes.associationSuccessful);
+    console.log(`----------------  END::: ${this.cardName} -----------------`)
+
     if ( changes.associationSuccessful && changes.associationSuccessful.currentValue ) {
       this.cardIsDirty = false;
       this.suspendedUndoEvent = null;
