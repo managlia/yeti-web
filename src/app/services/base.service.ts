@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {LoggerService} from './logger.service';
 import {Observable} from 'rxjs/Observable';
-import {of} from 'rxjs/observable/of';
+// import * as colors from 'colors/safe';
+import chalk from 'chalk';
 
 @Injectable()
 export class BaseService {

@@ -112,7 +112,10 @@ Has Recipients {{ hasRecipients }}<br>
               <app-tag-card [tags]="action.tags" (tagsUpdated)="updateTags"></app-tag-card>
             </div>
             <div class="col-6">
-              <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
+              <app-attachment-card  [entityId]="action.actionId"
+                                    entityType="action"
+                                    [resourceId]="dataStore.userId"
+              ></app-attachment-card>
             </div>
           </div>
 

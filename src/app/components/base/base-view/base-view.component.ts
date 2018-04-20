@@ -1,33 +1,39 @@
-import {Component, OnInit, Renderer2, ViewContainerRef, ViewChild} from '@angular/core';
+import {Component, OnInit, Renderer2} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Location} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
+import chalk from 'chalk';
 
-import {EntityService} from '../../../services/entity.service';
-import {CompanyOrContactService} from '../../../services/company-or-contact.service';
-import * as label from '../../labels';
-import {ContactService} from '../../../services/contact.service';
-import {CompanyPhoneTypeService} from '../../../services/company-phone-type.service';
+import {ActionClassificationOtherTypeService} from '../../../services/action-classification-other-type.service';
+import {ActionClassificationOtherType} from '../../../classes/types/action-classification-other-type';
+import {ActionClassificationTypeService} from '../../../services/action-classification-type.service';
+import {ActionService} from '../../../services/action.service';
+import {CampaignClassificationTypeService} from '../../../services/campaign-classification-type.service';
 import {CampaignService} from '../../../services/campaign.service';
 import {CompanyAddressClassificationTypeService} from '../../../services/company-address-classification-type.service';
-import {CompanyUrlTypeService} from '../../../services/company-url-type.service';
-import {CompanyService} from '../../../services/company.service';
 import {CompanyClassificationTypeService} from '../../../services/company-classification-type.service';
-import {ActionService} from '../../../services/action.service';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {CompanyOrContactService} from '../../../services/company-or-contact.service';
+import {CompanyPhoneTypeService} from '../../../services/company-phone-type.service';
+import {CompanyService} from '../../../services/company.service';
+import {CompanyUrlTypeService} from '../../../services/company-url-type.service';
 import {Company} from '../../../classes/company';
-import {EntityClassificationType} from '../../../classes/types/entity-classification-type';
-import {PhoneType} from '../../../classes/types/phone-type';
+import {ContactAddressClassificationTypeService} from '../../../services/contact-address-classification-type.service';
+import {ContactClassificationTypeService} from '../../../services/contact-classification-type.service';
+import {ContactPhoneTypeService} from '../../../services/contact-phone-type.service';
+import {ContactService} from '../../../services/contact.service';
+import {ContactTitleTypeService} from '../../../services/contact-title-type.service';
+import {ContactTitleType} from '../../../classes/types/contact-title-type';
+import {ContactUrlTypeService} from '../../../services/contact-url-type.service';
+import {Contact} from '../../../classes/contact';
 import {AddressClassificationType} from '../../../classes/types/address-classification-type';
-import {UrlType} from '../../../classes/types/url-type';
-import {ScopeTypeService} from '../../../services/scope-type.service';
 import {DataStore} from '../../../classes/data-store';
 import {EmailService} from '../../../services/email.service';
-import {ActionClassificationTypeService} from '../../../services/action-classification-type.service';
-import {ActionClassificationOtherTypeService} from '../../../services/action-classification-other-type.service';
-import {Observable} from 'rxjs/Observable';
-import {ActionClassificationOtherType} from '../../../classes/types/action-classification-other-type';
-import {CampaignClassificationTypeService} from '../../../services/campaign-classification-type.service';
+import {EntityService} from '../../../services/entity.service';
+import {PhoneType} from '../../../classes/types/phone-type';
+import {ScopeTypeService} from '../../../services/scope-type.service';
+import {UrlType} from '../../../classes/types/url-type';
+import * as label from '../../labels';
 
 @Component({
   selector: 'app-base-view',
@@ -66,38 +72,40 @@ export class BaseViewComponent implements OnInit {
   classificationTypes: any[];
   addressClassificationTypes: AddressClassificationType[];
   classificationOtherTypes: ActionClassificationOtherType[];
+  titleTypes: ContactTitleType[];
 
   entity: string;
   entityId: string;
 
+  goBack = () => this.location.back();
+
   constructor(
+    public actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
+    public actionClassificationTypeService: ActionClassificationTypeService,
     public actionService: ActionService,
+    public campaignClassificationTypeService: CampaignClassificationTypeService,
     public campaignService: CampaignService,
-    public companyService: CompanyService,
-    public contactService: ContactService,
+    public companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,
+    public companyClassificationTypeService: CompanyClassificationTypeService,
     public companyOrContactService: CompanyOrContactService,
-
+    public companyPhoneTypeService: CompanyPhoneTypeService,
+    public companyService: CompanyService,
+    public companyUrlTypeService: CompanyUrlTypeService,
+    public contactAddressClassificationTypeService: ContactAddressClassificationTypeService,
+    public contactClassificationTypeService: ContactClassificationTypeService,
+    public contactPhoneTypeService: ContactPhoneTypeService,
+    public contactService: ContactService,
+    public contactTitleTypeService: ContactTitleTypeService,
+    public contactUrlTypeService: ContactUrlTypeService,
+    public dataStore: DataStore,
     public emailService: EmailService,
-
-    public route: ActivatedRoute,
-    public router: Router,
+    public entityService: EntityService,
+    public formBuilder: FormBuilder,
     public location: Location,
     public renderer: Renderer2,
-    public entityService: EntityService,
-
-    public companyUrlTypeService: CompanyUrlTypeService,
-    public companyPhoneTypeService: CompanyPhoneTypeService,
-    public companyClassificationTypeService: CompanyClassificationTypeService,
-    public companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,
-    public formBuilder: FormBuilder,
-
-    public dataStore: DataStore,
-    public actionClassificationTypeService: ActionClassificationTypeService,
-    public actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
-    public scopeTypeService: ScopeTypeService,
-
-    public campaignClassificationTypeService: CampaignClassificationTypeService
-
+    public route: ActivatedRoute,
+    public router: Router,
+    public scopeTypeService: ScopeTypeService
   ) {
   }
 
@@ -154,7 +162,7 @@ export class BaseViewComponent implements OnInit {
   }
 
   waitAndReset(entity: string): void {
-    this.delay(4000).then(resolve => {
+    this.delay(5000).then(resolve => {
         if (entity === 'company') {
           this.companyFlag = false;
           this.companyFailureFlag = false;
@@ -177,9 +185,15 @@ export class BaseViewComponent implements OnInit {
     return company;
   }
 
+  orderContactContents(contact: Contact): Contact {
+    contact.tags = _.sortBy(contact.tags, ['name']);
+    return contact;
+  }
+
+
   readyToSave(): boolean {
-    const cardChanged = this.addressIsDirty || this.urlsIsDirty ||  this.phonesIsDirty
-          || this.tagsIsDirty || this.attachmentsIsDirty || this.entityFormGroup.dirty;
+    const cardChanged = this.addressIsDirty || this.urlsIsDirty || this.phonesIsDirty
+      || this.tagsIsDirty || this.attachmentsIsDirty || this.entityFormGroup.dirty;
     // console.log( '                   ==>>>> ' );
     // console.log( 'addressIsDirty     ==>>>> ', this.addressIsDirty );
     // console.log( 'urlsIsDirty        ==>>>> ', this.urlsIsDirty );
@@ -188,7 +202,7 @@ export class BaseViewComponent implements OnInit {
     // console.log( 'attachmentsIsDirty ==>>>> ', this.attachmentsIsDirty );
     // console.log( 'readyToSave        ==>>>> ', (cardChanged && this.entityFormGroup.valid) );
     // console.log( 'cardChanged        ==>>>> ', (cardChanged) );
-    // console.log( 'entityFormGroup    ==>>>> ', (this.entityFormGroup.valid) );
+    // console.log( 'formGroup valid    ==>>>> ', (this.entityFormGroup.valid) );
     // console.log( '                   ==>>>> ' );
     return (cardChanged && this.entityFormGroup.valid);
   }
@@ -202,11 +216,17 @@ export class BaseViewComponent implements OnInit {
   };
 
   readyToSaveColor = () => {
-      if ( this.readyToSave() ) {
+    if (this.readyToSave()) {
       return this.dirtyCardColor;
     } else {
       return '#f0f3f5';
     }
+  };
+
+  emailValidator = () => {
+    return Validators.compose([
+      Validators.email
+    ])
   };
 
   unreadyToSave(): boolean {

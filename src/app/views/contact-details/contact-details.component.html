@@ -1,4 +1,5 @@
-<div *ngIf="contact" id="search-component" class="animated fadeIn">
+<div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
+
   <div class="row">
     <div class="col-9"><!-- first column -->
 
@@ -14,7 +15,7 @@
         </div><!--/.col-->
       </div>
       <div class="col-sm-12 col-md-12">
-        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="contactUpdated">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="contactFlag">
           <div class="card-body">
             <blockquote class="card-bodyquote">
               <p>Your update has been saved.</p>
@@ -28,42 +29,69 @@
           <strong>Contact Details</strong>
         </div>
         <div class="card-body">
+          <form [formGroup]="entityFormGroup" novalidate>
+
+
           <!--main content area-->
           <div class="row">
             <div class="col-8">
 
               <div class="row">
-                <div class="col-3">
-                  <mat-form-field style="width:100%;">
-                    <input matInput [(ngModel)]="contact.firstName" placeholder="Contact First Name">
-                  </mat-form-field>
-                </div>
-                <div class="col-3">
+                <div class="col-4" style="padding-top:7px; padding-bottom:7px;">
 
-                  <mat-form-field style="width:100%;">
-                    <input matInput [(ngModel)]="contact.lastName" placeholder="Contact Last Name">
-                  </mat-form-field>
-                </div>
-                <div class="col-6">
-                  <mat-form-field style="width:100%;">
-                    <input matInput [(ngModel)]="contact.contactEmailAddress" placeholder="Email Address">
+
+
+                <mat-form-field style="width:90%;">
+                    <input matInput formControlName="contactFirstName" placeholder="Contact First Name">
+                    <mat-error *ngIf="contactFirstName.hasError('required')">
+                      Contact first name is required.
+                    </mat-error>
                   </mat-form-field>
 
+
                 </div>
-                <div class="col-6">
-                  <mat-form-field style="width:100%;">
-                    <mat-select placeholder="Title" [(ngModel)]="contact.titleType.contactTitleTypeId">
+                <div class="col-4" style="padding-top:7px; padding-bottom:7px;">
+
+
+                  <mat-form-field style="width:90%;">
+                    <input matInput formControlName="contactLastName" placeholder="Contact Last Name">
+                    <mat-error *ngIf="contactLastName.hasError('required')">
+                      Contact last name is required.
+                    </mat-error>
+                  </mat-form-field>
+
+
+                </div>
+                <div class="col-4" style="padding-top:7px; padding-bottom:7px;">
+
+                  <mat-form-field style="width:90%;">
+                    <mat-select placeholder="Title" formControlName="contactTitleTypeId">
                       <mat-option *ngFor="let title of titleTypes" [value]="title.contactTitleTypeId">
                         {{ title.name }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
-                </div>
-                <div class="col-6">
 
-                  <mat-form-field style="width:100%;">
+
+                </div>
+                <div class="col-6" style="padding-top:7px; padding-bottom:7px;">
+
+
+                  <mat-form-field style="width:90%;">
+                    <input matInput formControlName="contactEmailAddress" placeholder="Email Address">
+                    <mat-error *ngIf="contactEmailAddress.invalid">
+                      Contact email must be formatted properly.
+                    </mat-error>
+                  </mat-form-field>
+
+
+                </div>
+                <div class="col-6" style="padding-top:7px; padding-bottom:7px;">
+
+
+                  <mat-form-field style="width:90%;">
                     <mat-select placeholder="Classification Type"
-                                [(ngModel)]="contact.classificationType.classificationTypeId">
+                                formControlName="classificationTypeId">
                       <mat-option *ngFor="let classificationType of classificationTypes"
                                   [value]="classificationType.classificationTypeId">
                         {{ classificationType.name }}
@@ -71,35 +99,53 @@
                     </mat-select>
                   </mat-form-field>
 
-                </div>
-                <div class="col-6">
 
-                  <mat-form-field style="width:100%;">
+                </div>
+                <div class="col-6" style="padding-top:7px; padding-bottom:7px;">
+
+
+                  <mat-form-field style="width:90%;">
                       <textarea matInput placeholder="Contact Description (field will autosize as needed)"
                                 matTextareaAutosize
-                                matAutosizeMinRows="4"
-                                matAutosizeMaxRows="10" [(ngModel)]="contact.description"></textarea>
+                                matAutosizeMinRows="5"
+                                matAutosizeMaxRows="15" formControlName="description"></textarea>
+                    <mat-error *ngIf="description.hasError('required')">
+                      Contact email must be formatted properly.
+                    </mat-error>
                   </mat-form-field>
-                </div>
-                <div class="col-6">
 
-                  <mat-form-field style="width:100%;">
-                    <input matInput [matDatepicker]="datepicker" placeholder="This contact's birthday"
-                           [(ngModel)]="contact.dob">
-                    <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
-                    <mat-datepicker #datepicker></mat-datepicker>
+
+                </div>
+                <div class="col-6" style="padding-top:7px; padding-bottom:7px;">
+
+                  <mat-form-field style="width:90%;">
+                    <input matInput
+                           [matDatepicker]="picker"
+                           placeholder="This contact's birthday"
+                           formControlName="dob"
+                    >
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
+
+
+
                 </div>
 
                 <div class="col-6">
                   <!--beneath main content area-->
-                  <app-address-card [addresses]="contact.addresses"
-                                    [addressTypes]="addressClassificationTypes"
-                                    (addressesChangedInCard)="addressesChanged($event)"></app-address-card>
+                  <app-address-card
+                    [associationSuccessful]="campaignFlag"
+                    [associationFailure]="campaignFailureFlag"
+                    [addresses]="contact.addresses"
+                    [addressTypes]="addressClassificationTypes"
+                    (addressesChangedInCard)="addressesChanged($event)"></app-address-card>
                 </div>
                 <div class="col-6">
                   <!--beneath main content area-->
                   <app-phone-card
+                    [associationSuccessful]="campaignFlag"
+                    [associationFailure]="campaignFailureFlag"
                     [phones]="contact.phones"
                     [phoneTypes]="phoneTypes"
                     (phonesUpdated)="updatePhones($event)"
@@ -111,33 +157,56 @@
 
             </div>
             <div class="col-4">
+
+              <app-datespace [entity]="contact"></app-datespace>
+
               <app-links-card
+                [associationSuccessful]="campaignFlag"
+                [associationFailure]="campaignFailureFlag"
                 [urls]="contact.urls"
                 [urlTypes]="urlTypes"
                 (linksUpdated)="updateLinks($event)"
               ></app-links-card>
               <app-tag-card
-                [associationSuccessful]="contactUpdated"
-                [associationFailure]="contactFailureUpdated"
+                [associationSuccessful]="campaignFlag"
+                [associationFailure]="campaignFailureFlag"
                 [tags]="contact.tags"
                 (tagsUpdated)="updateTags($event)"></app-tag-card>
 
 
-              <app-attachment-card [attachments]="contact.attachments"></app-attachment-card>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12" style="text-align:right;">
-              <button type="button" class="btn btn-warning" (click)="addUpdateContact()">Click to save</button>
+              <app-attachment-card [entityId]="contact.contactId"
+                                   entityType="contact"
+                                   [resourceId]="dataStore.userId"></app-attachment-card>
             </div>
           </div>
 
+
+          <!--<div class="row" style="background-color: yellow;">-->
+          <div class="row">
+            <div class="col-6" style="text-align:left">
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+            </div>
+            <div class="col-6" style="text-align:right">
+              <button type="button" class="btn btn-warning" (click)="addUpdateContact()" [disabled]="unreadyToSave()">
+                Click to save
+              </button>
+            </div>
+          </div>
+
+
+          </form>
         </div>
       </div>
-      <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">Back</button>
 
       <div>
       </div>
+
+      <app-note-list-card [entityId]="contact.contactId"
+                          entityType="contact"
+                          [resourceId]="dataStore.userId"
+      ></app-note-list-card>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">Back</button>
+
     </div>
     <div class="col-3"><!-- third column -->
 
@@ -148,7 +217,7 @@
         [companyId]="contact.companyId"
         (selectCompany)="selectCompany($event)"
         (onCompanyChosen)="onCompanyChosen($event)"></app-company-choice-card>
-      <div *ngIf="contactId">
+      <div *ngIf="contact.contactId">
 
         <app-campaign-card [contactId]="contact.contactId"
                            [associationSuccessful]="campaignFlag"

@@ -1,26 +1,30 @@
+<script src="../../../../node_modules/dropzone"></script>
 
-<div *ngIf="attachments" class="animated fadeIn">
-  <div class="card">
-    <div class="card-header">
-      <strong>Attachments</strong>
-    </div>
-    <div class="card-body">
+<div class="card">
+  <div class="card-header">
+    <strong>Attachments</strong>
+  </div>
+  <div class="card-body">
 
-        <div *ngFor="let anAttachment of attachments">
-          <div
-            [style.color]="fontColor"
-            (mouseover)="onAttchmentOver(event,this)"
-            (mouseout)="onAttachmentOut(event,this)"
-            (click)="onSelectAttachment(event, anAttachment.attachment.attachmentId)"
-            [innerHtml]="anAttachment | attachmentSummary">
-          </div>
-        </div>
-        <div class="row" style="text-align:center;vertical-align:bottom;padding-top:10px;">
-          <div class="col-md-12">
-            <button type="button" class="btn btn-primary btn-sm" (click)="openAddressDialog()">Add new address</button>
-          </div>
-        </div>
+
+
+    <div *ngFor="let anAttachment of attachments">
+
+      <div [innerHtml]="anAttachment | attachmentSummary"
+           (mouseover)="onConsideringEntity(event,this)"
+           (mouseout)="onUnconsideringEntity(event,this)"
+           (click)="selectAttachment(anAttachment)"
+      style="padding-bottom:18px; font-weight:bold; text-align: center;"></div>
 
     </div>
+
+    <div #theDropZone style="background-color: lightsteelblue; padding: 10px 10px 10px 10px; text-align: center;">
+    Drag and Drop... Or Click...
+    </div>
+
+    <div class="dz-preview dz-file-preview" #showZone>
+      <div class="dz-error-message"><span data-dz-errormessage></span></div>
+    </div>
+
   </div>
 </div>

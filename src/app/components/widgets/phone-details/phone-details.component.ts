@@ -81,7 +81,6 @@ export class PhoneDetailsComponent implements OnInit {
   considerReformat = (theGroup: any) => {
     const item = theGroup as FormGroup;
     const updatedValue = phone.formatNumber( item.value.valueControl, 'US', 'National' );
-    console.log('considering reformat', updatedValue);
     item.patchValue( {valueControl: updatedValue} );
   };
 

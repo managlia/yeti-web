@@ -149,12 +149,17 @@
                 </div>
               </div>
               <div class="col-6">
+                <app-datespace [entity]="action"></app-datespace>
+
                 <app-tag-card #tagsCard id="tagsCard"
                   [associationSuccessful]="actionFlag"
                   [associationFailure]="actionFailureFlag"
                   [tags]="action.tags"
                   (tagsUpdated)="updateTags($event)"></app-tag-card>
-                <app-attachment-card [attachments]="action.attachments"></app-attachment-card>
+                <app-attachment-card  [entityId]="action.actionId"
+                                      entityType="action"
+                                      [resourceId]="dataStore.userId"
+                ></app-attachment-card>
               </div>
             </div>
 
@@ -171,6 +176,14 @@
           </form>
         </div>
       </div>
+
+
+      <app-note-list-card [entityId]="action.actionId"
+                         entityType="action"
+                         [resourceId]="dataStore.userId"
+      ></app-note-list-card>
+
+
 
 
     </div>

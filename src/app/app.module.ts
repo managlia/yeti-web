@@ -12,6 +12,7 @@ import { NgPipesModule } from 'ngx-pipes';
 import { ReactiveFormsModule } from '@angular/forms';  // <-- #1 import module
 import { NgxElectronModule } from 'ngx-electron';
 
+
 // Import containers
 import {
   FullLayoutComponent,
@@ -107,7 +108,6 @@ import { ActionDetailsComponent } from './views/action-details/action-details.co
 import { EmailDetailsComponent } from './views/email-details/email-details.component';
 
 import { AddressDetailsComponent } from './components/widgets/address-details/address-details.component';
-import { AttachmentDetailsComponent } from './components/widgets/attachment-details/attachment-details.component';
 import { DateTimeDetailsComponent } from './components/widgets/date-time-details/date-time-details.component';
 import { TagDetailsComponent } from './components/widgets/tag-details/tag-details.component';
 import { UrlDetailsComponent } from './components/widgets/url-details/url-details.component';
@@ -126,7 +126,6 @@ import { MapToCommonIdPipe } from './classes/pipes/map-to-common-id.pipe';
 import { DataStore } from './classes/data-store';
 
 import { AddressService } from './components/widgets/address.service';
-import { AttachmentService } from './components/widgets/attachment.service';
 import { DateTimeService } from './components/widgets/date-time.service';
 import { TaggingService } from './components/widgets/tagging.service';
 import { UrlService } from './components/widgets/url.service';
@@ -167,6 +166,8 @@ import { ExceptionService } from './services/exception.service';
 import { LoggerService } from './services/logger.service';
 import { ScopeTypeService } from './services/scope-type.service';
 import { TagService } from './services/tag.service';
+import { NoteService } from './services/note.service';
+import { AttachmentService } from './services/attachment.service';
 
 import { ElectronService } from 'ngx-electron';
 
@@ -216,6 +217,8 @@ import { CampaignQuickEditComponent } from './components/widgets/campaign-quick-
 import { PhoneDetailsComponent } from './components/widgets/phone-details/phone-details.component';
 import { AdderComponent } from './components/base/adder/adder.component';
 import { BaseViewComponent } from './components/base/base-view/base-view.component';
+import { DatespaceComponent } from './components/datespace/datespace.component';
+import { NoteListCardComponent } from './components/note-list-card/note-list-card.component';
 
 @NgModule({
   imports: [
@@ -267,7 +270,6 @@ import { BaseViewComponent } from './components/base/base-view/base-view.compone
   ],
   declarations: [
     AddressDetailsComponent,
-    AttachmentDetailsComponent,
     TagDetailsComponent,
     DateTimeDetailsComponent,
     UrlDetailsComponent,
@@ -323,9 +325,11 @@ import { BaseViewComponent } from './components/base/base-view/base-view.compone
     PhoneDetailsComponent,
     AdderComponent,
     BaseViewComponent,
+    DatespaceComponent,
+    NoteListCardComponent,
   ],
   providers: [
-    AddressService, AttachmentService, DateTimeService, TaggingService, UrlService, PhoneService,
+    AddressService, DateTimeService, TaggingService, UrlService, PhoneService,
     ActionQuickEditService, CampaignQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
@@ -333,14 +337,14 @@ import { BaseViewComponent } from './components/base/base-view/base-view.compone
     CompanyPhoneService, CompanyPhoneTypeService, ContactPhoneService, ContactPhoneTypeService,
     CompanyClassificationTypeService, CompanyAddressClassificationTypeService,
     ContactAddressClassificationTypeService, ContactClassificationTypeService, ContactTitleTypeService,
-    CampaignClassificationTypeService, ScopeTypeService, TagService, EntityService, CompanyOrContactService,
+    CampaignClassificationTypeService, ScopeTypeService, TagService, NoteService, AttachmentService, EntityService, CompanyOrContactService,
     CampaignOrActionService, ActionContactService, DataStore, ElectronService,
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy,
     }],
   bootstrap: [ AppComponent ],
-  entryComponents: [AddressDetailsComponent, AttachmentDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent,
+  entryComponents: [AddressDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent,
                   ActionQuickEditComponent, CampaignQuickEditComponent, UrlDetailsComponent, PhoneDetailsComponent]
 })
 export class AppModule { }

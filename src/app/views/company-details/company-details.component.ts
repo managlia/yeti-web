@@ -1,19 +1,17 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
+import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
 import {Action} from '../../classes/action';
+import {Address} from '../../classes/common/address';
 import {Campaign} from '../../classes/campaign';
 import {Company} from '../../classes/company';
-import {EntityClassificationType} from '../../classes/types/entity-classification-type';
 import {Contact} from '../../classes/contact';
-
-import {Address} from '../../classes/common/address';
-import {Url} from '../../classes/common/url';
 import {Phone} from '../../classes/common/phone';
 import {Tag} from '../../classes/common/tag';
-import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
-import {ScopeType} from '../../classes/types/scope-type';
+import {Url} from '../../classes/common/url';
+import {EntityClassificationType} from '../../classes/types/entity-classification-type';
 
 @Component({
   selector: 'app-company-details',
@@ -51,7 +49,7 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
     this.entityFormGroup.reset();
     this.resetTheDirty();
     this.getCompany();
-  }
+  };
 
   createForm() {
     if (!this.company.classificationType) { this.company.classificationType = new EntityClassificationType(); }

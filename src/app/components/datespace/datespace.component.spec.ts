@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AttachmentDetailsComponent } from './attachment-details.component';
+import { DatespaceComponent } from './datespace.component';
 
-describe('AttachmentDetailsComponent', () => {
-  let component: AttachmentDetailsComponent;
-  let fixture: ComponentFixture<AttachmentDetailsComponent>;
+describe('DatespaceComponent', () => {
+  let component: DatespaceComponent;
+  let fixture: ComponentFixture<DatespaceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttachmentDetailsComponent ]
+      declarations: [ DatespaceComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AttachmentDetailsComponent);
+    fixture = TestBed.createComponent(DatespaceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

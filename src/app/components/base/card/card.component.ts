@@ -1,6 +1,8 @@
 import { Component, Input, Renderer2, SimpleChanges, OnChanges } from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
+// import * as colors from 'colors/safe';
+import chalk from 'chalk';
 
 import {ActionService} from '../../../services/action.service';
 import * as label from '../../labels';
@@ -16,6 +18,7 @@ import {TaggingService} from '../../widgets/tagging.service';
 import {DataStore} from '../../../classes/data-store';
 import {AddressService} from '../../widgets/address.service';
 import {Company} from '../../../classes/company';
+import {AttachmentService} from '../../../services/attachment.service';
 
 @Component({
   selector: 'app-card',
@@ -61,6 +64,7 @@ export class CardComponent implements OnChanges {
     public addressService: AddressService,
     public tagService: TagService,
     public dataStore: DataStore,
+    public attachmentService: AttachmentService
   ) {}
 
 
@@ -68,10 +72,10 @@ export class CardComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
 
-    console.log(`----------------START::: ${this.cardName} -----------------`)
-    console.log(`${this.cardName} CHANGES:: `, changes);
-    console.log(`${this.cardName} associationSuccessful:: `, changes.associationSuccessful);
-    console.log(`----------------  END::: ${this.cardName} -----------------`)
+    // console.log(`----------------START::: ${this.cardName} -----------------`)
+    // console.log(`${this.cardName} CHANGES:: `, changes);
+    // console.log(`${this.cardName} associationSuccessful:: `, changes.associationSuccessful);
+    // console.log(`----------------  END::: ${this.cardName} -----------------`)
 
     if ( changes.associationSuccessful && changes.associationSuccessful.currentValue ) {
       this.cardIsDirty = false;
@@ -79,11 +83,11 @@ export class CardComponent implements OnChanges {
       this.refreshSupportingData();
       if ( this.suspendedEvent ) {
         this.suspendedEvent.subscribe( result => {
-          console.log(':::: CARD HAS BEEN UPDATED AFTER ENTITY UPDATE IS COMPLETE::::', result);
+          console.log(chalk.cyan(':::: CARD HAS BEEN UPDATED AFTER ENTITY UPDATE IS COMPLETE::::'), result);
           this.suspendedEvent = null;
         });
       } else {
-        console.log(':::: UPDATE SUCCESSFUL BUT NO FURTHER ACTION IS NEEDED ::::');
+        console.log(chalk.cyan(':::: UPDATE SUCCESSFUL BUT NO FURTHER ACTION IS NEEDED ::::'));
       }
     }
     if ( changes.associationFailure && changes.associationFailure.currentValue ) {
@@ -91,11 +95,11 @@ export class CardComponent implements OnChanges {
       this.suspendedEvent = null;
       if ( this.suspendedUndoEvent ) {
         this.suspendedUndoEvent.subscribe( result => {
-          console.log(':::: CARD HAS <<<< NOT >>>> BEEN UPDATED AFTER ENTITY UPDATE HAS BEEN ATTEMPTED::::', result);
+          console.log(chalk.cyan(':::: CARD HAS <<<< NOT >>>> BEEN UPDATED AFTER ENTITY UPDATE HAS BEEN ATTEMPTED::::'), result);
           this.suspendedUndoEvent = null;
         });
       } else {
-        console.log(':::: UPDATE FAILED BUT NO MITIGATING ACTION IS NEEDED ::::');
+        console.log(chalk.cyan(':::: UPDATE FAILED BUT NO MITIGATING ACTION IS NEEDED ::::'));
       }
     }
   }

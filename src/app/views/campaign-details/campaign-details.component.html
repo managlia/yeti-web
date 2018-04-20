@@ -140,12 +140,18 @@
 
               </div>
               <div class="col-6">
+                <app-datespace [entity]="campaign"></app-datespace>
 
                 <app-tag-card
                   [associationSuccessful]="campaignUpdated"
                   [associationFailure]="campaignFailureUpdated"
                   [tags]="campaign.tags"
                   (tagsUpdated)="updateTags($event)"></app-tag-card>
+
+                <app-attachment-card  [entityId]="campaign.campaignId"
+                                      entityType="campaign"
+                                      [resourceId]="dataStore.userId"
+                ></app-attachment-card>
 
               </div>
             </div>
@@ -163,6 +169,13 @@
           </form>
         </div>
       </div>
+
+      <app-note-list-card [entityId]="campaign.campaignId"
+                          entityType="campaign"
+                          [resourceId]="dataStore.userId"
+      ></app-note-list-card>
+
+
     </div>
     <div class="col-3"><!-- second column -->
       <!--beneath main content area-->

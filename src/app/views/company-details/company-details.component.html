@@ -111,7 +111,6 @@
               <!--</div>-->
 
 
-
               <div>
                 <!--<div class="row" style="background-color: green;">-->
                 <div class="row">
@@ -144,17 +143,25 @@
               </div>
 
 
-
-
             </div>
             <!--<div class="col-4" style="background-color: chartreuse;">-->
             <div class="col-4">
+
+              <app-datespace [entity]="company"></app-datespace>
+
               <app-tag-card
                 [associationSuccessful]="companyFlag"
                 [associationFailure]="companyFailureFlag"
                 [tags]="company.tags"
                 (tagsUpdated)="updateTags($event)"></app-tag-card>
-              <app-attachment-card [attachments]="company.attachments"></app-attachment-card>
+
+
+              <app-attachment-card [entityId]="company.companyId"
+                                   entityType="company"
+                                   [resourceId]="dataStore.userId"
+              ></app-attachment-card>
+
+
             </div>
           </div>
 
@@ -173,6 +180,13 @@
 
         </div>
       </div>
+
+      <app-note-list-card [entityId]="company.companyId"
+                          entityType="company"
+                          [resourceId]="dataStore.userId"
+      ></app-note-list-card>
+
+
     </div>
     <div class="col-3">
       <div *ngIf="company?.companyId">

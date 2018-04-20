@@ -47,6 +47,8 @@ export class AddressCardComponent extends CardComponent implements OnInit, OnCha
     this.addressesChangedInCard.emit(this.addresses);
     if ( !this.suspendedUndoEvent ) {
       this.suspendedUndoEvent = new Observable<any>(observer => {
+        console.log('FAILURE !!!!!!!!!!!!!!!!!');
+        this.storePristineElements();
         this.writeCopyFromOriginal();
         observer.next('undone');
         observer.complete();
@@ -59,6 +61,8 @@ export class AddressCardComponent extends CardComponent implements OnInit, OnCha
     if ( !this.suspendedEvent ) {
       this.suspendedEvent = new Observable<any>(observer => {
         this.addresses = this.addresses.filter( e => !e.flaggedForDelete );
+        console.log('------------->>>>>>>>>>>>> SUCCESS ADDRESS UPDATE !!!!!!!!!!!!!!!!!', this.addresses );
+        this.storePristineElements();
         this.writeCopyFromOriginal();
         observer.next('undone');
         observer.complete();
