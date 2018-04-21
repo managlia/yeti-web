@@ -5,7 +5,6 @@ import * as us from 'us';
 import * as _ from 'lodash';
 import { AddressClassificationType } from '../../../classes/types/address-classification-type';
 
-
 @Component({
   selector: 'app-address-details',
   templateUrl: './address-details.component.html',

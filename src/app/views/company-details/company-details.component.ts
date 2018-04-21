@@ -181,4 +181,17 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
         response => this.showAssocationSuccessful('action'),
         error => this.handleAssociationFailure('action'));
   }
+
+  onChatter = () => {
+    console.log('how about a little chatter ****NOW*** ?');
+    const data = {
+      entityType: 'company',
+      entity: this.company
+    };
+    const x = this.chatterService.openDialog(data);
+
+    // x.subscribe(result => {
+    //     console.log('Does anything need to be done here????');
+    //   });
+  }
 }

@@ -1,7 +1,7 @@
 import {EntityClassificationType} from './types/entity-classification-type';
 import {ContactTitleType} from './types/contact-title-type';
 import {Url} from './common/url';
-import {File} from './common/file';
+import {Attachment} from './common/attachment';
 import {Address} from './common/address';
 import {Tag} from './common/tag';
 import {Company} from './company';
@@ -26,7 +26,7 @@ export class Contact {
   classificationType: EntityClassificationType;
   titleType: ContactTitleType;
   addresses: Address[];
-  attachments: File[];
+  attachments: Attachment[];
   tags: Tag[];
   urls: Url[];
   phones: Phone[];

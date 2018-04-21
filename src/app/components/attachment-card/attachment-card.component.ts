@@ -2,9 +2,7 @@ import {Component, OnInit, AfterViewInit, Input, ElementRef, ViewChild} from '@a
 import * as Dropzone from 'dropzone';
 import * as FileSaver from 'file-saver';
 
-import { File } from '../../classes/common/file';
-import {MatSelect, MatSortable} from '@angular/material';
-import {AttachmentService} from '../../services/attachment.service';
+import { Attachment } from '../../classes/common/attachment';
 import {CardComponent} from '../base/card/card.component';
 
 @Component({
@@ -18,7 +16,7 @@ export class AttachmentCardComponent extends CardComponent implements OnInit, Af
   @Input() entityId: string;
   @Input() resourceId: string;
 
-  attachments: File[];
+  attachments: Attachment[];
 
   fontColor = 'black';
 
@@ -51,7 +49,7 @@ export class AttachmentCardComponent extends CardComponent implements OnInit, Af
     this.getAttachmentsList();
   }
 
-  selectAttachment = (file: File) => {
+  selectAttachment = (file: Attachment) => {
     this.attachmentService.getFile(file.fileId, file.fileType)
       .then(blob => {
           const binaryData = [];

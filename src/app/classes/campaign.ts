@@ -1,6 +1,6 @@
 import {Action} from './action';
 import {Contact} from './contact';
-import {File} from './common/file';
+import {Attachment} from './common/attachment';
 import {Tag} from './common/tag';
 import {ScopeType} from './types/scope-type';
 import {CampaignClassificationType} from './types/campaign-classification-type';
@@ -23,7 +23,7 @@ export class Campaign {
   classificationType: CampaignClassificationType;
   scopeType: ScopeType;
   tags: Tag[];
-  attachments: File[];
+  attachments: Attachment[];
   actions: Action[];
   contacts: Contact[];
 

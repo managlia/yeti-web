@@ -1,4 +1,6 @@
-export class File {
+import {Contact} from '../contact';
+
+export class Attachment {
   fileId;
   fileStoragePath;
   fileName;
@@ -10,7 +12,7 @@ export class File {
   entityId;
   storageDate;
   entityData;
-  uploaderData;
+  uploaderData: Contact;
 
   constructor() {
   }

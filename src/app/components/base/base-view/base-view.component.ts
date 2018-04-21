@@ -11,6 +11,7 @@ import {ActionClassificationTypeService} from '../../../services/action-classifi
 import {ActionService} from '../../../services/action.service';
 import {CampaignClassificationTypeService} from '../../../services/campaign-classification-type.service';
 import {CampaignService} from '../../../services/campaign.service';
+import {ChatterService} from '../../widgets/chatter.service';
 import {CompanyAddressClassificationTypeService} from '../../../services/company-address-classification-type.service';
 import {CompanyClassificationTypeService} from '../../../services/company-classification-type.service';
 import {CompanyOrContactService} from '../../../services/company-or-contact.service';
@@ -87,6 +88,7 @@ export class BaseViewComponent implements OnInit {
     public attachmentService: AttachmentService,
     public campaignClassificationTypeService: CampaignClassificationTypeService,
     public campaignService: CampaignService,
+    public chatterService: ChatterService,
     public companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,
     public companyClassificationTypeService: CompanyClassificationTypeService,
     public companyOrContactService: CompanyOrContactService,
@@ -191,7 +193,6 @@ export class BaseViewComponent implements OnInit {
     contact.tags = _.sortBy(contact.tags, ['name']);
     return contact;
   }
-
 
   readyToSave(): boolean {
     const cardChanged = this.addressIsDirty || this.urlsIsDirty || this.phonesIsDirty

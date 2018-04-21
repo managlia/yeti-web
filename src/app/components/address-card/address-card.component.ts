@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 
 import { AddressClassificationType } from '../../classes/types/address-classification-type';
 import { Address } from '../../classes/common/address';
-import { AddressService } from '../widgets/address.service';
 import * as label from '../labels';
 import {Observable} from 'rxjs/Observable';
 import {CardComponent} from '../base/card/card.component';

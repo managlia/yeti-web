@@ -4,7 +4,7 @@ import {HttpHeaders, HttpResponse} from '@angular/common/http';
 import * as rp from 'request-promise';
 import { catchError, tap } from 'rxjs/operators';
 
-import {File} from '../classes/common/file';
+import {Attachment} from '../classes/common/attachment';
 
 import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
@@ -19,9 +19,9 @@ export class AttachmentService extends BaseService {
 
   cd = 'file'; // 'componentDescription'
 
-  getFileList(): Observable<File[]> {
+  getFileList(): Observable<Attachment[]> {
     this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
-    return this.http.get<File[]>(this.fileListUrl, {
+    return this.http.get<Attachment[]>(this.fileListUrl, {
       headers: BaseService.headers} )
       .pipe(
         tap(files => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
@@ -29,14 +29,14 @@ export class AttachmentService extends BaseService {
       );
   }
 
-  getFileListForEntity( entityType: string, entityId: string ): Observable<File[]> {
+  getFileListForEntity( entityType: string, entityId: string ): Observable<Attachment[]> {
     return this.getFileListByFilter(entityType, entityId);
   }
 
-  getFileListByFilter(entityType: string, entityId: string): Observable<File[]> {
+  getFileListByFilter(entityType: string, entityId: string): Observable<Attachment[]> {
     this.logger.debug(`${this.P}${this.getAllFilterStatement(this.cd)} ${entityId}`);
     const url = `${this.fileUrl}?entityType=${entityType}&entityId=${entityId}`;
-    return this.http.get<File[]>(url, {
+    return this.http.get<Attachment[]>(url, {
       headers: BaseService.headers} )
       .pipe(
         tap(files => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${entityId}`)),

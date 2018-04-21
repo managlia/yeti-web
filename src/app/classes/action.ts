@@ -1,7 +1,7 @@
 import {Contact} from './contact';
 import {ActionClassificationType} from './types/action-classification-type';
 import {ActionClassificationOtherType} from './types/action-classification-other-type';
-import {File} from './common/file';
+import {Attachment} from './common/attachment';
 import {ScopeType} from './types/scope-type';
 import {Tag} from './common/tag';
 import {CalendarEvent} from './calendar-event';
@@ -27,7 +27,7 @@ export class Action {
   classificationOtherType: ActionClassificationOtherType;
   scopeType: ScopeType;
   tags: Tag[];
-  attachments: File[];
+  attachments: Attachment[];
   actionChildren: Action[];
 
   constructor() {

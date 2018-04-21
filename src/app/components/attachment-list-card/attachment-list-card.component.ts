@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import * as FileSaver from 'file-saver';
+import {Attachment} from '../../classes/common/attachment';
+import {Contact} from '../../classes/contact';
+import * as _ from 'lodash';
 
 import * as label from '../labels';
 import {CardComponent} from '../base/card/card.component';
@@ -12,38 +15,43 @@ import {CardComponent} from '../base/card/card.component';
 })
 export class AttachmentListCardComponent extends CardComponent implements OnInit, AfterViewInit {
 
-  @Input() files: File[];
+  @Input() files: Attachment[];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource();
   activeFilter = 'true';
   typeFilter: string;
   textFilter = '';
+  distinctUploaders: Contact[];
+  uploaderFilter;
 
-  displayedColumns = [ 'fileCreateDate', 'fileEntity', 'fileUploader', 'fileLink' ];
+  displayedColumns = [ 'storageDate', 'entityData', 'fileUploader', 'fileType', 'fileName' ];
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   ngOnInit(): void {
-    // this.dataSource.filterPredicate = this.createFilter();
-    // this.dataSource.filter = JSON.stringify({
-    //   general: '',
-    //   entityType: 'all',
-    //   entityId: 'all'
-    // });
-    console.log('the files', this.files);
+    this.dataSource.filterPredicate = this.createFilter();
+    this.dataSource.filter = JSON.stringify({
+      general: '',
+      uploaderFilter: 'all'
+    });
     this.dataSource.data = this.files;
+    this.setDistinctUploaders()
   }
+
+  setDistinctUploaders = () => {
+    const uploaders = this.files.map( attachment => attachment.uploaderData )
+    this.distinctUploaders = _.uniqWith(uploaders, _.isEqual);
+  };
 
   applyFilters() {
     this.textFilter = this.textFilter.trim(); // Remove whitespace
     this.textFilter = this.textFilter.toLowerCase(); // Datasource defaults to lowercase matches
     const filterValues = {
       general: this.textFilter,
-      activeStatus: this.activeFilter,
-      typeStatus: this.typeFilter ? this.typeFilter : 'all',
+      uploaderFilter: this.uploaderFilter ? this.uploaderFilter : 'all'
     };
     this.dataSource.filter = JSON.stringify(filterValues);
   }
@@ -51,11 +59,9 @@ export class AttachmentListCardComponent extends CardComponent implements OnInit
   createFilter(): (data: any, filter: string) => boolean {
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
-      return (
-        data.fileType.toString().toLowerCase().indexOf(searchTerms.general) !== -1
-        || data.fileName.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
-        && (searchTerms.entityType === 'all' || data.entityType === searchTerms.entityType)
-        && (searchTerms.entityId === 'all' || data.entityId === searchTerms.entityId)
+      return (data.fileName.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
+        && (searchTerms.uploaderFilter === 'all' || (data.uploaderData &&
+          (data.uploaderData.contactId === searchTerms.uploaderFilter)))
     };
     return filterFunction;
   }

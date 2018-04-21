@@ -132,6 +132,7 @@ import { UrlService } from './components/widgets/url.service';
 import { PhoneService } from './components/widgets/phone.service';
 import { ActionQuickEditService } from './components/widgets/action-quick-edit.service';
 import { CampaignQuickEditService } from './components/widgets/campaign-quick-edit.service';
+import { ChatterService } from './components/widgets/chatter.service';
 
 import { ActionClassificationOtherTypeService } from './services/action-classification-other-type.service';
 import { ActionClassificationTypeService } from './services/action-classification-type.service';
@@ -223,6 +224,7 @@ import { AttachmentDetailsComponent } from './views/attachment-details/attachmen
 import { AttachmentListCardComponent } from './components/attachment-list-card/attachment-list-card.component';
 import { ActionSummaryPipe } from './classes/pipes/action-summary.pipe';
 import { CampaignSummaryPipe } from './classes/pipes/campaign-summary.pipe';
+import { ChatterDetailsComponent } from './components/widgets/chatter-details/chatter-details.component';
 
 @NgModule({
   imports: [
@@ -335,10 +337,11 @@ import { CampaignSummaryPipe } from './classes/pipes/campaign-summary.pipe';
     AttachmentDetailsComponent,
     ActionSummaryPipe,
     CampaignSummaryPipe,
+    ChatterDetailsComponent,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,
-    ActionQuickEditService, CampaignQuickEditService,
+    ChatterService, ActionQuickEditService, CampaignQuickEditService,
     ActionService, EmailService, CampaignService, ContactService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
     ActionClassificationOtherTypeService, CompanyUrlService, CompanyUrlTypeService, ContactUrlService, ContactUrlTypeService,
@@ -353,6 +356,6 @@ import { CampaignSummaryPipe } from './classes/pipes/campaign-summary.pipe';
     }],
   bootstrap: [ AppComponent ],
   entryComponents: [AddressDetailsComponent, TagDetailsComponent, DateTimeDetailsComponent,
-                  ActionQuickEditComponent, CampaignQuickEditComponent, UrlDetailsComponent, PhoneDetailsComponent]
+                  ActionQuickEditComponent, CampaignQuickEditComponent, ChatterDetailsComponent, UrlDetailsComponent, PhoneDetailsComponent]
 })
 export class AppModule { }
