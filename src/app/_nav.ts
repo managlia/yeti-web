@@ -32,5 +32,10 @@ export const navigation = [
     name: 'Email',
     url: '/email',
     icon: 'icon-star'
+  },
+  {
+    name: 'Attachments',
+    url: '/attachment',
+    icon: 'icon-star'
   }
 ];

@@ -76,8 +76,8 @@ import {
 // yeti dashboard
 import { DashboardLandingComponent } from './views/dashboard-landing/dashboard-landing.component';
 
-import { ActionListCardComponent } from './components/action-list-card/action-list-card.component';
 import { CampaignListCardComponent } from './components/campaign-list-card/campaign-list-card.component';
+import { ActionListCardComponent } from './components/action-list-card/action-list-card.component';
 
 // yeti company
 import { CompanyDetailsComponent } from './views/company-details/company-details.component';
@@ -219,6 +219,10 @@ import { AdderComponent } from './components/base/adder/adder.component';
 import { BaseViewComponent } from './components/base/base-view/base-view.component';
 import { DatespaceComponent } from './components/datespace/datespace.component';
 import { NoteListCardComponent } from './components/note-list-card/note-list-card.component';
+import { AttachmentDetailsComponent } from './views/attachment-details/attachment-details.component';
+import { AttachmentListCardComponent } from './components/attachment-list-card/attachment-list-card.component';
+import { ActionSummaryPipe } from './classes/pipes/action-summary.pipe';
+import { CampaignSummaryPipe } from './classes/pipes/campaign-summary.pipe';
 
 @NgModule({
   imports: [
@@ -285,6 +289,7 @@ import { NoteListCardComponent } from './components/note-list-card/note-list-car
     DashboardLandingComponent,
     ActionListCardComponent,
     CampaignListCardComponent,
+    AttachmentListCardComponent,
 
     CompanyDetailsComponent,
     ActionCardComponent,
@@ -327,6 +332,9 @@ import { NoteListCardComponent } from './components/note-list-card/note-list-car
     BaseViewComponent,
     DatespaceComponent,
     NoteListCardComponent,
+    AttachmentDetailsComponent,
+    ActionSummaryPipe,
+    CampaignSummaryPipe,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,

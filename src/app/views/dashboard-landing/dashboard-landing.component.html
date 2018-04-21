@@ -66,19 +66,22 @@
 
               <ng-template #actionAndCampaign>
                 <div class="col-md-6">
-                  <app-action-list-card [companyId]="loadedCompany?.companyId"
-                                        [contactId]="loadedContact?.contactId"></app-action-list-card>
-                </div>
-                <div class="col-md-6">
                   <app-campaign-list-card [companyId]="loadedCompany?.companyId"
                                           [contactId]="loadedContact?.contactId"></app-campaign-list-card>
+                </div>
+                <div class="col-md-6">
+                  <app-action-list-card [companyId]="loadedCompany?.companyId"
+                                        [contactId]="loadedContact?.contactId"></app-action-list-card>
                 </div>
               </ng-template>
 
               <ng-template #actionOnly>
-                <div class="col-md-12">
-                  <app-action-list-card></app-action-list-card>
-                </div>
+                  <div class="col-md-6">
+                    <app-campaign-list-card></app-campaign-list-card>
+                  </div>
+                  <div class="col-md-6">
+                    <app-action-list-card></app-action-list-card>
+                  </div>
               </ng-template>
 
             </div>

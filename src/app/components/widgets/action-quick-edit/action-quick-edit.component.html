@@ -1,5 +1,13 @@
 <div class="modal-header">
-  <h4 class="modal-title">Action quick edit</h4>
+  <div class="row" style="width:100%;">
+    <div class="col-6">
+      <h4 class="modal-title">Action quick edit</h4>
+    </div>
+    <div class="col-6" style="text-align: right;">
+      <app-datespace [entity]="action"></app-datespace>
+    </div>
+  </div>
+
 </div>
 <div class="modal-body">
   <div *ngIf="action" id="quick-action-edit" class="animated fadeIn">
@@ -60,7 +68,7 @@
         <mat-form-field style="width:100%">
                <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
                          matAutosizeMinRows="8"
-                         matAutosizeMaxRows="10" [(ngModel)]="action.description"></textarea>
+                         matAutosizeMaxRows="8" [(ngModel)]="action.description"></textarea>
         </mat-form-field>
 
       </div>

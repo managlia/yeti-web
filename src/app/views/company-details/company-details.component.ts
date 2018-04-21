@@ -59,6 +59,7 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
         this.company.classificationType.classificationTypeId, [Validators.required]),
       externalId: new FormControl(this.company.externalId, [Validators.required]),
       description:  new FormControl(this.company.description, [Validators.required]),
+      activeCompany:  new FormControl(this.company.active)
     });
     this.entityLoaded = true;
   }
@@ -67,11 +68,13 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
   get classificationTypeId() { return this.entityFormGroup.get('classificationTypeId'); }
   get externalId() { return this.entityFormGroup.get('externalId'); }
   get description() { return this.entityFormGroup.get('description'); }
+  get activeCompany() { return this.entityFormGroup.get('activeCompany'); }
 
   copyFormToCompany = () => {
     this.company.name = this.companyName.value;
     this.company.description = this.description.value;
     this.company.externalId = this.externalId.value;
+    this.company.active = this.activeCompany.value;
     this.company.classificationType = this.classificationTypes.filter(
       e => e.classificationTypeId === this.classificationTypeId.value)[0];
   }

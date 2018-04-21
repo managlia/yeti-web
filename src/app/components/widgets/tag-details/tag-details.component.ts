@@ -89,7 +89,7 @@ export class TagDetailsComponent implements OnInit {
       }
       this.input.nativeElement.value = '';
 
-      this.input.nativeElement.focus();
+      // this.input.nativeElement.focus();
       this.autoComplete.closePanel();
     }
   }

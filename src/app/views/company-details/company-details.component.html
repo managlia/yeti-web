@@ -101,6 +101,13 @@
 
                       </div>
                       <div class="col-4">
+
+                        <mat-radio-group name="activeCompany" formControlName="activeCompany">
+                          <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+                          <mat-radio-button [value]="false"> Inactive</mat-radio-button>
+                        </mat-radio-group>
+
+                        <app-datespace [entity]="company"></app-datespace>
                       </div>
                     </div>
                     <div *ngIf="company?.classificationType?.classificationTypeId === 'PR'">
@@ -122,6 +129,7 @@
                       [addressTypes]="addressClassificationTypes"
                       (addressesChangedInCard)="addressesChanged($event)"
                     ></app-address-card>
+
                   </div>
                   <div class="col-6">
                     <app-phone-card
@@ -147,7 +155,6 @@
             <!--<div class="col-4" style="background-color: chartreuse;">-->
             <div class="col-4">
 
-              <app-datespace [entity]="company"></app-datespace>
 
               <app-tag-card
                 [associationSuccessful]="companyFlag"

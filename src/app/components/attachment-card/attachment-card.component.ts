@@ -52,8 +52,6 @@ export class AttachmentCardComponent extends CardComponent implements OnInit, Af
   }
 
   selectAttachment = (file: File) => {
-    console.log('TODO: open this file: ', file);
-    const url = `http://localhost:5001/yetix/files/${file.fileId}`;
     this.attachmentService.getFile(file.fileId, file.fileType)
       .then(blob => {
           const binaryData = [];

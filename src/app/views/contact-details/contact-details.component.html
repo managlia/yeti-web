@@ -129,6 +129,14 @@
                   </mat-form-field>
 
 
+                  <mat-radio-group name="activeContact" formControlName="activeContact">
+                    <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+                    <mat-radio-button [value]="false"> Inactive</mat-radio-button>
+                  </mat-radio-group>
+
+
+                  <app-datespace [entity]="contact"></app-datespace>
+
 
                 </div>
 
@@ -150,23 +158,22 @@
                     [phoneTypes]="phoneTypes"
                     (phonesUpdated)="updatePhones($event)"
                   ></app-phone-card>
-                </div>
+                  <app-links-card
+                    [associationSuccessful]="campaignFlag"
+                    [associationFailure]="campaignFailureFlag"
+                    [urls]="contact.urls"
+                    [urlTypes]="urlTypes"
+                    (linksUpdated)="updateLinks($event)"
+                  ></app-links-card>
 
+                </div>
               </div>
 
 
             </div>
             <div class="col-4">
 
-              <app-datespace [entity]="contact"></app-datespace>
 
-              <app-links-card
-                [associationSuccessful]="campaignFlag"
-                [associationFailure]="campaignFailureFlag"
-                [urls]="contact.urls"
-                [urlTypes]="urlTypes"
-                (linksUpdated)="updateLinks($event)"
-              ></app-links-card>
               <app-tag-card
                 [associationSuccessful]="campaignFlag"
                 [associationFailure]="campaignFailureFlag"

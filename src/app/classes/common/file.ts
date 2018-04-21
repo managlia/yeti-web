@@ -9,6 +9,8 @@ export class File {
   entityType;
   entityId;
   storageDate;
+  entityData;
+  uploaderData;
 
   constructor() {
   }

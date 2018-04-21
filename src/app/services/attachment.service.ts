@@ -8,14 +8,26 @@ import {File} from '../classes/common/file';
 
 import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
+import {Note} from '../classes/note';
 
 @Injectable()
 export class AttachmentService extends BaseService {
 
 
   fileUrl = ServiceConstants.FILE_URL;
+  fileListUrl = ServiceConstants.FILE_LIST_URL;
 
   cd = 'file'; // 'componentDescription'
+
+  getFileList(): Observable<File[]> {
+    this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
+    return this.http.get<File[]>(this.fileListUrl, {
+      headers: BaseService.headers} )
+      .pipe(
+        tap(files => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
+      );
+  }
 
   getFileListForEntity( entityType: string, entityId: string ): Observable<File[]> {
     return this.getFileListByFilter(entityType, entityId);

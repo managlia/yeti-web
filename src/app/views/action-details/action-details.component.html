@@ -1,6 +1,6 @@
 <div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
   <div class="row">
-    <div class="col-6"><!-- first column -->
+    <div class="col-9"><!-- first column -->
 
       <div *ngIf="entity">
         <div class="col-sm-12 col-md-12">
@@ -23,7 +23,7 @@
         </div>
       </div><!--/.col-->
 
-      <div class="card">
+      <div class="card" style="min-width:850px;">
         <div class="card-header" [style.backgroundColor]="readyToSaveColor()">
           <strong>Action Details</strong>
         </div>
@@ -32,11 +32,11 @@
 
             <!--<div class="row" style="background-color: red;">-->
             <div class="row">
-              <div class="col-6">
+              <div class="col-5">
 
 
                 <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
-                  <input matInput formControlName="actionName" placeholder="Action Name">
+                  <input matInput formControlName="actionName" placeholder="Action Name" tabindex="1">
                   <mat-error *ngIf="actionName.hasError('required')">
                    Action name is required.
                   </mat-error>
@@ -54,9 +54,31 @@
                   </mat-error>
                 </mat-form-field>
 
+                <mat-form-field style="width:90%">
+                  <input matInput
+                         formControlName="targetValuation"
+                         placeholder="Target Valuation"
+                  >
+                </mat-form-field>
+                <div  style="width:90%"><app-simple-date-picker
+                    [theDate]="action.targetCompletionDate"
+                    [keyPhrase]="targetStatement"
+                ></app-simple-date-picker></div>
+
+                <mat-form-field style="width:90%">
+                  <input matInput
+                         formControlName="actualValuation"
+                         placeholder="Actual Valuation"
+                  >
+                </mat-form-field>
+                <div  style="width:90%"><app-simple-date-picker
+                  [theDate]="action.actualCompletionDate"
+                  [keyPhrase]="actualStatement"
+                ></app-simple-date-picker></div>
+
 
               </div>
-              <div class="col-6">
+              <div class="col-3">
                 <mat-form-field  style="width:90%; padding-top:7px; padding-bottom:7px;">
                   <mat-select
                     placeholder="Action Type"
@@ -100,56 +122,20 @@
                     Action scope is required.
                   </mat-error>
                 </mat-form-field>
-              </div>
-            </div>
+
+                <mat-radio-group name="activeAction" formControlName="activeAction">
+                  <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+                  <mat-radio-button [value]="false"> Closed</mat-radio-button>
+                </mat-radio-group>
 
 
-            <div class="row">
-              <div class="col-6">
-                <div class="card" style="min-width:350px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
-                <div class="card-header">
-                    <strong>Target valuation</strong>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <mat-form-field style="width:100%">
 
-
-                          <input matInput
-                                 formControlName="targetValuation"
-                                 placeholder="Target Valuation"
-                          >
-
-                        </mat-form-field>
-                        <app-simple-date-picker [theDate]="action.targetCompletionDate"
-                                                [keyPhrase]="targetStatement"></app-simple-date-picker>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="card" style="min-width:350px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
-                  <div class="card-header">
-                    <strong>Actual valuation</strong>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <mat-form-field style="width:100%">
-                          <input matInput
-                                 formControlName="actualValuation"
-                                 placeholder="Actual Valuation"
-                          >
-                        </mat-form-field>
-                        <app-simple-date-picker [theDate]="action.actualCompletionDate"
-                                                [keyPhrase]="actualStatement"></app-simple-date-picker>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-6">
                 <app-datespace [entity]="action"></app-datespace>
+
+              </div>
+
+
+              <div class="col-4">
 
                 <app-tag-card #tagsCard id="tagsCard"
                   [associationSuccessful]="actionFlag"
@@ -161,8 +147,8 @@
                                       [resourceId]="dataStore.userId"
                 ></app-attachment-card>
               </div>
-            </div>
 
+            </div>
 
             <div class="row">
               <div class="col-6" style="text-align:left">
@@ -178,16 +164,16 @@
       </div>
 
 
-      <app-note-list-card [entityId]="action.actionId"
+      <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
                          entityType="action"
                          [resourceId]="dataStore.userId"
-      ></app-note-list-card>
+      ></app-note-list-card></div>
 
 
 
 
     </div>
-    <div class="col-3"><!-- second column -->
+    <div class="col-3"><!-- third column -->
       <!--beneath main content area-->
       <div *ngIf="actionId">
         <app-campaign-card [actionId]="action.actionId"
@@ -196,11 +182,6 @@
                            (onCampaignAssociatedToEntity)="onCampaignAssociatedToEntity($event)"
                            (onCampaignFlaggedForRemoval)="onCampaignFlaggedForRemoval($event)"
         ></app-campaign-card>
-      </div>
-    </div>
-    <div class="col-3"><!-- third column -->
-      <!--beneath main content area-->
-      <div *ngIf="actionId">
         <app-company-card [actionId]="action.actionId"
                           [associationSuccessful]="companyFlag"
                           (onCompanyAssociatedToEntity)="onCompanyAssociatedToEntity($event)"

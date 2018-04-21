@@ -23,6 +23,17 @@
                 <mat-table #table [dataSource]="dataSource" matSort>
 
                   <!-- Name Column -->
+                  <ng-container matColumnDef="createDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Create Date </mat-header-cell>
+                    <mat-cell *matCellDef="let campaign"> {{campaign.createDate | date:'shortDate'}} </mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="targetCloseDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Target Close Date </mat-header-cell>
+                    <mat-cell *matCellDef="let campaign"> {{campaign.targetCompletionDate | date:'shortDate'}} </mat-cell>
+                  </ng-container>
+
+                  <!-- Name Column -->
                   <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{label.campaign.column.name}} </mat-header-cell>
                     <mat-cell *matCellDef="let campaign"> {{campaign.name}} </mat-cell>
@@ -36,18 +47,16 @@
 
                   <!-- type Column -->
                   <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef>
-
-                  <mat-select [(placeholder)]="label.campaign.column.type"
-                              [(ngModel)]="typeFilter"
-                              (selectionChange)="applyFilters()">
-                    <mat-option value="all">All Types</mat-option>
-                    <mat-option *ngFor="let classificationType of classificationTypes" [value]="classificationType.campaignClassificationTypeId">
-                      {{ classificationType.name }}
-                    </mat-option>
-                  </mat-select>
-
-                </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef>
+                      <mat-select [(placeholder)]="label.campaign.column.type"
+                                [(ngModel)]="typeFilter"
+                                (selectionChange)="applyFilters()">
+                        <mat-option value="all">All Types</mat-option>
+                        <mat-option *ngFor="let classificationType of classificationTypes" [value]="classificationType.campaignClassificationTypeId">
+                          {{ classificationType.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-header-cell>
                     <mat-cell *matCellDef="let campaign"> {{campaign.classificationType.name}} </mat-cell>
                   </ng-container>
 
@@ -64,8 +73,8 @@
                   </mat-header-cell>
                   <mat-cell *matCellDef="let campaign"> {{campaign.active | activeConversion}}</mat-cell>
                 </ng-container>
-                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                  <mat-row *matRowDef="let campaign; columns: displayedColumns;"
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let campaign; columns: displayedColumns;"
                            [style.background-color]="bgColor"
                            (mouseover)="onConsideringCampaign(event,this)"
                            (mouseout)="onUnconsideringCampaign(event,this)"
@@ -74,7 +83,7 @@
                 </mat-table>
 
             <mat-paginator [length]="100"
-                           [pageSize]="10"
+                           [pageSize]="5"
                            [pageSizeOptions]="[5, 10, 25, 100]">
             </mat-paginator>
 

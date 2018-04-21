@@ -19,6 +19,7 @@ export class Action {
   description: string;
   name: string;
   targetValuation: string;
+  createDate: Date;
   targetCompletionDate: Date;
   actualValuation: string;
   actualCompletionDate: Date;

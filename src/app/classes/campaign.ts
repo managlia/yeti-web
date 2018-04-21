@@ -14,6 +14,7 @@ export class Campaign {
   active: boolean;
   deleteable: boolean;
   restrictedToOwner: boolean;
+  createDate: Date;
   deactivationDate: Date;
   actualCompletionDate: Date;
   actualValuation: string;

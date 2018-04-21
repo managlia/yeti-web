@@ -12,11 +12,11 @@
 
               <form [formGroup]="noteFormGroup" novalidate>
                 <div class="row">
-                  <div class="col-4" style="background-color: seashell;">
+                  <div class="col-4">
 
 
                     <mat-form-field style="width:99%; padding-top:7px; padding-bottom:7px;">
-                      <input matInput formControlName="noteDescription" placeholder="Enter subject">
+                      <input matInput formControlName="noteDescription" placeholder="Enter subject" tabindex="1" autofocus>
                       <mat-error *ngIf="noteDescription.hasError('required')">
                         Please enter a subject before saving.
                       </mat-error>
@@ -25,7 +25,7 @@
 
 
                   </div>
-                  <div class="col-8" style="background-color: lightyellow;">
+                  <div class="col-8">
 
 
 
@@ -34,7 +34,7 @@
                            formControlName="noteValue"
                            placeholder="Enter notes" matTextareaAutosize
                            matAutosizeMinRows="10"
-                           matAutosizeMaxRows="25"></textarea>
+                           matAutosizeMaxRows="25"  tabindex="2"></textarea>
                       <mat-error *ngIf="noteValue.hasError('required')">
                         Please enter some notes before saving.
                       </mat-error>
@@ -46,12 +46,12 @@
                   </div>
                 </div>
                 <div class="row" style="margin-bottom:40px;">
-                  <div class="col-6" style="background-color: cadetblue; text-align: left">
-                    <button type="button" class="btn btn-secondary btn-sm" (click)="resetForm()">Cancel</button>
+                  <div class="col-6" style="text-align: left">
+                    <button type="button" class="btn btn-secondary btn-sm" (click)="resetForm()" tabindex="-1">Cancel</button>
                   </div>
-                  <div class="col-6" style="background-color: lightgreen; text-align: right">
+                  <div class="col-6" style="text-align: right">
                     <div (mouseenter)="possiblyTriggerErrorMessages()"
-                    ><button type="button" class="btn btn-primary btn-sm" (click)="addNote()"
+                    ><button type="button" class="btn btn-primary btn-sm" (click)="addNote()"  tabindex="3"
                              [disabled]="noteFormGroup.invalid">Submit</button></div>
                   </div>
                 </div>

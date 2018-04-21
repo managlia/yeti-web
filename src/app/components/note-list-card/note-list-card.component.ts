@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import { MatPaginator, MatSort, MatSortable, MatTableDataSource } from '@angular/material';
 
 import { NoteService } from '../../services/note.service';
@@ -21,6 +21,7 @@ export class NoteListCardComponent implements OnInit, AfterViewInit {
   notes: Note[] = [ new Note() ];
   viewNoteForm = false;
   noteFormGroup: FormGroup;
+
 
   dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;

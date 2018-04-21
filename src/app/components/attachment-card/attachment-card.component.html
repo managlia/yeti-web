@@ -1,13 +1,10 @@
 <script src="../../../../node_modules/dropzone"></script>
 
-<div class="card">
+<div class="card" style="min-width:250px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
   <div class="card-header">
     <strong>Attachments</strong>
   </div>
   <div class="card-body">
-
-
-
     <div *ngFor="let anAttachment of attachments">
 
       <div [innerHtml]="anAttachment | attachmentSummary"
@@ -15,7 +12,6 @@
            (mouseout)="onUnconsideringEntity(event,this)"
            (click)="selectAttachment(anAttachment)"
       style="padding-bottom:18px; font-weight:bold; text-align: center;"></div>
-
     </div>
 
     <div #theDropZone style="background-color: lightsteelblue; padding: 10px 10px 10px 10px; text-align: center;">

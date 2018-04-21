@@ -34,6 +34,7 @@ import {PhoneType} from '../../../classes/types/phone-type';
 import {ScopeTypeService} from '../../../services/scope-type.service';
 import {UrlType} from '../../../classes/types/url-type';
 import * as label from '../../labels';
+import {AttachmentService} from '../../../services/attachment.service';
 
 @Component({
   selector: 'app-base-view',
@@ -83,6 +84,7 @@ export class BaseViewComponent implements OnInit {
     public actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
     public actionClassificationTypeService: ActionClassificationTypeService,
     public actionService: ActionService,
+    public attachmentService: AttachmentService,
     public campaignClassificationTypeService: CampaignClassificationTypeService,
     public campaignService: CampaignService,
     public companyAddressClassificationTypeService: CompanyAddressClassificationTypeService,

@@ -1,6 +1,4 @@
-<div *ngIf="entity.createDate" style="text-align:center; width:100%; padding-top:7px; padding-bottom:7px; font-weight: bold; color: deeppink;">
-  Added on: {{ entity.createDate | date:'short' }}
-</div>
-<div *ngIf="entity.lastModifiedDate" style="text-align:center; width:100%; padding-top:7px; padding-bottom:17px; font-weight: bold; color: deeppink;">
-  Last updated on: {{ entity.lastModifiedDate | date:'short' }}
-</div>
+<div *ngIf="entity.createDate" style="text-align:center; width:100%; color: deeppink;"
+>Added: {{ entity.createDate | date:'short' }}</div>
+<div *ngIf="entity.lastModifiedDate" style="text-align:center; width:100%; color: deeppink;"
+>Last update: {{ entity.lastModifiedDate | date:'short' }}</div>

@@ -9,7 +9,7 @@ export class Company {
   name: string;
   description: string;
   externalId: string;
-  isActive: boolean;
+  active: boolean;
   createDate: Date;
   deactivationDate: Date;
   lastModifiedDate: Date;

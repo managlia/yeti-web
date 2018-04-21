@@ -59,7 +59,8 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
       actionClassificationOtherTypeId: new FormControl(this.action.classificationOtherType.actionClassificationOtherTypeId),
       scopeTypeId: new FormControl(this.action.scopeType.scopeTypeId, [Validators.required]),
       targetValuation: new FormControl(this.action.targetValuation),
-      actualValuation: new FormControl(this.action.actualValuation)
+      actualValuation: new FormControl(this.action.actualValuation),
+      activeAction: new FormControl(this.action.active)
     });
     this.disableOther();
     this.entityLoaded = true;
@@ -72,6 +73,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   get scopeTypeId() { return this.entityFormGroup.get('scopeTypeId'); }
   get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
   get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
+  get activeAction() { return this.entityFormGroup.get('activeAction'); }
 
   copyFormToAction = () => {
     if ( this.actionClassificationTypeId.value !== 'OT' ) {
@@ -81,6 +83,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
     this.action.description = this.actionDescription.value;
     this.action.targetValuation = this.targetValuation.value;
     this.action.actualValuation = this.actualValuation.value;
+    this.action.active = this.activeAction.value;
     this.action.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.action.classificationType = this.classificationTypes.filter(

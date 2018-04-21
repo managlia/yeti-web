@@ -64,6 +64,7 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
       description:  new FormControl(this.contact.description, [Validators.required]),
       contactTitleTypeId: new FormControl(this.contact.titleType.contactTitleTypeId),
       dob:  new FormControl(this.contact.dob),
+      activeContact:  new FormControl(this.contact.active)
     });
     this.entityLoaded = true;
   }
@@ -75,6 +76,7 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
   get description() { return this.entityFormGroup.get('description'); }
   get contactTitleTypeId() { return this.entityFormGroup.get('contactTitleTypeId'); }
   get dob() { return this.entityFormGroup.get('dob'); }
+  get activeContact() { return this.entityFormGroup.get('activeContact'); }
 
   copyFormToContact = () => {
 
@@ -83,6 +85,7 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
     this.contact.description = this.description.value;
     this.contact.contactEmailAddress = this.contactEmailAddress.value;
     this.contact.dob = this.dob.value;
+    this.contact.active = this.activeContact.value;
     this.contact.classificationType = this.classificationTypes.filter(
       e => e.classificationTypeId === this.classificationTypeId.value)[0];
     this.contact.titleType = this.titleTypes.filter(

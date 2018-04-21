@@ -4,8 +4,8 @@ export class ServiceConstants {
 
   /* Until env variables are externalized && CAMEL... START */
   private static DEV_HOST = 'http://localhost:8081';
-  private static DEV_EMAIL_HOST = 'http://localhost:8082';
-  private static DEV_NOTES_HOST = 'http://localhost:5001';
+  private static DEV_EMAIL_HOST = 'http://localhost:5002';
+  private static DEV_NOTES_HOST = 'http://localhost:5002';
   private static HOST = ServiceConstants.DEV_HOST;
   private static EMAIL_HOST = ServiceConstants.DEV_EMAIL_HOST;
   /* Until env variables are externalized && CAMEL... END */
@@ -49,5 +49,6 @@ export class ServiceConstants {
 
   public static NOTE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/notes`;
   public static FILE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/files`;
+  public static FILE_LIST_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetio/files`;
 
 }

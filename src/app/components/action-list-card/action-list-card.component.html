@@ -21,6 +21,19 @@
             </div>
             <mat-table #table [dataSource]="dataSource" matSort>
 
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="createDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Create Date </mat-header-cell>
+                <mat-cell *matCellDef="let action"> {{action.createDate | date:'shortDate'}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="targetCloseDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Target Close Date </mat-header-cell>
+                <mat-cell *matCellDef="let action"> {{action.targetCompletionDate | date:'shortDate'}} </mat-cell>
+              </ng-container>
+
+
               <!-- Basic column: Name Column -->
               <ng-container matColumnDef="name">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.name}}</mat-header-cell>
@@ -135,7 +148,7 @@
               </ng-template>
             </mat-table>
             <mat-paginator [length]="100"
-                           [pageSize]="10"
+                           [pageSize]="5"
                            [pageSizeOptions]="[5, 10, 25, 100]">
             </mat-paginator>
           </div>

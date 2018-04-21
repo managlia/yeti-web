@@ -56,7 +56,8 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
       campaignClassificationTypeId: new FormControl(this.campaign.classificationType.campaignClassificationTypeId, [Validators.required]),
       scopeTypeId: new FormControl(this.campaign.scopeType.scopeTypeId, [Validators.required]),
       targetValuation: new FormControl(this.campaign.targetValuation),
-      actualValuation: new FormControl(this.campaign.actualValuation)
+      actualValuation: new FormControl(this.campaign.actualValuation),
+      activeCampaign: new FormControl(this.campaign.active),
     });
     this.entityLoaded = true;
   };
@@ -67,12 +68,14 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   get scopeTypeId() { return this.entityFormGroup.get('scopeTypeId'); }
   get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
   get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
+  get activeCampaign() { return this.entityFormGroup.get('activeCampaign'); }
 
   copyFormToCampaign = () => {
     this.campaign.name = this.campaignName.value;
     this.campaign.description = this.campaignDescription.value;
     this.campaign.targetValuation = this.targetValuation.value;
     this.campaign.actualValuation = this.actualValuation.value;
+    this.campaign.active = this.activeCampaign.value;
     this.campaign.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.campaign.classificationType = this.classificationTypes.filter(

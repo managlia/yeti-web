@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import chalk from 'chalk';
 
 import {ActionService} from '../../../services/action.service';
-import * as label from '../../labels';
+import {AttachmentService} from '../../../services/attachment.service';
 import {CampaignService} from '../../../services/campaign.service';
 import {CompanyService} from '../../../services/company.service';
 import {CompanyOrContactService} from '../../../services/company-or-contact.service';
@@ -17,8 +17,7 @@ import {TagService} from '../../../services/tag.service';
 import {TaggingService} from '../../widgets/tagging.service';
 import {DataStore} from '../../../classes/data-store';
 import {AddressService} from '../../widgets/address.service';
-import {Company} from '../../../classes/company';
-import {AttachmentService} from '../../../services/attachment.service';
+import * as label from '../../labels';
 
 @Component({
   selector: 'app-card',

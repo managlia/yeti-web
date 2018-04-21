@@ -38,8 +38,8 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
   scopeTypes: ScopeType[];
   public readonly label = label;
   fullEdit = false;
-  shortList = ['name', 'description', 'type'];
-  fullList = ['name', 'description', 'type', 'deleteAction', 'scope', 'active'];
+  shortList = ['createDate', 'targetCloseDate', 'name', 'description', 'type'];
+  fullList = ['createDate', 'targetCloseDate', 'name', 'description', 'type', 'deleteAction', 'scope', 'active'];
   displayedColumns: string[] = null;
 
   constructor(

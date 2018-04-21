@@ -31,7 +31,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
   classificationTypes: CampaignClassificationType[];
   scopeTypes: ScopeType[];
   public readonly label = label;
-  displayedColumns = ['name', 'description', 'type', 'active'];
+  displayedColumns = [ 'createDate', 'targetCloseDate', 'name', 'description', 'type', 'active'];
 
   constructor(
     private campaignService: CampaignService,
@@ -62,7 +62,13 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
     } else if (this.contactId) {
       this.campaignService.getCampaignListByContact( this.contactId )
         .subscribe(campaigns => this.dataSource.data = campaigns);
+    } else {
+      this.campaignService.getCampaignList()
+        .subscribe(campaigns => this.dataSource.data = campaigns);
     }
+
+
+
   }
 
   addNewCampaign(): void {

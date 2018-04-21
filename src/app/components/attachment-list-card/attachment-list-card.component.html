@@ -1,0 +1,84 @@
+<div *ngIf="this.dataSource.data">
+  <div id="search-component" class="animated fadeIn">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <strong>Uploads</strong>
+          </div>
+          <div class="card-body">
+
+            <div class="row">
+              <div class="col-9">
+                <mat-form-field>
+                  <input matInput [(ngModel)]="textFilter" (keyup)="applyFilters()" placeholder="Filter">
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="fileCreateDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Storage Date </mat-header-cell>
+                <mat-cell *matCellDef="let aFile"> {{aFile.storageDate | date:'shortDate'}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="fileEntity">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Linked To </mat-header-cell>
+                <mat-cell *matCellDef="let aFile">
+                  <div (mouseover)="onConsideringEntity(event,this)"
+                       (mouseout)="onUnconsideringEntity(event,this)"
+                       (click)="selectEntity(aFile)">
+                          <div *ngIf="aFile.entityType === 'action'"><b>Action: </b><div [innerHtml]="aFile.entityData | actionSummary"></div></div>
+                          <div *ngIf="aFile.entityType === 'campaign'"><b>Campaign: </b><div [innerHtml]="aFile.entityData | campaignSummary"></div></div>
+                          <div *ngIf="aFile.entityType === 'company'"><b>Company: </b><div [innerHtml]="aFile.entityData | companySummary"></div></div>
+                          <div *ngIf="aFile.entityType === 'contact'"><b>Contact: </b><div [innerHtml]="aFile.entityData | contactSummary"></div></div>
+                          Is active: {{aFile.entityData.active}}
+                  </div>
+
+                </mat-cell>
+              </ng-container>
+
+
+              <!-- Name Column -->
+              <ng-container matColumnDef="fileUploader">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Uploader </mat-header-cell>
+                <mat-cell *matCellDef="let aFile">
+                  <div *ngIf="aFile.uploaderData">
+                    <div (mouseover)="onConsideringEntity(event,this)"
+                         (mouseout)="onUnconsideringEntity(event,this)"
+                         (click)="selectUploader(aFile)"><div [innerHtml]="aFile.uploaderData | contactSummary"></div></div>
+                  </div>
+                </mat-cell>
+              </ng-container>
+
+              <!-- description Column -->
+              <ng-container matColumnDef="fileLink">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Link to Download </mat-header-cell>
+                <mat-cell *matCellDef="let aFile">
+
+                  <div [innerHtml]="aFile | attachmentSummary"
+                       (mouseover)="onConsideringEntity(event,this)"
+                       (mouseout)="onUnconsideringEntity(event,this)"
+                       (click)="selectAttachment(aFile)"></div>
+
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let aFile; columns: displayedColumns;"></mat-row>
+            </mat-table>
+
+            <mat-paginator [length]="100"
+                           [pageSize]="25"
+                           [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

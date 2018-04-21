@@ -6,6 +6,7 @@ import {ContactDetailsComponent} from './views/contact-details/contact-details.c
 import {CampaignDetailsComponent} from './views/campaign-details/campaign-details.component';
 import {ActionDetailsComponent} from './views/action-details/action-details.component';
 import {EmailDetailsComponent} from './views/email-details/email-details.component';
+import {AttachmentDetailsComponent} from './views/attachment-details/attachment-details.component';
 
 // Import Containers
 import {
@@ -83,16 +84,20 @@ export const routes: Routes = [
         component: CampaignDetailsComponent
       },
       {
+        path: 'attachment',
+        component: AttachmentDetailsComponent
+      },
+      {
         path: 'action',
+        component: ActionDetailsComponent
+      },
+      {
+        path: 'action/:id',
         component: ActionDetailsComponent
       },
       {
         path: 'email',
         component: EmailDetailsComponent
-      },
-      {
-        path: 'action/:id',
-        component: ActionDetailsComponent
       },
       {
         path: 'email/:id',
