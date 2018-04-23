@@ -23,9 +23,25 @@
         </div>
       </div><!--/.col-->
 
+      <div *ngIf="notesOnTop">
+        <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
+                                                          entityType="action"
+                                                          [resourceId]="dataStore.userId"
+        ></app-note-list-card></div>
+      </div>
+
       <div class="card" style="min-width:850px;">
         <div class="card-header" [style.backgroundColor]="readyToSaveColor()">
-          <strong>Action Details</strong>
+
+          <div class="row">
+            <div class="col-8">
+              <strong>Action Details</strong>
+            </div>
+            <div class="col-4" style="text-align: right">
+              <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
+            </div>
+          </div>
+
         </div>
         <div class="card-body">
           <form [formGroup]="entityFormGroup" novalidate>
@@ -113,6 +129,7 @@
                   <mat-select
                     formControlName="scopeTypeId"
                     placeholder="Scope"
+                    (selectionChange)="disableTeam()"
                   >
                     <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
                       {{ scopeType.name }}
@@ -122,6 +139,23 @@
                     Action scope is required.
                   </mat-error>
                 </mat-form-field>
+
+
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <mat-select
+                    formControlName="teamId"
+                    placeholder="Team"
+                  >
+                    <mat-option *ngFor="let aTeam of teams" [value]="aTeam.teamId">
+                      {{ aTeam.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="teamId.hasError('required')">
+                    Team is required when you've chosen 'Team' scope.
+                  </mat-error>
+                </mat-form-field>
+
+
 
                 <mat-radio-group name="activeAction" formControlName="activeAction">
                   <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
@@ -154,8 +188,9 @@
               <div class="col-6" style="text-align:left">
                 <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
               </div>
-              <div class="col-6" style="text-align:right">
-                <button type="button" class="btn btn-warning" (click)="addUpdateAction()" [disabled]="unreadyToSave()">Click to save</button>
+              <div (mouseenter)="possiblyTriggerErrorMessages()"
+              ><div class="col-6" style="text-align:right">
+                <button type="button" class="btn btn-warning" (click)="addUpdateAction()" [disabled]="unreadyToSave()">Click to save</button></div>
               </div>
             </div>
 
@@ -163,14 +198,12 @@
         </div>
       </div>
 
-
+      <div *ngIf="!notesOnTop">
       <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
                          entityType="action"
                          [resourceId]="dataStore.userId"
       ></app-note-list-card></div>
-
-
-
+      </div>
 
     </div>
     <div class="col-3"><!-- third column -->

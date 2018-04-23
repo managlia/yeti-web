@@ -21,6 +21,8 @@ export class ContactCardComponent extends CardComponent implements OnInit {
       this.getContactsByCustomerId();
     } else if (this.actionId) {
       this.getContactsByActionId();
+    } else if (this.teamId) {
+      this.getContactsByTeamId();
     } else if (this.campaignId) {
       this.getContactsByCampaignId();
     } else {
@@ -36,6 +38,11 @@ export class ContactCardComponent extends CardComponent implements OnInit {
   getContactsByActionId(): void {
     console.log(`dfmdfm getting contacts by action id ${this.actionId}`);
     this.contactService.getContactListByAction( this.actionId )
+      .subscribe(contacts => this.entities = contacts );
+  }
+
+  getContactsByTeamId(): void {
+    this.contactService.getContactListByTeam( this.teamId )
       .subscribe(contacts => this.entities = contacts );
   }
 
@@ -70,6 +77,8 @@ export class ContactCardComponent extends CardComponent implements OnInit {
       this.router.navigateByUrl( `/contact/add/company/${this.companyId}` );
     } else if (this.actionId) {
       this.router.navigateByUrl( `/contact/add/action/${this.actionId}` );
+    } else if (this.teamId) {
+      this.router.navigateByUrl( `/contact/add/team/${this.teamId}` );
     } else if (this.campaignId) {
       this.router.navigateByUrl( `/contact/add/campaign/${this.campaignId}` );
     }

@@ -29,13 +29,13 @@ export class Action {
   tags: Tag[];
   attachments: Attachment[];
   actionChildren: Action[];
+  teamId: string;
 
   constructor() {
     this.active = true;
     this.deleteable = true;
     this.classificationType = new ActionClassificationType();
     this.classificationOtherType = new ActionClassificationOtherType();
-    this.scopeType = new ScopeType();
     this.actionChildren = [];
     this.attachments = [];
     this.tags = [];

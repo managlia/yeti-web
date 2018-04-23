@@ -63,5 +63,6 @@ export class BaseService {
   public deleteCompanyFromComponent = (cd: string) => `${this.deleteDescription} COMPANY FROM ${cd} ${this.whoseId} `;
   public putActionToComponent = (cd: string) => `${this.putDescription} ACTION/ADDING TO ${cd} ${this.whoseId}`;
   public deleteActionFromComponent = (cd: string) => `${this.deleteDescription} ACTION FROM ${cd} ${this.whoseId} `;
-
+  public putTeamToComponent = (cd: string) => `${this.putDescription} TEAM/ADDING TO ${cd} ${this.whoseId}`;
+  public deleteTeamFromComponent = (cd: string) => `${this.deleteDescription} TEAM FROM ${cd} ${this.whoseId} `;
 }

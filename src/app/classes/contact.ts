@@ -41,5 +41,7 @@ export class Contact {
     this.urls = [];
     this.phones = [];
   }
+  get name() { return this.firstName + ' ' + this.lastName };
+
 }
 

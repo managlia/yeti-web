@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn} from '@angular/forms';
 import * as _ from 'lodash';
 
 import {Action} from '../../classes/action';
@@ -12,6 +12,7 @@ import {Campaign} from '../../classes/campaign';
 
 import {Tag} from '../../classes/common/tag';
 import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
+import {toPromise} from 'rxjs/operator/toPromise';
 
 @Component({
   selector: 'app-action-details',
@@ -39,6 +40,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
     this.entityName = 'action';
     window.scrollTo(0, 0);
     this.getAction();
+    this.loadTeams();
     this.loadTypes();
   }
 
@@ -49,20 +51,28 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   }
 
   createForm = () => {
-    if (!this.action.scopeType) { this.action.scopeType = new ScopeType(); }
+    if (!this.action.scopeType) {
+      this.action.scopeType = new ScopeType();
+      this.action.scopeType.scopeTypeId = 'SH';
+    }
     if (!this.action.classificationType) { this.action.classificationType = new ActionClassificationType(); }
     if (!this.action.classificationOtherType) { this.action.classificationOtherType = new ActionClassificationOtherType(); }
+
     this.entityFormGroup = new FormGroup({
       actionName: new FormControl(this.action.name, [Validators.required]),
       actionDescription: new FormControl(this.action.description, [Validators.required]),
-      actionClassificationTypeId: new FormControl(this.action.classificationType.actionClassificationTypeId, [Validators.required]),
-      actionClassificationOtherTypeId: new FormControl(this.action.classificationOtherType.actionClassificationOtherTypeId),
+      actionClassificationTypeId:
+        new FormControl(this.action.classificationType.actionClassificationTypeId, [Validators.required]),
+      actionClassificationOtherTypeId:
+        new FormControl(this.action.classificationOtherType.actionClassificationOtherTypeId, [Validators.required]),
       scopeTypeId: new FormControl(this.action.scopeType.scopeTypeId, [Validators.required]),
       targetValuation: new FormControl(this.action.targetValuation),
       actualValuation: new FormControl(this.action.actualValuation),
-      activeAction: new FormControl(this.action.active)
+      activeAction: new FormControl(this.action.active),
+      teamId: new FormControl(this.action.teamId, [Validators.required])
     });
     this.disableOther();
+    this.disableTeam();
     this.entityLoaded = true;
   };
 
@@ -74,6 +84,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
   get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
   get activeAction() { return this.entityFormGroup.get('activeAction'); }
+  get teamId() { return this.entityFormGroup.get('teamId'); }
 
   copyFormToAction = () => {
     if ( this.actionClassificationTypeId.value !== 'OT' ) {
@@ -84,6 +95,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
     this.action.targetValuation = this.targetValuation.value;
     this.action.actualValuation = this.actualValuation.value;
     this.action.active = this.activeAction.value;
+    this.action.teamId = this.teamId.value;
     this.action.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.action.classificationType = this.classificationTypes.filter(
@@ -99,6 +111,16 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
       this.actionClassificationOtherTypeId.disable();
     } else {
       this.actionClassificationOtherTypeId.enable();
+   }
+  };
+
+  disableTeam = () => {
+    const disableTeam = this.scopeTypeId.value !== 'SH';
+    if ( disableTeam ) {
+      this.teamId.setValue({value: null} );
+      this.teamId.disable();
+    } else {
+      this.teamId.enable();
     }
   };
 
@@ -160,12 +182,16 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   }
 
   loadTypes(): void {
-    this.actionClassificationTypeService.getActionClassificationTypeList()
-      .subscribe(results => this.classificationTypes = results);
-    this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList()
-      .subscribe(results => this.classificationOtherTypes = results);
-    this.scopeTypeService.getScopeTypeList()
-      .subscribe(results => this.scopeTypes = results);
+      const p1 = this.actionClassificationTypeService.getActionClassificationTypeList();
+      p1.subscribe(results => this.classificationTypes = results);
+      const p2 = this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList();
+      p2.subscribe(results => this.classificationOtherTypes = results);
+      const p3 = this.scopeTypeService.getScopeTypeList();
+      p3.subscribe(results => this.scopeTypes = results);
+      this.typesPromise = Promise.all([p1.toPromise(), p1.toPromise(), p1.toPromise()]).then( result => {
+        console.log('all types loaded');
+        this.typesPromise = null;
+      });
   }
 
   onCompanyAssociatedToEntity(company: Company) {

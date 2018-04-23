@@ -12,6 +12,7 @@ import {CompanyOrContactService} from '../../../services/company-or-contact.serv
 import {CampaignService} from '../../../services/campaign.service';
 import {CompanyService} from '../../../services/company.service';
 import {ContactService} from '../../../services/contact.service';
+import {TeamService} from '../../../services/team.service';
 
 @Component({
   selector: 'app-adder',
@@ -37,7 +38,8 @@ export class AdderComponent {
     public actionService: ActionService,
     public campaignService: CampaignService,
     public companyService: CompanyService,
-    public contactService: ContactService
+    public contactService: ContactService,
+    public teamService: TeamService
   ) { }
 
   search(term: string): void {
@@ -48,5 +50,4 @@ export class AdderComponent {
     this.myControl = new FormControl();
     this.viewSearch = true;
   }
-
 }

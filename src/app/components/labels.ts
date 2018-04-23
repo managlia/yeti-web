@@ -61,6 +61,13 @@ export const contact = {
   remove: 'Remove'
 };
 
+export const teams = {
+  title: 'My Teams',
+  listTitle: 'Team List',
+  addExisting: 'Add existing team',
+  remove: 'Remove'
+};
+
 export const address = {
   title: 'Addresses',
   listTitle: 'Address List',

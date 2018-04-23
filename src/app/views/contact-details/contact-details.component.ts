@@ -190,4 +190,12 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
       response => this.showAssocationSuccessful('action'),
       error => this.handleAssociationFailure('action'));
   }
+
+  onChatter = () => {
+    const data = {
+      entityType: 'contact',
+      entity: this.contact
+    };
+    const x = this.chatterService.openDialog(data);
+  }
 }

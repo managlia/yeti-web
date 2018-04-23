@@ -23,9 +23,25 @@
         </div>
       </div><!--/.col-->
 
+      <div *ngIf="notesOnTop">
+        <app-note-list-card [entityId]="campaign.campaignId"
+                            entityType="campaign"
+                            [resourceId]="dataStore.userId"
+        ></app-note-list-card>
+      </div>
+
       <div class="card">
         <div class="card-header" [style.backgroundColor]="readyToSaveColor()">
-          <strong>Campaign Details</strong>
+
+          <div class="row">
+            <div class="col-8">
+              <strong>Campaign Details</strong>
+            </div>
+            <div class="col-4" style="text-align: right">
+              <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
+            </div>
+          </div>
+
         </div>
         <div class="card-body">
           <form [formGroup]="entityFormGroup" novalidate>
@@ -98,6 +114,7 @@
                   <mat-select
                     placeholder="Scope"
                     formControlName="scopeTypeId"
+                    (selectionChange)="disableTeam()"
                     tabindex="4"
                   >
                     <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
@@ -105,6 +122,22 @@
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
+
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <mat-select
+                    formControlName="teamId"
+                    placeholder="Team"
+                  >
+                    <mat-option *ngFor="let aTeam of teams" [value]="aTeam.teamId">
+                      {{ aTeam.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="teamId.hasError('required')">
+                    Team is required when you've chosen 'Team' scope.
+                  </mat-error>
+                </mat-form-field>
+
+
 
                 <mat-radio-group name="activeCampaign" formControlName="activeCampaign">
                   <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
@@ -136,7 +169,8 @@
                 <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
               </div>
               <div class="col-6" style="text-align:right">
-                <button type="button" class="btn btn-warning" (click)="addUpdateCampaign()" [disabled]="unreadyToSave()">Click to save</button>
+                <div (mouseenter)="possiblyTriggerErrorMessages()"
+                ><button type="button" class="btn btn-warning" (click)="addUpdateCampaign()" [disabled]="unreadyToSave()">Click to save</button></div>
               </div>
             </div>
 
@@ -144,11 +178,12 @@
         </div>
       </div>
 
-      <app-note-list-card [entityId]="campaign.campaignId"
-                          entityType="campaign"
-                          [resourceId]="dataStore.userId"
-      ></app-note-list-card>
-
+        <div *ngIf="!notesOnTop">
+          <app-note-list-card [entityId]="campaign.campaignId"
+                              entityType="campaign"
+                              [resourceId]="dataStore.userId"
+          ></app-note-list-card>
+        </div>
 
     </div>
     <div class="col-3"><!-- third column -->

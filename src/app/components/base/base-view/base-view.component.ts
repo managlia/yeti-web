@@ -33,6 +33,8 @@ import {EmailService} from '../../../services/email.service';
 import {EntityService} from '../../../services/entity.service';
 import {PhoneType} from '../../../classes/types/phone-type';
 import {ScopeTypeService} from '../../../services/scope-type.service';
+import {Team} from '../../../classes/team';
+import {TeamService} from '../../../services/team.service';
 import {UrlType} from '../../../classes/types/url-type';
 import * as label from '../../labels';
 import {AttachmentService} from '../../../services/attachment.service';
@@ -47,6 +49,8 @@ export class BaseViewComponent implements OnInit {
   entityName = 'OverrideInTheViewDetails';
   entityFormGroup: FormGroup;
   entityLoaded = false;
+  notesOnTop = false;
+  typesPromise: any;
 
   public dirtyCardColor = 'deeppink';
   bgColor = 'black';
@@ -57,11 +61,13 @@ export class BaseViewComponent implements OnInit {
   contactFlag = false;
   campaignFlag = false;
   companyFlag = false;
+  teamFlag = false;
 
   actionFailureFlag = false;
   companyFailureFlag = false;
   contactFailureFlag = false;
   campaignFailureFlag = false;
+  teamFailureFlag = false;
 
   addressIsDirty = false;
   urlsIsDirty = false;
@@ -75,6 +81,7 @@ export class BaseViewComponent implements OnInit {
   addressClassificationTypes: AddressClassificationType[];
   classificationOtherTypes: ActionClassificationOtherType[];
   titleTypes: ContactTitleType[];
+  teams: Team[];
 
   entity: string;
   entityId: string;
@@ -109,7 +116,8 @@ export class BaseViewComponent implements OnInit {
     public renderer: Renderer2,
     public route: ActivatedRoute,
     public router: Router,
-    public scopeTypeService: ScopeTypeService
+    public scopeTypeService: ScopeTypeService,
+    public teamService: TeamService
   ) {
   }
 
@@ -145,6 +153,8 @@ export class BaseViewComponent implements OnInit {
       this.contactFailureFlag = true;
     } else if (entity === 'action') {
       this.actionFailureFlag = true;
+    } else if (entity === 'team') {
+      this.teamFailureFlag = true;
     } else if (entity === 'company') {
       this.companyFailureFlag = true;
     }
@@ -158,6 +168,8 @@ export class BaseViewComponent implements OnInit {
       this.campaignFlag = true;
     } else if (entity === 'contact') {
       this.contactFlag = true;
+    } else if (entity === 'team') {
+      this.teamFlag = true;
     } else if (entity === 'action') {
       this.actionFlag = true;
     }
@@ -179,10 +191,17 @@ export class BaseViewComponent implements OnInit {
         } else if (entity === 'action') {
           this.actionFlag = false;
           this.actionFailureFlag = false;
+        } else if (entity === 'team') {
+          this.teamFlag = false;
+          this.teamFailureFlag = false;
         }
       }
     );
   }
+
+  toggleNotesPosition = () => {
+    this.notesOnTop = !this.notesOnTop;
+  };
 
   orderCompanyContents(company: Company): Company {
     company.tags = _.sortBy(company.tags, ['name']);
@@ -209,6 +228,18 @@ export class BaseViewComponent implements OnInit {
     // console.log( '                   ==>>>> ' );
     return (cardChanged && this.entityFormGroup.valid);
   }
+
+  possiblyTriggerErrorMessages = () => {
+    if ( this.entityFormGroup.invalid ) {
+      Object.keys(this.entityFormGroup.controls)
+        .forEach( c => this.entityFormGroup.controls[c].markAsTouched() );
+    }
+  };
+
+  loadTeams = () => {
+      this.teamService.getTeamListByContact( this.dataStore.userId )
+        .subscribe(teams => this.teams = teams);
+  };
 
   resetTheDirty = () => {
     this.addressIsDirty = false;

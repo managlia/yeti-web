@@ -24,10 +24,31 @@
         </div>
       </div><!--/.col-->
 
+      <div *ngIf="notesOnTop">
+        <app-note-list-card [entityId]="contact.contactId"
+                            entityType="contact"
+                            [resourceId]="dataStore.userId"
+        ></app-note-list-card>
+      </div>
+
+
       <div class="card">
         <div class="card-header">
-          <strong>Contact Details</strong>
+
+
+          <div class="row">
+            <div class="col-8">
+              <strong>Contact Details</strong>
+            </div>
+            <div class="col-4" style="text-align: right">
+              <button type="button" class="btn btn-warning" (click)="onChatter()">Chatter</button>
+              <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
+            </div>
+          </div>
+
+
         </div>
+
         <div class="card-body">
           <form [formGroup]="entityFormGroup" novalidate>
 
@@ -194,9 +215,10 @@
               <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
             </div>
             <div class="col-6" style="text-align:right">
-              <button type="button" class="btn btn-warning" (click)="addUpdateContact()" [disabled]="unreadyToSave()">
+              <div (mouseenter)="possiblyTriggerErrorMessages()"
+              ><button type="button" class="btn btn-warning" (click)="addUpdateContact()" [disabled]="unreadyToSave()">
                 Click to save
-              </button>
+              </button></div>
             </div>
           </div>
 
@@ -207,11 +229,12 @@
 
       <div>
       </div>
-
-      <app-note-list-card [entityId]="contact.contactId"
-                          entityType="contact"
-                          [resourceId]="dataStore.userId"
-      ></app-note-list-card>
+      <div *ngIf="!notesOnTop">
+        <app-note-list-card [entityId]="contact.contactId"
+                            entityType="contact"
+                            [resourceId]="dataStore.userId"
+        ></app-note-list-card>
+      </div>
       <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">Back</button>
 
     </div>

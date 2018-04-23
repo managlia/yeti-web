@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit, ElementRef} from '@angular/core';
+import {Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit, ElementRef, OnChanges, SimpleChanges} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Router} from '@angular/router';
 
@@ -6,6 +6,7 @@ import {ActionClassificationTypeService} from '../../services/action-classificat
 import {ActionContactService} from '../../services/action-contact.service';
 import {ActionService} from '../../services/action.service';
 import {Action} from '../../classes/action';
+import { Team } from '../../classes/team';
 import {ActionClassificationType} from '../../classes/types/action-classification-type';
 import {ActionClassificationOtherTypeService} from '../../services/action-classification-other-type.service';
 import {ActionClassificationOtherType} from '../../classes/types/action-classification-other-type';
@@ -13,16 +14,19 @@ import {ScopeType} from '../../classes/types/scope-type';
 import {ScopeTypeService} from '../../services/scope-type.service';
 import {ActionQuickEditService} from '../widgets/action-quick-edit.service';
 import * as label from '../labels';
+import {TeamService} from '../../services/team.service';
+import {DataStore} from '../../classes/data-store';
 
 @Component({
   selector: 'app-action-list-card',
   templateUrl: './action-list-card.component.html',
   styleUrls: ['./action-list-card.component.css']
 })
-export class ActionListCardComponent implements OnInit, AfterViewInit {
+export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() companyId: string;
   @Input() contactId: string;
+  @Input() fatFilters: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource();
@@ -41,12 +45,15 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
   shortList = ['createDate', 'targetCloseDate', 'name', 'description', 'type'];
   fullList = ['createDate', 'targetCloseDate', 'name', 'description', 'type', 'deleteAction', 'scope', 'active'];
   displayedColumns: string[] = null;
+  teams: Team[];
 
   constructor(
     private actionContactService: ActionContactService,
+    public teamService: TeamService,
     private actionService: ActionService,
     private actionClassificationTypeService: ActionClassificationTypeService,
     private actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
+    private dataStore: DataStore,
     private scopeTypeService: ScopeTypeService,
     public renderer: Renderer2,
     private router: Router,
@@ -93,6 +100,16 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
       this.actionService.getActionList()
         .subscribe(actions => this.dataSource.data = actions);
     }
+    this.teamService.getTeamListByContact( this.dataStore.userId )
+      .subscribe(teams => this.teams = teams);
+  }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if ( changes.fatFilters  ) {
+      console.log('* *  gotta apply fatFilters to action: ', this.fatFilters);
+      this.applyFilters()
+    }
   }
 
   addNewAction(): void {
@@ -127,7 +144,8 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
       activeStatus: this.activeFilter,
       scopeStatus: this.scopeFilter ? this.scopeFilter : 'all',
       typeStatus: this.typeFilter ? this.typeFilter : 'all',
-      deleteableStatus: this.deleteableStatus ? this.deleteableStatus : 'all'
+      deleteableStatus: this.deleteableStatus ? this.deleteableStatus : 'all',
+      fatFilters: this.fatFilters
     };
     this.dataSource.filter = JSON.stringify(filterValues);
   }
@@ -135,6 +153,14 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
   createFilter(): (data: any, filter: string) => boolean {
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
+
+      const relevantScopes = [];
+      if ( searchTerms.fatFilters ) {
+        if ( searchTerms.fatFilters.mine ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PR'); }
+        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PU'); }
+        if ( searchTerms.fatFilters.myTeams ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('SH'); }
+      }
+      console.log('relevant scopes', relevantScopes);
       return (
         data.name.toString().toLowerCase().indexOf(searchTerms.general) !== -1
         || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
@@ -143,6 +169,13 @@ export class ActionListCardComponent implements OnInit, AfterViewInit {
         && (searchTerms.scopeStatus === 'all' || (data.scopeType && (data.scopeType.scopeTypeId === searchTerms.scopeStatus)))
         && (searchTerms.typeStatus === 'all' || (data.classificationType &&
            (data.classificationType.actionClassificationTypeId === searchTerms.typeStatus)))
+
+        // fatFilters
+        && ( (!searchTerms.fatFilters) || (!searchTerms.fatFilters.teamId) || data.teamId === searchTerms.fatFilters.teamId )
+        && ( !searchTerms.fatFilters || (relevantScopes.includes(data.scopeType.scopeTypeId)) )
+
+
+
     };
     return filterFunction
   }

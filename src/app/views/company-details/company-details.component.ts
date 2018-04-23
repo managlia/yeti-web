@@ -189,9 +189,5 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
       entity: this.company
     };
     const x = this.chatterService.openDialog(data);
-
-    // x.subscribe(result => {
-    //     console.log('Does anything need to be done here????');
-    //   });
   }
 }

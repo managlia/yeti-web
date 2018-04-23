@@ -1,0 +1,29 @@
+<div *ngIf="entities" class="animated fadeIn">
+  <div class="card" style="min-width:350px;">
+    <div class="card-header">
+      <strong>{{label.teams.title}}</strong>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:green" *ngIf="associationSuccessful">{{label.confirm.success}}</span>
+      <span class="badge badge-success float-right animated fadeIn fadeOut" style="background-color:indianred" *ngIf="associationFailure">{{label.confirm.failure}}</span>
+    </div>
+    <div class="card-body">
+      <div *ngFor="let aTeam of entities">
+        <div class="row">
+          <div class="col-md-8">
+            <div style="padding-bottom:15px;"
+              [style.color]="fontColor"
+              (mouseover)="onConsideringEntity(event,this)"
+              (mouseout)="onUnconsideringEntity(event,this)"
+              (click)="onSelectedTeam(event,aTeam.teamId)">
+                <b>{{aTeam.name}}</b> - {{aTeam.description}} added {{aTeam.createDate | date:'shortDate'}}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <mat-checkbox (click)="removeTeam(aTeam.teamId)"> {{label.teams.remove}}</mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

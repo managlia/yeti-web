@@ -141,6 +141,7 @@ import { ActionService } from './services/action.service';
 import { EmailService } from './services/email.service';
 import { CampaignClassificationTypeService } from './services/campaign-classification-type.service';
 import { CampaignOrActionService } from './services/campaign-or-action.service';
+import { SmallChatterService } from './services/small-chatter.service';
 import { CampaignService } from './services/campaign.service';
 import { CompanyAddressClassificationTypeService } from './services/company-address-classification-type.service';
 import { CompanyClassificationTypeService } from './services/company-classification-type.service';
@@ -149,6 +150,7 @@ import { CompanyService } from './services/company.service';
 import { ContactAddressClassificationTypeService } from './services/contact-address-classification-type.service';
 import { ContactClassificationTypeService } from './services/contact-classification-type.service';
 import { ContactService } from './services/contact.service';
+import { TeamService } from './services/team.service';
 import { ContactTitleTypeService } from './services/contact-title-type.service';
 
 import { CompanyUrlService } from './services/company-url.service';
@@ -225,6 +227,10 @@ import { AttachmentListCardComponent } from './components/attachment-list-card/a
 import { ActionSummaryPipe } from './classes/pipes/action-summary.pipe';
 import { CampaignSummaryPipe } from './classes/pipes/campaign-summary.pipe';
 import { ChatterDetailsComponent } from './components/widgets/chatter-details/chatter-details.component';
+import { WindDirectionPipe } from './classes/pipes/wind-direction.pipe';
+import { TeamDetailsComponent } from './views/team-details/team-details.component';
+import { TeamCardComponent } from './components/team-card/team-card.component';
+import { TeamFilterCardComponent } from './components/team-filter-card/team-filter-card.component';
 
 @NgModule({
   imports: [
@@ -338,18 +344,22 @@ import { ChatterDetailsComponent } from './components/widgets/chatter-details/ch
     ActionSummaryPipe,
     CampaignSummaryPipe,
     ChatterDetailsComponent,
+    WindDirectionPipe,
+    TeamDetailsComponent,
+    TeamCardComponent,
+    TeamFilterCardComponent,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,
     ChatterService, ActionQuickEditService, CampaignQuickEditService,
-    ActionService, EmailService, CampaignService, ContactService, CompanyService,
+    ActionService, EmailService, CampaignService, ContactService, TeamService, CompanyService,
     ExceptionService, DataService, LoggerService, ActionClassificationTypeService,
     ActionClassificationOtherTypeService, CompanyUrlService, CompanyUrlTypeService, ContactUrlService, ContactUrlTypeService,
     CompanyPhoneService, CompanyPhoneTypeService, ContactPhoneService, ContactPhoneTypeService,
     CompanyClassificationTypeService, CompanyAddressClassificationTypeService,
     ContactAddressClassificationTypeService, ContactClassificationTypeService, ContactTitleTypeService,
     CampaignClassificationTypeService, ScopeTypeService, TagService, NoteService, AttachmentService, EntityService, CompanyOrContactService,
-    CampaignOrActionService, ActionContactService, DataStore, ElectronService,
+    SmallChatterService, CampaignOrActionService, ActionContactService, DataStore, ElectronService,
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy,

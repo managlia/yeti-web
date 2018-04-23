@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit } from '@angular/core';
+import {Component, OnInit, Input, ViewChild, Renderer2, AfterViewInit, OnChanges, SimpleChanges} from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -6,20 +6,24 @@ import { CampaignClassificationTypeService } from '../../services/campaign-class
 import { CampaignService } from '../../services/campaign.service';
 import { CampaignClassificationType } from '../../classes/types/campaign-classification-type';
 import { Campaign } from '../../classes/campaign';
+import { Team } from '../../classes/team';
 import {ScopeType} from '../../classes/types/scope-type';
 import {ScopeTypeService} from '../../services/scope-type.service';
 import {CampaignQuickEditService} from '../widgets/campaign-quick-edit.service';
 import * as label from '../labels';
+import {TeamService} from '../../services/team.service';
+import {DataStore} from '../../classes/data-store';
 
 @Component({
   selector: 'app-campaign-list-card',
   templateUrl: './campaign-list-card.component.html',
   styleUrls: ['./campaign-list-card.component.css']
 })
-export class CampaignListCardComponent implements OnInit, AfterViewInit {
+export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() companyId: string;
   @Input() contactId: string;
+  @Input() fatFilters: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource = new MatTableDataSource();
@@ -27,6 +31,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
   activeFilter = 'true';
   typeFilter: string;
   textFilter = '';
+  teams: Team[];
 
   classificationTypes: CampaignClassificationType[];
   scopeTypes: ScopeType[];
@@ -35,10 +40,12 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private campaignService: CampaignService,
+    public teamService: TeamService,
     private campaignClassificationTypeService: CampaignClassificationTypeService,
     private scopeTypeService: ScopeTypeService,
     public renderer: Renderer2,
     private router: Router,
+    private dataStore: DataStore,
     private campaignQuickEditService: CampaignQuickEditService
   ) {
     this.getClassificationTypes();
@@ -66,9 +73,17 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
       this.campaignService.getCampaignList()
         .subscribe(campaigns => this.dataSource.data = campaigns);
     }
+    this.teamService.getTeamListByContact( this.dataStore.userId )
+      .subscribe(teams => this.teams = teams);
 
 
+  }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if ( changes.fatFilters  ) {
+      console.log('* *  gotta apply fatFilters to campaign: ', this.fatFilters);
+      this.applyFilters()
+    }
   }
 
   addNewCampaign(): void {
@@ -101,6 +116,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
       general: this.textFilter,
       activeStatus: this.activeFilter,
       typeStatus: this.typeFilter ? this.typeFilter : 'all',
+      fatFilters: this.fatFilters
     };
     this.dataSource.filter = JSON.stringify(filterValues);
   }
@@ -108,12 +124,26 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit {
   createFilter(): (data: any, filter: string) => boolean {
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
+
+      const relevantScopes = [];
+      if ( searchTerms.fatFilters ) {
+        if ( searchTerms.fatFilters.mine ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PR'); }
+        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PU'); }
+        if ( searchTerms.fatFilters.myTeams ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('SH'); }
+      }
+
+
       return (
         data.name.toString().toLowerCase().indexOf(searchTerms.general) !== -1
         || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
         && (searchTerms.activeStatus === 'all' || data.active === (searchTerms.activeStatus === 'true'))
         && (searchTerms.typeStatus === 'all' || (data.classificationType &&
            (data.classificationType.campaignClassificationTypeId === searchTerms.typeStatus)))
+
+        // fatFilters
+        && ( (!searchTerms.fatFilters) || (!searchTerms.fatFilters.teamId) || data.teamId === searchTerms.fatFilters.teamId )
+        && ( !searchTerms.fatFilters || (relevantScopes.includes(data.scopeType.scopeTypeId)) )
+
     };
     return filterFunction
   }

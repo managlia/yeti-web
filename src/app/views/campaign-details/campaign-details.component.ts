@@ -38,6 +38,7 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
     this.entityName = 'campaign';
     window.scrollTo(0, 0);
     this.getCampaign();
+    this.loadTeams();
     this.loadTypes();
   }
 
@@ -48,17 +49,23 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   }
 
   createForm = () => {
-    if (!this.campaign.scopeType) { this.campaign.scopeType = new ScopeType(); }
+    if (!this.campaign.scopeType) {
+      this.campaign.scopeType = new ScopeType();
+      this.campaign.scopeType.scopeTypeId = 'SH';
+    }
     if (!this.campaign.classificationType) { this.campaign.classificationType = new CampaignClassificationType(); }
     this.entityFormGroup = new FormGroup({
       campaignName: new FormControl(this.campaign.name, [Validators.required]),
       campaignDescription: new FormControl(this.campaign.description, [Validators.required]),
-      campaignClassificationTypeId: new FormControl(this.campaign.classificationType.campaignClassificationTypeId, [Validators.required]),
+      campaignClassificationTypeId:
+        new FormControl(this.campaign.classificationType.campaignClassificationTypeId, [Validators.required]),
       scopeTypeId: new FormControl(this.campaign.scopeType.scopeTypeId, [Validators.required]),
       targetValuation: new FormControl(this.campaign.targetValuation),
       actualValuation: new FormControl(this.campaign.actualValuation),
       activeCampaign: new FormControl(this.campaign.active),
+      teamId: new FormControl(this.campaign.teamId, [Validators.required]),
     });
+    this.disableTeam();
     this.entityLoaded = true;
   };
 
@@ -69,6 +76,7 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
   get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
   get activeCampaign() { return this.entityFormGroup.get('activeCampaign'); }
+  get teamId() { return this.entityFormGroup.get('teamId'); }
 
   copyFormToCampaign = () => {
     this.campaign.name = this.campaignName.value;
@@ -76,10 +84,21 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
     this.campaign.targetValuation = this.targetValuation.value;
     this.campaign.actualValuation = this.actualValuation.value;
     this.campaign.active = this.activeCampaign.value;
+    this.campaign.teamId = this.teamId.value;
     this.campaign.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.campaign.classificationType = this.classificationTypes.filter(
       e => e.campaignClassificationTypeId === this.campaignClassificationTypeId.value)[0];
+  };
+
+  disableTeam = () => {
+    const disableTeam = this.scopeTypeId.value !== 'SH';
+    if ( disableTeam ) {
+      this.teamId.setValue({value: null} );
+      this.teamId.disable();
+    } else {
+      this.teamId.enable();
+    }
   };
 
   getCampaign(): void {

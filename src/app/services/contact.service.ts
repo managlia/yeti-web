@@ -6,6 +6,7 @@ import { catchError, tap } from 'rxjs/operators';
 import {Action} from '../classes/action';
 import {Campaign} from '../classes/campaign';
 import {Contact} from '../classes/contact';
+import {Team} from '../classes/team';
 import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
 
@@ -33,6 +34,11 @@ export class ContactService extends BaseService {
   getContactListByAction(actionId: string): Observable<Contact[]> {
     const filterId = 'actionId';
     return this.getContactListByFilter(actionId, filterId );
+  }
+
+  getContactListByTeam(teamId: string): Observable<Contact[]> {
+    const filterId = 'teamId';
+    return this.getContactListByFilter(teamId, filterId );
   }
 
   getContactListByCampaign(campaignId: string): Observable<Contact[]> {
@@ -139,4 +145,32 @@ export class ContactService extends BaseService {
       catchError(this.handleError<any>(`${this.E}${this.deleteActionFromComponent(this.cd)} ${contactId} (actionId=${actionId}`))
     );
   }
+
+  addTeamToContact(contactId: string, team: Team): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.putTeamToComponent(this.cd)} ${contactId}`);
+    const url = `${this.contactUrl}/${contactId}/Teams`;
+    return this.http.put(url, team, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+      .pipe(
+        tap(_ => this.logger.debug(`${this.S}${this.putTeamToComponent(this.cd)} ${contactId}`)),
+        catchError(this.handleError<any>(`${this.E}${this.putTeamToComponent(this.cd)} ${contactId}`))
+      );
+  }
+
+  removeTeamFromContact(contactId: string, teamId: string): Observable<HttpResponse<any>> {
+    this.logger.debug(`${this.P}${this.deleteTeamFromComponent(this.cd)} ${contactId} (teamId=${teamId}`);
+    const url = `${this.contactUrl}/${contactId}/Teams/${teamId}`;
+    return this.http.delete(url, {
+      headers: BaseService.headers,
+      responseType: BaseService.responseTypeValue,
+      observe: BaseService.observeValue})
+      .pipe(
+        tap(_ => this.logger.debug(`${this.S}${this.deleteTeamFromComponent(this.cd)} ${contactId} (teamId=${teamId}`)),
+        catchError(this.handleError<any>(`${this.E}${this.deleteTeamFromComponent(this.cd)} ${contactId} (teamId=${teamId}`))
+      );
+  }
+
+
 }

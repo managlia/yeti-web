@@ -15,6 +15,7 @@ import {UrlService} from '../../widgets/url.service';
 import {Observable} from 'rxjs/Observable';
 import {TagService} from '../../../services/tag.service';
 import {TaggingService} from '../../widgets/tagging.service';
+import {TeamService} from '../../../services/team.service';
 import {DataStore} from '../../../classes/data-store';
 import {AddressService} from '../../widgets/address.service';
 import * as label from '../../labels';
@@ -33,6 +34,7 @@ export class CardComponent implements OnChanges {
   @Input() contactId: string;
   @Input() campaignId: string;
   @Input() actionId: string;
+  @Input() teamId: string;
 
   suspendedEvent: Observable<any> = null;
   suspendedUndoEvent: Observable<any> = null;
@@ -62,6 +64,7 @@ export class CardComponent implements OnChanges {
     public taggingService: TaggingService,
     public addressService: AddressService,
     public tagService: TagService,
+    public teamService: TeamService,
     public dataStore: DataStore,
     public attachmentService: AttachmentService
   ) {}

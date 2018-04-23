@@ -1,0 +1,168 @@
+<div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
+  <div class="row">
+    <div class="col-9">
+      <div *ngIf="entity">
+        <div class="col-sm-12 col-12">
+          <div class="card text-white bg-primary text-center">
+            <div class="card-body">
+              <blockquote class="card-bodyquote">
+                <div style="color:red">Adding team for {{entity}}::{{entityId}}</div>
+              </blockquote>
+            </div>
+          </div>
+        </div><!--/.col-->
+      </div>
+      <div class="col-sm-12 col-12">
+        <div class="card text-white bg-success text-center animated fadeIn" *ngIf="teamFlag">
+          <div class="card-body">
+            <blockquote class="card-bodyquote">
+              <p>Your update has been saved.</p>
+            </blockquote>
+          </div>
+        </div>
+      </div><!--/.col-->
+
+      <div *ngIf="notesOnTop">
+        <app-note-list-card [entityId]="team.teamId"
+                            entityType="team"
+                            [resourceId]="dataStore.userId"
+        ></app-note-list-card>
+      </div>
+
+
+      <div class="card">
+        <div class="card-header">
+
+          <div class="row">
+            <div class="col-8">
+              <strong>Team Details</strong>
+            </div>
+            <div class="col-4" style="text-align: right">
+              <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <div class="col-8">
+              <!--<div class="row">-->
+              <!--<div class="col-12">-->
+              <form [formGroup]="entityFormGroup" novalidate>
+                <!--<div class="row" style="background-color: red;">-->
+                <div class="row">
+                  <div class="col-12" style="padding-top:7px; padding-bottom:7px;">
+
+                    <mat-form-field style="width:90%;">
+                      <input matInput formControlName="teamName"
+                             placeholder="Team Name">
+                      <mat-error *ngIf="teamName.hasError('required')">
+                        Team name is required.
+                      </mat-error>
+                    </mat-form-field>
+
+                  </div>
+                </div>
+
+
+                <div class="row">
+                  <div class="col-8" style="padding-top:7px; padding-bottom:7px;">
+
+
+                    <mat-form-field style="width:90%;">
+                           <textarea matInput
+                                     placeholder="Team Description (field will autosize as needed)"
+                                     matTextareaAutosize matAutosizeMinRows="4"
+                                     matAutosizeMaxRows="10" formControlName="description"
+                           ></textarea>
+                      <mat-error *ngIf="description.hasError('required')">
+                        Team description is required.
+                      </mat-error>
+                    </mat-form-field>
+
+
+                  </div>
+                  <div class="col-4">
+
+                    <mat-radio-group name="activeTeam" formControlName="activeTeam">
+                      <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
+                      <mat-radio-button [value]="false"> Inactive</mat-radio-button>
+                    </mat-radio-group>
+
+                    <app-datespace [entity]="team"></app-datespace>
+                  </div>
+                </div>
+              </form>
+              <!--</div>-->
+              <!--</div>-->
+
+            </div>
+            <!--<div class="col-4" style="background-color: chartreuse;">-->
+            <div class="col-4">
+
+              <div *ngIf="team?.teamId">
+                <app-contact-card [teamId]="team.teamId"
+                                  [associationSuccessful]="contactFlag"
+                                  [associationFailure]="contacFailuretFlag"
+                                  (onContactAssociatedToEntity)="onContactAssociatedToEntity($event)"
+                                  (onContactFlaggedForRemoval)="onContactFlaggedForRemoval($event)"
+                ></app-contact-card>
+              </div>
+
+
+            </div>
+          </div>
+
+
+          <!--<div class="row" style="background-color: yellow;">-->
+          <div class="row">
+            <div class="col-6" style="text-align:left">
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+            </div>
+            <div class="col-6" style="text-align:right">
+              <button type="button" class="btn btn-warning" (click)="addUpdateTeam()" [disabled]="unreadyToSave()">
+                Click to save
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div *ngIf="!notesOnTop">
+        <app-note-list-card [entityId]="team.teamId"
+                            entityType="team"
+                            [resourceId]="dataStore.userId"
+        ></app-note-list-card>
+      </div>
+
+    </div>
+    <div class="col-3">
+
+
+      <app-team-card [contactId]="dataStore.userId"
+                       [associationSuccessful]="teamFlag"
+                       [associationFailure]="teamFailureFlag"
+                       (onTeamFlaggedForRemoval)="onTeamFlaggedForRemoval($event)"
+      ></app-team-card>
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

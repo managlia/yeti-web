@@ -32,6 +32,7 @@ export class ServiceConstants {
   public static CONTACT_CLASSIFICATION_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactClassificationTypes`;
   public static CONTACT_TITLE_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactTitleTypes`;
   public static CONTACT_URL = `${ServiceConstants.HOST}/yeti/Contacts`;
+  public static TEAM_URL = `${ServiceConstants.HOST}/yeti/Teams`;
 
   public static CONTACT_URL_URL = `${ServiceConstants.HOST}/yeti/ContactUrls`;
   public static CONTACT_URL_TYPE_URL = `${ServiceConstants.HOST}/yeti/ContactUrlTypes`;
@@ -46,6 +47,10 @@ export class ServiceConstants {
 
   public static EXT_EVENTS_URL = `${ServiceConstants.EMAIL_HOST}/yetiemail/ExtEvents`;
   public static EXT_EMAIL_URL = `${ServiceConstants.EMAIL_HOST}/yetiemail/ExtEmails`;
+
+  public static NEWS_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/news`;
+  public static TWITTER_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/twitter`;
+  public static WEATHER_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/weather`;
 
   public static NOTE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/notes`;
   public static FILE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/files`;

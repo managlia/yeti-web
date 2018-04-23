@@ -1,0 +1,41 @@
+<div class="card" style="width:500px;">
+  <div class="card-header">
+    <strong>Filter On:</strong>
+  </div>
+
+  <div class="card-body">
+
+    <mat-radio-group name="activeContact" [(ngModel)]="teamOnly">
+
+
+      <div class="row" style="padding-bottom:10px; adding-top:10px;">
+        <div class="col-4">
+          <mat-radio-button [value]="false" (change)="onRadioToggled(value)"> Combos </mat-radio-button>
+        </div>
+        <div class="col-8">
+          <mat-checkbox [(ngModel)]="mine" (change)="withMine(value)"> Mine (Private) </mat-checkbox><br/>
+          <mat-checkbox [(ngModel)]="myTeams" (change)="withMyTeams(value)"> My Teams combined </mat-checkbox><br/>
+          <mat-checkbox [(ngModel)]="companyWide" (change)="withCompanyWide(value)"> Company-wide </mat-checkbox>
+        </div>
+      </div>
+
+      <div *ngIf="teams">
+        <div class="row" style="padding-bottom:10px; adding-top:10px; height:45px;" >
+          <div class="col-4">
+            <mat-radio-button [value]="true" (change)="onRadioToggled(value)"> Specific team </mat-radio-button>
+          </div>
+          <div class="col-8">
+            <mat-form-field style="width:90%;">
+              <mat-select placeholder="Team" [(ngModel)]="teamId" (selectionChange)="bySelectedTeam()" #teamSelect>
+                <mat-option *ngFor="let aTeam of teams" [value]="aTeam.teamId">
+                  {{ aTeam.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+    </mat-radio-group>
+  </div>
+</div>

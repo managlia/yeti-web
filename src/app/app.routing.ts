@@ -7,6 +7,7 @@ import {CampaignDetailsComponent} from './views/campaign-details/campaign-detail
 import {ActionDetailsComponent} from './views/action-details/action-details.component';
 import {EmailDetailsComponent} from './views/email-details/email-details.component';
 import {AttachmentDetailsComponent} from './views/attachment-details/attachment-details.component';
+import {TeamDetailsComponent} from './views/team-details/team-details.component';
 
 // Import Containers
 import {
@@ -70,6 +71,18 @@ export const routes: Routes = [
       {
         path: 'contact/add/:entity/:entityId',
         component: ContactDetailsComponent
+      },
+      {
+        path: 'team',
+        component: TeamDetailsComponent
+      },
+      {
+        path: 'team/:id',
+        component: TeamDetailsComponent
+      },
+      {
+        path: 'team/add/:entity/:entityId',
+        component: TeamDetailsComponent
       },
       {
         path: 'campaign',

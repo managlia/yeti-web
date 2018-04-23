@@ -14,7 +14,7 @@ export class ChatterService {
   openDialog(data: any): Observable<any> {
     console.log('data', data);
     const dialogRef = this.dialog.open(ChatterDetailsComponent, {
-      width: '1200px',
+      width: '1400px',
       height: '800px',
       data: data
     });

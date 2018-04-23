@@ -128,7 +128,7 @@ export class NoteListCardComponent implements OnInit, AfterViewInit {
             );
           });
     } else {
-      console.error('entityType and/or entityId not defined');
+      console.log('entityType and/or entityId not defined');
     };
   };
 }

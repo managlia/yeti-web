@@ -19,6 +19,7 @@ export class DashboardLandingComponent extends BaseViewComponent implements OnIn
   private searchTerms = new Subject<string>();
   public loadedCompany;  // TODO: Consider replacing with global from datastore
   public loadedContact;  // TODO: Consider replacing with global from datastore
+  fatFilters: any;
 
   @Input() coc: string;
   @Input() id: string;
@@ -28,6 +29,7 @@ export class DashboardLandingComponent extends BaseViewComponent implements OnIn
   contactLoaded = false;
 
   ngOnInit() {
+    this.loadTeams();
     this.myControl = new FormControl();
     const coc = this.route.snapshot.paramMap.get('coc');
     const id = this.route.snapshot.paramMap.get('id');
@@ -94,4 +96,8 @@ export class DashboardLandingComponent extends BaseViewComponent implements OnIn
 
   selectCompany = () => this.router.navigateByUrl( `/company/${this.loadedCompany.companyId}` );
   selectContact = () => this.router.navigateByUrl( `/contact/${this.loadedContact.contactId}` );
+
+  updateFilters = (updatedFilters: any) => {
+    this.fatFilters = updatedFilters;
+  }
 }

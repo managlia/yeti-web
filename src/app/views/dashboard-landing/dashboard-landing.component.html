@@ -60,31 +60,37 @@
             </div>
           </div>
 
-            <div class="row">
+          <app-team-filter-card
+            (filterUpdated)="updateFilters($event)"
+          ></app-team-filter-card>
 
-              <div *ngIf="searchEntityLoaded(); then actionAndCampaign; else actionOnly"></div>
 
-              <ng-template #actionAndCampaign>
-                <div class="col-md-6">
-                  <app-campaign-list-card [companyId]="loadedCompany?.companyId"
-                                          [contactId]="loadedContact?.contactId"></app-campaign-list-card>
-                </div>
-                <div class="col-md-6">
-                  <app-action-list-card [companyId]="loadedCompany?.companyId"
-                                        [contactId]="loadedContact?.contactId"></app-action-list-card>
-                </div>
-              </ng-template>
+          <div class="row" *ngIf="fatFilters">
+            <div *ngIf="searchEntityLoaded(); then actionAndCampaign; else actionOnly"></div>
+            <ng-template #actionAndCampaign>
+              <div class="col-md-6">
+                <app-campaign-list-card [companyId]="loadedCompany?.companyId"
+                                        [fatFilters]="fatFilters"
+                                        [contactId]="loadedContact?.contactId"></app-campaign-list-card>
+              </div>
+              <div class="col-md-6">
+                <app-action-list-card [companyId]="loadedCompany?.companyId"
+                                      [fatFilters]="fatFilters"
+                                      [contactId]="loadedContact?.contactId"></app-action-list-card>
+              </div>
+            </ng-template>
+            <ng-template #actionOnly>
+              <div class="col-md-6">
+                <app-campaign-list-card [fatFilters]="fatFilters"></app-campaign-list-card>
+              </div>
+              <div class="col-md-6">
+                <app-action-list-card [fatFilters]="fatFilters"></app-action-list-card>
+              </div>
+            </ng-template>
+          </div>
 
-              <ng-template #actionOnly>
-                  <div class="col-md-6">
-                    <app-campaign-list-card></app-campaign-list-card>
-                  </div>
-                  <div class="col-md-6">
-                    <app-action-list-card></app-action-list-card>
-                  </div>
-              </ng-template>
 
-            </div>
+
         </div>
       </div>
     </div>

@@ -26,11 +26,11 @@ export class Campaign {
   attachments: Attachment[];
   actions: Action[];
   contacts: Contact[];
+  teamId: string;
 
   constructor() {
     this.active = true;
     this.classificationType = new CampaignClassificationType();
-    this.scopeType = new ScopeType();
     this.actions = [];
     this.attachments = [];
     this.tags = [];
