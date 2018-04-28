@@ -1,0 +1,23 @@
+.mat-column-createDate {
+  flex: 0 0 13%;
+  text-align: left;
+}
+.mat-column-targetCloseDate {
+  flex: 0 0 13%;
+  text-align: left;
+}
+.mat-column-name {
+  flex: 0 0 31%;
+}
+.mat-column-type {
+  flex: 0 0 16%;
+  text-align: center;
+}
+.mat-column-scope {
+  flex: 0 0 14%;
+  text-align: center;
+}
+.mat-column-active {
+  flex: 0 0 13%;
+  text-align: center;
+}

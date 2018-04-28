@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import * as _ from 'lodash';
 
 import { Contact } from '../../classes/contact';
@@ -15,6 +15,7 @@ export class ContactCardComponent extends CardComponent implements OnInit {
 
   @Output() onContactFlaggedForRemoval = new EventEmitter<string>();
   @Output() onContactAssociatedToEntity = new EventEmitter<Contact>();
+  @Input() hostOnly = false;
 
   ngOnInit() {
     if (this.companyId) {

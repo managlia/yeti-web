@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -13,11 +13,13 @@ import {Contact} from '../../../classes/contact';
 })
 export class ContactAdderComponent extends AdderComponent implements OnInit {
 
+  @Input() hostOnly = false;
+
   ngOnInit() {
     this.results$ = this.searchTerms.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((term: string) => this.companyOrContactService.searchContact(term) ),
+      switchMap((term: string) => this.companyOrContactService.searchContact(term, this.hostOnly) ),
     );
     this.results$
       .subscribe(results => this.results = this.excludeAlreadyAssociated(results, this.existingEntities) );

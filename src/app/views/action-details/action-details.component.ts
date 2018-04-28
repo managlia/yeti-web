@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ViewChild, OnInit, AfterViewInit, QueryList, ViewChildren} from '@angular/core';
 import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn} from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
 
 import {Action} from '../../classes/action';
-import {ActionClassificationType} from '../../classes/types/action-classification-type';
 import {ActionClassificationOtherType} from '../../classes/types/action-classification-other-type';
 import {ScopeType} from '../../classes/types/scope-type';
 import {Company} from '../../classes/company';
@@ -12,7 +12,8 @@ import {Campaign} from '../../classes/campaign';
 
 import {Tag} from '../../classes/common/tag';
 import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
-import {toPromise} from 'rxjs/operator/toPromise';
+import {SimpleDateTimePickerComponent} from '../../components/widgets/simple-date-time-picker/simple-date-time-picker.component';
+import {SimpleSliderComponent} from '../../components/widgets/simple-slider/simple-slider.component';
 
 @Component({
   selector: 'app-action-details',
@@ -20,9 +21,12 @@ import {toPromise} from 'rxjs/operator/toPromise';
   styleUrls: ['./action-details.component.css']
 })
 
-export class ActionDetailsComponent extends BaseViewComponent implements OnInit {
+export class ActionDetailsComponent extends BaseViewComponent implements OnInit, AfterViewInit  {
 
-  action: Action;
+  @ViewChild(SimpleDateTimePickerComponent) simpleDateTimePicker: SimpleDateTimePickerComponent;
+  @ViewChildren(SimpleSliderComponent) sliders: QueryList<SimpleSliderComponent>;
+
+  action: Action = new Action();
 
   actionId: string;
   scopeTypes: ScopeType[];
@@ -37,43 +41,50 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   };
 
   ngOnInit() {
+    this.entityFormGroup = new FormGroup( {});
     this.entityName = 'action';
     window.scrollTo(0, 0);
+
+    this.createForm();
+
     this.getAction();
     this.loadTeams();
     this.loadTypes();
+  }
+
+  ngAfterViewInit() {
+    this.entityFormGroup.addControl('pickerForm', this.simpleDateTimePicker.pickerForm);
+    this.simpleDateTimePicker.pickerForm.setParent(this.entityFormGroup);
+
+    this.sliders.toArray().map( slider => {
+      this.entityFormGroup.addControl('pickerForm ' + slider.aLabel, slider.sliderForm);
+      slider.sliderForm.setParent(this.entityFormGroup);
+    });
+
   }
 
   resetForm = () => {
     this.entityFormGroup.reset();
     this.resetTheDirty();
     this.getAction();
-  }
+  };
 
   createForm = () => {
-    if (!this.action.scopeType) {
-      this.action.scopeType = new ScopeType();
-      this.action.scopeType.scopeTypeId = 'SH';
-    }
-    if (!this.action.classificationType) { this.action.classificationType = new ActionClassificationType(); }
     if (!this.action.classificationOtherType) { this.action.classificationOtherType = new ActionClassificationOtherType(); }
+    this.entityFormGroup.addControl( 'actionName', new FormControl(this.action.name, [Validators.required]) );
+    this.entityFormGroup.addControl( 'actionDescription', new FormControl(this.action.description, [Validators.required]), );
+    this.entityFormGroup.addControl( 'actionClassificationTypeId',
+      new FormControl(this.action.classificationType.actionClassificationTypeId, [Validators.required]) );
+    this.entityFormGroup.addControl( 'actionClassificationOtherTypeId',
+      new FormControl(this.action.classificationOtherType.actionClassificationOtherTypeId, [Validators.required]) );
+    this.entityFormGroup.addControl( 'scopeTypeId', new FormControl(this.action.scopeType.scopeTypeId, [Validators.required]) );
+    this.entityFormGroup.addControl( 'activeAction', new FormControl(this.action.active) );
+    this.entityFormGroup.addControl( 'actualCompletionDate', new FormControl(this.action.actualCompletionDate, [Validators.required]) );
+    this.entityFormGroup.addControl( 'teamId', new FormControl(this.action.teamId, [Validators.required]) );
 
-    this.entityFormGroup = new FormGroup({
-      actionName: new FormControl(this.action.name, [Validators.required]),
-      actionDescription: new FormControl(this.action.description, [Validators.required]),
-      actionClassificationTypeId:
-        new FormControl(this.action.classificationType.actionClassificationTypeId, [Validators.required]),
-      actionClassificationOtherTypeId:
-        new FormControl(this.action.classificationOtherType.actionClassificationOtherTypeId, [Validators.required]),
-      scopeTypeId: new FormControl(this.action.scopeType.scopeTypeId, [Validators.required]),
-      targetValuation: new FormControl(this.action.targetValuation),
-      actualValuation: new FormControl(this.action.actualValuation),
-      activeAction: new FormControl(this.action.active),
-      teamId: new FormControl(this.action.teamId, [Validators.required])
-    });
     this.disableOther();
     this.disableTeam();
-    this.entityLoaded = true;
+    this.disableCompletionDate();
   };
 
   get actionName() { return this.entityFormGroup.get('actionName'); }
@@ -81,10 +92,9 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   get actionClassificationTypeId() { return this.entityFormGroup.get('actionClassificationTypeId'); }
   get actionClassificationOtherTypeId() { return this.entityFormGroup.get('actionClassificationOtherTypeId'); }
   get scopeTypeId() { return this.entityFormGroup.get('scopeTypeId'); }
-  get targetValuation() { return this.entityFormGroup.get('targetValuation'); }
-  get actualValuation() { return this.entityFormGroup.get('actualValuation'); }
   get activeAction() { return this.entityFormGroup.get('activeAction'); }
   get teamId() { return this.entityFormGroup.get('teamId'); }
+  get actualCompletionDate() { return this.entityFormGroup.get('actualCompletionDate'); }
 
   copyFormToAction = () => {
     if ( this.actionClassificationTypeId.value !== 'OT' ) {
@@ -92,10 +102,9 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
     }
     this.action.name = this.actionName.value;
     this.action.description = this.actionDescription.value;
-    this.action.targetValuation = this.targetValuation.value;
-    this.action.actualValuation = this.actualValuation.value;
     this.action.active = this.activeAction.value;
     this.action.teamId = this.teamId.value;
+    this.action.actualCompletionDate = this.actualCompletionDate.value;
     this.action.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.action.classificationType = this.classificationTypes.filter(
@@ -117,12 +126,23 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
   disableTeam = () => {
     const disableTeam = this.scopeTypeId.value !== 'SH';
     if ( disableTeam ) {
-      this.teamId.setValue({value: null} );
+      this.teamId.setValue(null );
       this.teamId.disable();
     } else {
       this.teamId.enable();
     }
   };
+
+  disableCompletionDate = () => {
+    const disableCompletionDate = this.activeAction.value;
+    if ( disableCompletionDate ) {
+      this.actualCompletionDate.setValue(null );
+      this.actualCompletionDate.disable();
+    } else {
+      this.actualCompletionDate.enable();
+    }
+  };
+
 
   getAction(): void {
     this.actionId = this.route.snapshot.paramMap.get('id');
@@ -131,13 +151,31 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
       this.actionService.getAction(this.actionId)
         .subscribe(action => {
           this.action = action;
-          this.createForm();
+          this.entityFormGroup.patchValue({
+            'actionName': this.action.name,
+            'actionDescription': this.action.name,
+
+            'actionClassificationTypeId': this.action.classificationType.actionClassificationTypeId ?
+              this.action.classificationType.actionClassificationTypeId : 'GA',
+
+            'actionClassificationOtherTypeId': this.action.classificationOtherType ?
+              this.action.classificationOtherType.actionClassificationOtherTypeId : null,
+
+            'scopeTypeId': this.action.scopeType.scopeTypeId ?
+              this.action.scopeType.scopeTypeId : 'PR',
+
+
+            'activeAction': this.action.active,
+            'actualCompletionDate': this.action.actualCompletionDate,
+            'teamId': this.action.teamId
+            });
+            this.disableOther();
+            this.disableTeam();
+            this.disableCompletionDate();
         });
     } else {
-      this.action = new Action();
       this.entity = this.route.snapshot.paramMap.get('entity');
       this.entityId = this.route.snapshot.paramMap.get('entityId');
-      this.createForm();
     }
   }
 
@@ -150,7 +188,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
         this.getAction();
       });
     } else {
-      this.action.ownerId = this.dataStore.userId;
+      this.action.ownerId = this.resourceId;
       if (this.entity && this.entityId) {
         this.actionService.addAction(this.action).toPromise()
           .then(response => this.completeAssociation(response.headers.get('Location'), this.entity, this.entityId))
@@ -229,4 +267,15 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit 
       response => this.showAssocationSuccessful('campaign'),
       error => this.handleAssociationFailure('campaign'));
   }
+
+  updateDifficulty = (val: number) => {
+    console.log('setting difficulty to ' + val);
+    this.action.difficulty = val;
+  }
+
+  updateImportance = (val: number) => {
+    console.log('setting importance to ' + val);
+    this.action.importance = val;
+  }
+
 }

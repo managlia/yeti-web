@@ -60,6 +60,23 @@
                     <mat-cell *matCellDef="let campaign"> {{campaign.classificationType.name}} </mat-cell>
                   </ng-container>
 
+                  <!-- Scope Column -->
+                  <ng-container matColumnDef="scope">
+                    <mat-header-cell *matHeaderCellDef>
+                      <mat-select [(placeholder)]="label.campaign.column.scope"
+                                  [(ngModel)]="scopeFilter"
+                                  (selectionChange)="applyFilters()">
+                        <mat-option value="all">All Scopes</mat-option>
+                        <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
+                          {{ scopeType.name }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let campaign"> {{campaign.scopeType?.name}}</mat-cell>
+                  </ng-container>
+
+
+
                <!--  Full Edit column: Active -->
                 <ng-container matColumnDef="active">
                   <mat-header-cell *matHeaderCellDef>

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {LoggerService} from './logger.service';
 import {Observable} from 'rxjs/Observable';
+import {DataStore} from '../classes/data-store';
 // import * as colors from 'colors/safe';
 import chalk from 'chalk';
 
@@ -10,7 +11,8 @@ export class BaseService {
 
   static readonly headers = new HttpHeaders({
     'Content-Type': 'application/json',
-    'X-TEST-EXTRA': 'ABC'
+    'X-CHECK-ID': DataStore.userId,
+    'X-HOST-ID': DataStore.companyId
   });
   static readonly observeValue = 'response';
   static readonly responseTypeValue = 'text';

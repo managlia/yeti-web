@@ -26,6 +26,7 @@
         <div class="col-md-12">
           <app-contact-adder
             [existingEntities]="entities"
+            [hostOnly]="hostOnly"
             (onEntityAdded)="onContactAdded($event)"
           ></app-contact-adder>
           <button type="button" class="btn btn-primary btn-sm" (click)="createNewContact()">{{label.contact.addNew}}</button>

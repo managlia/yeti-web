@@ -8,8 +8,14 @@
         <div class="card-body">
            <div class="row">
 
+             <app-team-filter-card
+               (filterUpdated)="updateFilters($event)"
+             ></app-team-filter-card>
+
               <div class="col-12">
-                <div *ngIf="files"><app-attachment-list-card [files]="files"></app-attachment-list-card></div>
+                <div *ngIf="files"><app-attachment-list-card
+                  [fatFilters]="fatFilters"
+                  [files]="files"></app-attachment-list-card></div>
               </div>
 
           </div>

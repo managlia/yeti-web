@@ -16,25 +16,25 @@ export class CompanyOrContactService extends BaseService {
 
   searchCompanyAndContact(term: string): Observable<CompanyOrContact[]> {
     const key = 'term';
-    return this.doSearch( term, key );
+    return this.doSearch( term, key, false );
   }
 
   searchCompany(term: string): Observable<CompanyOrContact[]> {
     const key = 'company';
-    return this.doSearch( term, key );
+    return this.doSearch( term, key, false );
   }
 
-  searchContact(term: string): Observable<CompanyOrContact[]> {
+  searchContact(term: string, hostOnly: boolean): Observable<CompanyOrContact[]> {
     const key = 'contact';
-    return this.doSearch( term, key );
+    return this.doSearch( term, key, hostOnly );
   }
 
-  doSearch(term: string, key: string): Observable<CompanyOrContact[]> {
+  doSearch(term: string, key: string, hostOnly: boolean ): Observable<CompanyOrContact[]> {
     this.logger.debug(`${this.P}${this.getFilterStatement(this.cd)}${key} === "${term}"`);
     if (!term.trim()) {
       return of([]);
     }
-    return this.http.get<CompanyOrContact[]>(`${this.companyOrContactUrl}/?${key}=${term}`)
+    return this.http.get<CompanyOrContact[]>(`${this.companyOrContactUrl}/?${key}=${term}&hostonly=${hostOnly}`)
       .pipe(
         tap(_ => this.logger.debug(`${this.S}${this.getFilterStatement(this.cd)}${key} === "${term}"`)),
         catchError(this.handleError<any>(`${this.E}${this.getFilterStatement(this.cd)}${key} === "${term}"`))

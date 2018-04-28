@@ -1,0 +1,80 @@
+<div class="row" style="width:100%;">
+  <div class="col-12">
+
+  <form [formGroup]="pickerForm">
+
+    <div class="row">
+      <div class="col-3" style="background-color: #4dbd74; padding-right:6px;">
+        <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
+          <input matInput [matDatepicker]="myDatepicker" placeholder="Target action date"
+                 formControlName="formattedDate">
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="col-2" style="background-color: #20a8d8; padding-left:6px; padding-right:6px;">
+        <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
+        <mat-select placeholder="Hour"
+                    formControlName="startHour">
+          <mat-option *ngFor="let hour of hours" [value]="hour.hourInt">{{ hour.description }}</mat-option>
+        </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-2" style="background-color: #aad450; padding-left:6px; padding-right:6px;">
+        <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
+        <mat-select placeholder="Minute"
+                    formControlName="startMinute">
+          <mat-option *ngFor="let minute of minutes" [value]="minute.minuteInt">{{ minute.description }}</mat-option>
+        </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-2" style="background-color: yellowgreen; padding-left:6px; padding-right:6px;">
+        <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
+          <mat-select placeholder="AM/PM"
+                      formControlName="ampm">
+            <mat-option *ngFor="let ampm of ampms" [value]="ampm">{{ ampm }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+
+      <div class="col-3" style="background-color: aqua; padding-left:6px;">
+        <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
+          <mat-select placeholder="Zone"
+                      formControlName="shortTz">
+            <mat-option *ngFor="let tz of timeZones" [value]="tz">{{ tz.shortValue }} ({{ tz.longValue }})</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6" style="background-color: pink;">
+        <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+        <mat-select placeholder="Planned  Duration"
+                    formControlName="duration">
+          <mat-option *ngFor="let duration of durations" [value]="duration.minutes">{{ duration.description }}</mat-option>
+        </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-6" style="background-color: peachpuff;">
+        &nbsp;
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12" style="background-color: lightgoldenrodyellow;">
+        {{ getActionTargetDescription() }}
+      </div>
+    </div>
+
+
+
+
+
+  </form>
+
+
+  </div>
+</div>

@@ -25,7 +25,7 @@
       <div *ngIf="notesOnTop">
         <app-note-list-card [entityId]="team.teamId"
                             entityType="team"
-                            [resourceId]="dataStore.userId"
+                            [resourceId]="resourceId"
         ></app-note-list-card>
       </div>
 
@@ -103,6 +103,7 @@
 
               <div *ngIf="team?.teamId">
                 <app-contact-card [teamId]="team.teamId"
+                                  hostOnly="true"
                                   [associationSuccessful]="contactFlag"
                                   [associationFailure]="contacFailuretFlag"
                                   (onContactAssociatedToEntity)="onContactAssociatedToEntity($event)"
@@ -133,7 +134,7 @@
       <div *ngIf="!notesOnTop">
         <app-note-list-card [entityId]="team.teamId"
                             entityType="team"
-                            [resourceId]="dataStore.userId"
+                            [resourceId]="resourceId"
         ></app-note-list-card>
       </div>
 
@@ -141,7 +142,7 @@
     <div class="col-3">
 
 
-      <app-team-card [contactId]="dataStore.userId"
+      <app-team-card [contactId]="resourceId"
                        [associationSuccessful]="teamFlag"
                        [associationFailure]="teamFailureFlag"
                        (onTeamFlaggedForRemoval)="onTeamFlaggedForRemoval($event)"

@@ -9,60 +9,81 @@
 
           <form action="" method="post" class="form-horizontal">
             <div class="form-group row">
-              <div class="col-md-6">
-                <mat-form-field style="width:100%">
-                  <input type="text" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
-                         [(placeholder)]="label.dashboard.searchPlaceholder"
-                         #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)" id="searcher">
-                  <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let coc of results$ | async" [value]="coc.matchTerm"
-                                (onSelectionChange)="onOptionSelected(coc)">
-                      {{ coc.matchTerm }}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
+              <div class="col-4">
+
+                <div class="row" style="width:90%;">
+                  <div class="col-9">
+                    <mat-form-field style="width:100%">
+                      <input type="text" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
+                             [(placeholder)]="label.dashboard.searchPlaceholder"
+                             #searchBox2 id="search-box2" (keyup)="search(searchBox2.value)" id="searcher">
+                      <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let coc of results$ | async" [value]="coc.matchTerm"
+                                    (onSelectionChange)="onOptionSelected(coc)">
+                          {{ coc.matchTerm }}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-3">
+                    <button type="button" class="btn btn-secondary" (click)="resetSearch()"> {{label.dashboard.clear}} </button>
+                  </div>
+                </div>
+
+
+
+                <div *ngIf="searchEntityLoaded()">
+
+                  <div class="card card-accent-primary">
+
+                    <div *ngIf="(companyLoaded && this.loadedCompany)">
+                      <div class="card-header">
+                        <strong>{{label.dashboard.company}}</strong>
+                      </div>
+                      <div class="card-body">
+                        <div [innerHtml]="loadedCompany | companySummary"
+                             (mouseover)="onConsideringEntity(event,this)"
+                             (mouseout)="onUnconsideringEntity(event,this)"
+                             (click)="selectCompany()"></div>
+                      </div>
+                    </div>
+                    <div *ngIf="(contactLoaded && this.loadedContact)">
+                      <div class="card-header">
+                        <strong>{{label.dashboard.contact}}</strong>
+                      </div>
+                      <div class="card-body">
+                        <div [innerHtml]="loadedContact | contactSummary"
+                             (mouseover)="onConsideringEntity(event,this)"
+                             (mouseout)="onUnconsideringEntity(event,this)"
+                             (click)="selectContact()"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+
+                <app-team-filter-card
+                  (filterUpdated)="updateFilters($event)"
+                ></app-team-filter-card>
+
+
+
+
+
+
+
+
               </div>
-              <div class="col-md-6">
-                <button type="button" class="btn btn-secondary" (click)="resetSearch()"> {{label.dashboard.clear}} </button>
+              <div class="col-8" style="background-color: #00bf8f">
               </div>
             </div>
           </form>
 
-          <div *ngIf="searchEntityLoaded()">
-            <div class="row">
-              <div class="col-sm-6 col-md-4">
-                <div class="card card-accent-primary">
 
-                  <div *ngIf="(companyLoaded && this.loadedCompany)">
-                    <div class="card-header">
-                      <strong>{{label.dashboard.company}}</strong>
-                    </div>
-                    <div class="card-body">
-                      <div [innerHtml]="loadedCompany | companySummary"
-                           (mouseover)="onConsideringEntity(event,this)"
-                           (mouseout)="onUnconsideringEntity(event,this)"
-                           (click)="selectCompany()"></div>
-                    </div>
-                  </div>
-                  <div *ngIf="(contactLoaded && this.loadedContact)">
-                    <div class="card-header">
-                      <strong>{{label.dashboard.contact}}</strong>
-                    </div>
-                    <div class="card-body">
-                      <div [innerHtml]="loadedContact | contactSummary"
-                           (mouseover)="onConsideringEntity(event,this)"
-                           (mouseout)="onUnconsideringEntity(event,this)"
-                           (click)="selectContact()"></div>
-                    </div>
-                  </div>
-                </div>
-              </div><!--/.col-->
-            </div>
-          </div>
-
-          <app-team-filter-card
-            (filterUpdated)="updateFilters($event)"
-          ></app-team-filter-card>
 
 
           <div class="row" *ngIf="fatFilters">

@@ -1,0 +1,19 @@
+
+<div class="row" style="margin-top:20px;">
+  <div class="col-12">{{label}}</div>
+</div>
+<form [formGroup]="sliderForm">
+  <div class="row">
+    <div class="col-12" style="width:100%;">
+      <span>Less (1)</span>
+      <span>
+          <mat-slider thumbLabel style="width:310px;"
+                  min="1" max="10" step="1"
+                  formControlName="slideValue" tickInterval="1"
+          ></mat-slider>
+      </span>
+      <span>More (10)</span>
+    </div>
+  </div>
+</form>
+

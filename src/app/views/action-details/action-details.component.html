@@ -1,7 +1,6 @@
-<div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
+<div id="search-component" class="animated fadeIn" xmlns:width="http://www.w3.org/1999/xhtml">
   <div class="row">
     <div class="col-9"><!-- first column -->
-
       <div *ngIf="entity">
         <div class="col-sm-12 col-md-12">
           <div class="card text-white bg-primary text-center">
@@ -22,17 +21,14 @@
           </div>
         </div>
       </div><!--/.col-->
-
       <div *ngIf="notesOnTop">
         <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
                                                           entityType="action"
-                                                          [resourceId]="dataStore.userId"
+                                                          [resourceId]="resourceId"
         ></app-note-list-card></div>
       </div>
-
       <div class="card" style="min-width:850px;">
         <div class="card-header" [style.backgroundColor]="readyToSaveColor()">
-
           <div class="row">
             <div class="col-8">
               <strong>Action Details</strong>
@@ -41,57 +37,48 @@
               <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
             </div>
           </div>
-
         </div>
         <div class="card-body">
           <form [formGroup]="entityFormGroup" novalidate>
-
             <!--<div class="row" style="background-color: red;">-->
             <div class="row">
               <div class="col-5">
 
-
                 <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
                   <input matInput formControlName="actionName" placeholder="Action Name" tabindex="1">
                   <mat-error *ngIf="actionName.hasError('required')">
-                   Action name is required.
+                    Action name is required.
                   </mat-error>
                 </mat-form-field>
-
-
                 <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px; vertical-align: bottom">
                  <textarea matInput
                            formControlName="actionDescription"
                            placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
                            matAutosizeMinRows="5"
-                           matAutosizeMaxRows="15"></textarea>
+                           matAutosizeMaxRows="15"
+                           tabindex="2"
+                 ></textarea>
                   <mat-error *ngIf="actionDescription.hasError('required')">
                     Action description is required.
                   </mat-error>
                 </mat-form-field>
+                <app-simple-date-time-picker
+                  [action]="action"
+                ></app-simple-date-time-picker>
 
-                <mat-form-field style="width:90%">
-                  <input matInput
-                         formControlName="targetValuation"
-                         placeholder="Target Valuation"
-                  >
-                </mat-form-field>
-                <div  style="width:90%"><app-simple-date-picker
-                    [theDate]="action.targetCompletionDate"
-                    [keyPhrase]="targetStatement"
-                ></app-simple-date-picker></div>
 
-                <mat-form-field style="width:90%">
-                  <input matInput
-                         formControlName="actualValuation"
-                         placeholder="Actual Valuation"
-                  >
-                </mat-form-field>
-                <div  style="width:90%"><app-simple-date-picker
-                  [theDate]="action.actualCompletionDate"
-                  [keyPhrase]="actualStatement"
-                ></app-simple-date-picker></div>
+                <app-simple-slider
+                  aLabel="Importance"
+                  [aValue]="action.importance"
+                  (valueChanged)="updateImportance($event)"
+                ></app-simple-slider>
 
+
+                <app-simple-slider
+                  aLabel="Difficulty"
+                  [aValue]="action.difficulty"
+                  (valueChanged)="updateDifficulty($event)"
+                ></app-simple-slider>
 
               </div>
               <div class="col-3">
@@ -110,21 +97,17 @@
                     Action classification is required.
                   </mat-error>
                 </mat-form-field>
-                  <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
-
-                    <mat-select
-                      formControlName="actionClassificationOtherTypeId"
-                      placeholder="Other Type"
-                    >
-                      <mat-option *ngFor="let classificationOtherType of classificationOtherTypes"
-                                  [value]="classificationOtherType.actionClassificationOtherTypeId">
-                        {{ classificationOtherType.name }}
-                      </mat-option>
-                    </mat-select>
-
-                  </mat-form-field>
-
-
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <mat-select
+                    formControlName="actionClassificationOtherTypeId"
+                    placeholder="Other Type"
+                  >
+                    <mat-option *ngFor="let classificationOtherType of classificationOtherTypes"
+                                [value]="classificationOtherType.actionClassificationOtherTypeId">
+                      {{ classificationOtherType.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
                 <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
                   <mat-select
                     formControlName="scopeTypeId"
@@ -139,8 +122,6 @@
                     Action scope is required.
                   </mat-error>
                 </mat-form-field>
-
-
                 <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
                   <mat-select
                     formControlName="teamId"
@@ -154,43 +135,49 @@
                     Team is required when you've chosen 'Team' scope.
                   </mat-error>
                 </mat-form-field>
-
-
-
-                <mat-radio-group name="activeAction" formControlName="activeAction">
+                <mat-radio-group name="activeAction" formControlName="activeAction" (change)="disableCompletionDate()">
                   <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
                   <mat-radio-button [value]="false"> Closed</mat-radio-button>
                 </mat-radio-group>
-
-
-
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <input matInput
+                         placeholder="Actual ccompletion date"
+                         [matDatepicker]="myDatepicker"
+                         formControlName="actualCompletionDate"
+                  >
+                  <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+                  <mat-datepicker #myDatepicker></mat-datepicker>
+                </mat-form-field>
                 <app-datespace [entity]="action"></app-datespace>
-
               </div>
-
-
               <div class="col-4">
-
                 <app-tag-card #tagsCard id="tagsCard"
-                  [associationSuccessful]="actionFlag"
-                  [associationFailure]="actionFailureFlag"
-                  [tags]="action.tags"
-                  (tagsUpdated)="updateTags($event)"></app-tag-card>
+                              [associationSuccessful]="actionFlag"
+                              [associationFailure]="actionFailureFlag"
+                              [tags]="action.tags"
+                              (tagsUpdated)="updateTags($event)"></app-tag-card>
                 <app-attachment-card  [entityId]="action.actionId"
                                       entityType="action"
-                                      [resourceId]="dataStore.userId"
                 ></app-attachment-card>
-              </div>
 
+<div style="color:orangered;">
+    {{ action.targetCompletionDate | date:'full' }}<br/>
+    {{ action.targetCompletionDateEnd | date:'full'  }} <br/>
+    Importance: {{ action.importance }} <br/>
+    Difficulty {{ action.difficulty }}
+</div>
+
+              </div>
             </div>
 
             <div class="row">
-              <div class="col-6" style="text-align:left">
+              <div class="col-6">
                 <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
               </div>
-              <div (mouseenter)="possiblyTriggerErrorMessages()"
-              ><div class="col-6" style="text-align:right">
-                <button type="button" class="btn btn-warning" (click)="addUpdateAction()" [disabled]="unreadyToSave()">Click to save</button></div>
+              <div class="col-6" style="text-align:right;">
+                <div (mouseenter)="possiblyTriggerErrorMessages()">
+                <button type="button" class="btn btn-warning" (click)="addUpdateAction()" [disabled]="unreadyToSave()">Click to save</button>
+                </div>
               </div>
             </div>
 
@@ -199,10 +186,10 @@
       </div>
 
       <div *ngIf="!notesOnTop">
-      <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
-                         entityType="action"
-                         [resourceId]="dataStore.userId"
-      ></app-note-list-card></div>
+        <div style="min-width:850px;"><app-note-list-card [entityId]="action.actionId"
+                                                          entityType="action"
+                                                          [resourceId]="resourceId"
+        ></app-note-list-card></div>
       </div>
 
     </div>

@@ -17,9 +17,7 @@ export class Campaign {
   createDate: Date;
   deactivationDate: Date;
   actualCompletionDate: Date;
-  actualValuation: string;
   targetCompletionDate: Date;
-  targetValuation: string;
   classificationType: CampaignClassificationType;
   scopeType: ScopeType;
   tags: Tag[];
@@ -27,6 +25,8 @@ export class Campaign {
   actions: Action[];
   contacts: Contact[];
   teamId: string;
+  importance: number;
+  difficulty: number;
 
   constructor() {
     this.active = true;
@@ -34,5 +34,7 @@ export class Campaign {
     this.actions = [];
     this.attachments = [];
     this.tags = [];
+    this.importance = 5;
+    this.difficulty = 5;
   }
 }

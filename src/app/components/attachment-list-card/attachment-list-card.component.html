@@ -15,9 +15,16 @@
                 </mat-form-field>
               </div>
             </div>
+            <div class="row">
+              <div class="col-9">
+                <mat-checkbox [(ngModel)]="entityToggles.company" (change)="entityCheckboxToggled()"> Attached to Companies </mat-checkbox><br/>
+                <mat-checkbox [(ngModel)]="entityToggles.contact" (change)="entityCheckboxToggled()"> Attached to Contacts </mat-checkbox><br/>
+                <mat-checkbox [(ngModel)]="entityToggles.campaign" (change)="entityCheckboxToggled()"> Attached to Campaigns </mat-checkbox><br/>
+                <mat-checkbox [(ngModel)]="entityToggles.action" (change)="entityCheckboxToggled()"> Attached to Actions </mat-checkbox><br/>
+              </div>
+            </div>
 
             <mat-table #table [dataSource]="dataSource" matSort>
-
               <!-- Name Column -->
               <ng-container matColumnDef="storageDate">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Storage Date </mat-header-cell>

@@ -37,6 +37,7 @@ export const campaign = {
     name: 'Name',
     description: 'Description',
     type: 'Type',
+    scope: 'Scope',
     active: 'Is Active'
   }
 };

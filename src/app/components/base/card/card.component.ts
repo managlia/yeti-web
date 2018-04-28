@@ -16,9 +16,9 @@ import {Observable} from 'rxjs/Observable';
 import {TagService} from '../../../services/tag.service';
 import {TaggingService} from '../../widgets/tagging.service';
 import {TeamService} from '../../../services/team.service';
-import {DataStore} from '../../../classes/data-store';
 import {AddressService} from '../../widgets/address.service';
 import * as label from '../../labels';
+import {DataStore} from '../../../classes/data-store';
 
 @Component({
   selector: 'app-card',
@@ -27,6 +27,7 @@ import * as label from '../../labels';
 })
 export class CardComponent implements OnChanges {
 
+  resourceId = DataStore.userId;
   public pristineElements: any = [];
   cardName = 'overwrite in the extending class';
 
@@ -65,7 +66,6 @@ export class CardComponent implements OnChanges {
     public addressService: AddressService,
     public tagService: TagService,
     public teamService: TeamService,
-    public dataStore: DataStore,
     public attachmentService: AttachmentService
   ) {}
 

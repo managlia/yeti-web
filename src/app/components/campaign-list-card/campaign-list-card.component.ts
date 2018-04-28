@@ -21,6 +21,7 @@ import {DataStore} from '../../classes/data-store';
 })
 export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChanges {
 
+  resourceId = DataStore.userId;
   @Input() companyId: string;
   @Input() contactId: string;
   @Input() fatFilters: any;
@@ -30,13 +31,14 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
   bgColor = 'white';
   activeFilter = 'true';
   typeFilter: string;
+  scopeFilter: string;
   textFilter = '';
   teams: Team[];
 
   classificationTypes: CampaignClassificationType[];
   scopeTypes: ScopeType[];
   public readonly label = label;
-  displayedColumns = [ 'createDate', 'targetCloseDate', 'name', 'description', 'type', 'active'];
+  displayedColumns = [ 'createDate', 'targetCloseDate', 'name', 'type', 'scope', 'active'];
 
   constructor(
     private campaignService: CampaignService,
@@ -45,7 +47,6 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
     private scopeTypeService: ScopeTypeService,
     public renderer: Renderer2,
     private router: Router,
-    private dataStore: DataStore,
     private campaignQuickEditService: CampaignQuickEditService
   ) {
     this.getClassificationTypes();
@@ -61,6 +62,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
     this.dataSource.filter = JSON.stringify({
       general: '',
       activeStatus: 'true',
+      scopeStatus: 'all',
       typeStatus: 'all'
     });
     if (this.companyId) {
@@ -73,7 +75,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
       this.campaignService.getCampaignList()
         .subscribe(campaigns => this.dataSource.data = campaigns);
     }
-    this.teamService.getTeamListByContact( this.dataStore.userId )
+    this.teamService.getTeamListByContact( this.resourceId )
       .subscribe(teams => this.teams = teams);
 
 
@@ -115,6 +117,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
     const filterValues = {
       general: this.textFilter,
       activeStatus: this.activeFilter,
+      scopeStatus: this.scopeFilter ? this.scopeFilter : 'all',
       typeStatus: this.typeFilter ? this.typeFilter : 'all',
       fatFilters: this.fatFilters
     };
@@ -124,19 +127,17 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
   createFilter(): (data: any, filter: string) => boolean {
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
-
       const relevantScopes = [];
       if ( searchTerms.fatFilters ) {
         if ( searchTerms.fatFilters.mine ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PR'); }
-        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PU'); }
+        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PA'); }
         if ( searchTerms.fatFilters.myTeams ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('SH'); }
       }
-
-
       return (
         data.name.toString().toLowerCase().indexOf(searchTerms.general) !== -1
         || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1)
         && (searchTerms.activeStatus === 'all' || data.active === (searchTerms.activeStatus === 'true'))
+        && (searchTerms.scopeStatus === 'all' || (data.scopeType && (data.scopeType.scopeTypeId === searchTerms.scopeStatus)))
         && (searchTerms.typeStatus === 'all' || (data.classificationType &&
            (data.classificationType.campaignClassificationTypeId === searchTerms.typeStatus)))
 

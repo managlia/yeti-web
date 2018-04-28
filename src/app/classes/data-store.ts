@@ -7,11 +7,17 @@ import {Action} from './action';
 
 @Injectable()
 export class DataStore {
+
+  static readonly userId: string = '1';
+  static readonly companyId: string = '1';
+  static readonly userTimezone: string = 'America/Chicago';
+
   user: Contact;
   hostCompany: Company;
 
   // temp till data-store is active
-  userId = '1';
+  // userId = '1';
+
 
   loadedCompany: Company;
   loadedCompanyContacts: Contact[];

@@ -26,7 +26,7 @@
       <div *ngIf="notesOnTop">
         <app-note-list-card [entityId]="campaign.campaignId"
                             entityType="campaign"
-                            [resourceId]="dataStore.userId"
+                            [resourceId]="resourceId"
         ></app-note-list-card>
       </div>
 
@@ -71,22 +71,23 @@
                    ></textarea>
                 </mat-form-field>
 
-                <mat-form-field style="width:100%">
-                  <input matInput
-                         formControlName="targetValuation"
-                         placeholder="Campaign Target Valuation"
-                  >
-                </mat-form-field>
+                <app-simple-slider
+                  aLabel="Importance"
+                  [aValue]="campaign.importance"
+                  (valueChanged)="updateImportance($event)"
+                ></app-simple-slider>
+
+                <app-simple-slider
+                  aLabel="Difficulty"
+                  [aValue]="campaign.difficulty"
+                  (valueChanged)="updateDifficulty($event)"
+                ></app-simple-slider>
+
+
                 <app-simple-date-picker [theDate]="campaign.targetCompletionDate"
                                         [keyPhrase]="targetStatement"></app-simple-date-picker>
 
 
-                <mat-form-field style="width:100%">
-                  <input matInput
-                         formControlName="actualValuation"
-                         placeholder="Actual Valuation"
-                  >
-                </mat-form-field>
                 <app-simple-date-picker [theDate]="campaign.actualCompletionDate"
                                         [keyPhrase]="actualStatement"></app-simple-date-picker>
 
@@ -157,7 +158,6 @@
 
                 <app-attachment-card  [entityId]="campaign.campaignId"
                                       entityType="campaign"
-                                      [resourceId]="dataStore.userId"
                 ></app-attachment-card>
 
               </div>
@@ -181,7 +181,7 @@
         <div *ngIf="!notesOnTop">
           <app-note-list-card [entityId]="campaign.campaignId"
                               entityType="campaign"
-                              [resourceId]="dataStore.userId"
+                              [resourceId]="resourceId"
           ></app-note-list-card>
         </div>
 

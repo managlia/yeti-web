@@ -46,6 +46,7 @@ import {AttachmentService} from '../../../services/attachment.service';
 })
 export class BaseViewComponent implements OnInit {
 
+  resourceId = DataStore.userId;
   entityName = 'OverrideInTheViewDetails';
   entityFormGroup: FormGroup;
   entityLoaded = false;
@@ -108,7 +109,6 @@ export class BaseViewComponent implements OnInit {
     public contactService: ContactService,
     public contactTitleTypeService: ContactTitleTypeService,
     public contactUrlTypeService: ContactUrlTypeService,
-    public dataStore: DataStore,
     public emailService: EmailService,
     public entityService: EntityService,
     public formBuilder: FormBuilder,
@@ -237,7 +237,7 @@ export class BaseViewComponent implements OnInit {
   };
 
   loadTeams = () => {
-      this.teamService.getTeamListByContact( this.dataStore.userId )
+      this.teamService.getTeamListByContact( this.resourceId )
         .subscribe(teams => this.teams = teams);
   };
 

@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit, Input, ElementRef, ViewChild} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Input, ElementRef, ViewChild, SimpleChanges} from '@angular/core';
 import * as Dropzone from 'dropzone';
 import * as FileSaver from 'file-saver';
 
@@ -14,7 +14,6 @@ export class AttachmentCardComponent extends CardComponent implements OnInit, Af
 
   @Input() entityType: string;
   @Input() entityId: string;
-  @Input() resourceId: string;
 
   attachments: Attachment[];
 

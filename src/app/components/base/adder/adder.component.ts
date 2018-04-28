@@ -13,6 +13,7 @@ import {CampaignService} from '../../../services/campaign.service';
 import {CompanyService} from '../../../services/company.service';
 import {ContactService} from '../../../services/contact.service';
 import {TeamService} from '../../../services/team.service';
+import {DataStore} from '../../../classes/data-store';
 
 @Component({
   selector: 'app-adder',
@@ -21,6 +22,7 @@ import {TeamService} from '../../../services/team.service';
 })
 export class AdderComponent {
 
+  resourceId = DataStore.userId;
   @Output() onEntityAdded = new EventEmitter<any>();
   @Input() existingEntities: any[];
 

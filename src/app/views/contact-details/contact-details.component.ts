@@ -138,6 +138,10 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
         action => this.contactService.addActionToContact(newId, action).subscribe(
           response => this.updateRoute(location)
         ));
+    } else if (entity === 'company') {
+
+      this.updateRoute(location);
+
     } else if (entity === 'campaign') {
       this.campaignService.getCampaign(entityId).toPromise().then(
         campaign => this.contactService.addCampaignToContact(newId, campaign).subscribe(

@@ -14,7 +14,6 @@ export class Company {
   deactivationDate: Date;
   lastModifiedDate: Date;
   targetDate: Date;
-  valuation: string;
   classificationType: EntityClassificationType;
   addresses: Address[];
   attachments: any[];

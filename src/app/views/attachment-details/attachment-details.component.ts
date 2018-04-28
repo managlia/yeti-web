@@ -10,6 +10,8 @@ import { Attachment } from '../../classes/common/attachment';
 })
 export class AttachmentDetailsComponent extends BaseViewComponent implements OnInit {
 
+  fatFilters: any;
+
   files: Attachment[];
 
   ngOnInit() {
@@ -17,6 +19,12 @@ export class AttachmentDetailsComponent extends BaseViewComponent implements OnI
   }
 
   getFileList = () => this.attachmentService.getFileList().subscribe( results => this.files = results );
+
+  updateFilters = (updatedFilters: any) => {
+    this.fatFilters = updatedFilters;
+  }
+
+
 }
 
 

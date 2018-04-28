@@ -34,7 +34,8 @@ export class CampaignOrActionService extends BaseService {
     if (!term.trim()) {
       return of([]);
     }
-    return this.http.get<CampaignOrAction[]>(`${this.campaignOrActionUrl}/?${key}=${term}`)
+    return this.http.get<CampaignOrAction[]>(`${this.campaignOrActionUrl}/?${key}=${term}`, {
+      headers: BaseService.headers})
       .pipe(
         tap(_ => this.logger.debug(`${this.S}${this.getFilterStatement(this.cd)}${key} === "${term}"`)),
         catchError(this.handleError<any>(`${this.E}${this.getFilterStatement(this.cd)}${key} === "${term}"`))

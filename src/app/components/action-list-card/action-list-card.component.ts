@@ -42,8 +42,8 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
   scopeTypes: ScopeType[];
   public readonly label = label;
   fullEdit = false;
-  shortList = ['createDate', 'targetCloseDate', 'name', 'description', 'type'];
-  fullList = ['createDate', 'targetCloseDate', 'name', 'description', 'type', 'deleteAction', 'scope', 'active'];
+  shortList = ['createDate', 'targetCloseDate', 'name', 'type'];
+  fullList = ['createDate', 'targetCloseDate', 'name', 'type', 'scope', 'active'];
   displayedColumns: string[] = null;
   teams: Team[];
 
@@ -53,7 +53,6 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
     private actionService: ActionService,
     private actionClassificationTypeService: ActionClassificationTypeService,
     private actionClassificationOtherTypeService: ActionClassificationOtherTypeService,
-    private dataStore: DataStore,
     private scopeTypeService: ScopeTypeService,
     public renderer: Renderer2,
     private router: Router,
@@ -100,7 +99,7 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
       this.actionService.getActionList()
         .subscribe(actions => this.dataSource.data = actions);
     }
-    this.teamService.getTeamListByContact( this.dataStore.userId )
+    this.teamService.getTeamListByContact( DataStore.userId )
       .subscribe(teams => this.teams = teams);
   }
 
@@ -157,10 +156,9 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
       const relevantScopes = [];
       if ( searchTerms.fatFilters ) {
         if ( searchTerms.fatFilters.mine ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PR'); }
-        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PU'); }
+        if ( searchTerms.fatFilters.companyWide ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('PA'); }
         if ( searchTerms.fatFilters.myTeams ||  searchTerms.fatFilters.teamOnly ) { relevantScopes.push('SH'); }
       }
-      console.log('relevant scopes', relevantScopes);
       return (
         data.name.toString().toLowerCase().indexOf(searchTerms.general) !== -1
         || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1)

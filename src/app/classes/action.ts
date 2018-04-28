@@ -18,10 +18,9 @@ export class Action {
   deleteable: boolean;
   description: string;
   name: string;
-  targetValuation: string;
   createDate: Date;
   targetCompletionDate: Date;
-  actualValuation: string;
+  targetCompletionDateEnd: Date;
   actualCompletionDate: Date;
   classificationType: ActionClassificationType;
   classificationOtherType: ActionClassificationOtherType;
@@ -30,14 +29,21 @@ export class Action {
   attachments: Attachment[];
   actionChildren: Action[];
   teamId: string;
+  importance: number;
+  difficulty: number;
 
   constructor() {
+    // this.targetCompletionDate = new Date();
+    // this.targetCompletionDateEnd = new Date();
     this.active = true;
     this.deleteable = true;
     this.classificationType = new ActionClassificationType();
+    this.scopeType = new ScopeType();
     this.classificationOtherType = new ActionClassificationOtherType();
     this.actionChildren = [];
     this.attachments = [];
     this.tags = [];
+    this.importance = 5;
+    this.difficulty = 5;
   }
 }

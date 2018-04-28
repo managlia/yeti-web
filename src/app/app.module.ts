@@ -231,6 +231,8 @@ import { WindDirectionPipe } from './classes/pipes/wind-direction.pipe';
 import { TeamDetailsComponent } from './views/team-details/team-details.component';
 import { TeamCardComponent } from './components/team-card/team-card.component';
 import { TeamFilterCardComponent } from './components/team-filter-card/team-filter-card.component';
+import { SimpleSliderComponent } from './components/widgets/simple-slider/simple-slider.component';
+import { SimpleDateTimePickerComponent } from './components/widgets/simple-date-time-picker/simple-date-time-picker.component';
 
 @NgModule({
   imports: [
@@ -348,6 +350,8 @@ import { TeamFilterCardComponent } from './components/team-filter-card/team-filt
     TeamDetailsComponent,
     TeamCardComponent,
     TeamFilterCardComponent,
+    SimpleSliderComponent,
+    SimpleDateTimePickerComponent,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,

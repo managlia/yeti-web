@@ -4,7 +4,6 @@ import {MatChipInputEvent} from '@angular/material';
 import {ENTER, COMMA} from '@angular/cdk/keycodes';
 import * as _ from 'lodash';
 
-import {DataStore} from '../../../classes/data-store';
 import {Tag} from '../../../classes/common/tag';
 import {Observable} from 'rxjs/Observable';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
@@ -34,7 +33,6 @@ export class TagDetailsComponent implements OnInit {
   separatorKeysCodes = [ENTER, COMMA];
 
   constructor(
-    private dataStore: DataStore,
     public dialogRef: MatDialogRef<TagDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {

@@ -1,7 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {CardComponent} from '../base/card/card.component';
 import { Team } from '../../classes/team';
-import {Url} from '../../classes/common/url';
 
 @Component({
   selector: 'app-team-filter-card',
@@ -23,8 +22,8 @@ export class TeamFilterCardComponent extends CardComponent implements OnInit {
   teamId: string;
 
   ngOnInit(): void {
-    if (this.dataStore.userId) {
-      this.teamService.getTeamListByContact( this.dataStore.userId )
+    if (this.resourceId) {
+      this.teamService.getTeamListByContact( this.resourceId )
         .subscribe(teams => this.teams = teams);
     } else {
       this.entities = [];

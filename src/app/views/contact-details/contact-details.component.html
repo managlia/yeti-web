@@ -27,7 +27,7 @@
       <div *ngIf="notesOnTop">
         <app-note-list-card [entityId]="contact.contactId"
                             entityType="contact"
-                            [resourceId]="dataStore.userId"
+                            [resourceId]="resourceId"
         ></app-note-list-card>
       </div>
 
@@ -204,7 +204,7 @@
 
               <app-attachment-card [entityId]="contact.contactId"
                                    entityType="contact"
-                                   [resourceId]="dataStore.userId"></app-attachment-card>
+			  ></app-attachment-card>
             </div>
           </div>
 
@@ -232,7 +232,7 @@
       <div *ngIf="!notesOnTop">
         <app-note-list-card [entityId]="contact.contactId"
                             entityType="contact"
-                            [resourceId]="dataStore.userId"
+                            [resourceId]="resourceId"
         ></app-note-list-card>
       </div>
       <button type="button" class="btn btn-secondary btn-sm" (click)="goBack()">Back</button>

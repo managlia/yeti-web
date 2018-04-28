@@ -18,7 +18,6 @@ export class Contact {
   lastName: string;
   contactEmailAddress: string;
   description: string;
-  valuation: string;
   createDate: Date;
   deactivationDate: Date;
   dob: Date;

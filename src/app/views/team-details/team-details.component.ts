@@ -71,7 +71,7 @@ export class TeamDetailsComponent extends BaseViewComponent implements OnInit {
         this.getTeam();
       });
     } else {
-      this.team.creatorId = this.dataStore.userId;
+      this.team.creatorId = this.resourceId;
       if (this.entity && this.entityId) {
         this.teamService.addTeam(this.team).toPromise().then(
           response => this.completeAssociation(response.headers.get('Location'), this.entity, this.entityId) );
@@ -93,7 +93,7 @@ export class TeamDetailsComponent extends BaseViewComponent implements OnInit {
   }
 
   onTeamFlaggedForRemoval(teamId: string) {
-    this.teamService.removeContactFromTeam(this.team.teamId, this.dataStore.userId).subscribe(
+    this.teamService.removeContactFromTeam(this.team.teamId, this.resourceId).subscribe(
       response => this.showAssocationSuccessful('team'),
       error => this.handleAssociationFailure('team'));
   }
