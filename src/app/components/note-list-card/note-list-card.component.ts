@@ -2,11 +2,8 @@ import {Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef} from '@a
 import { MatPaginator, MatSort, MatSortable, MatTableDataSource } from '@angular/material';
 
 import { NoteService } from '../../services/note.service';
-import { Note } from '../../classes/note';
+import { Note } from '../../classes/comms/note';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ScopeType} from '../../classes/types/scope-type';
-import {ActionClassificationOtherType} from '../../classes/types/action-classification-other-type';
-import {ActionClassificationType} from '../../classes/types/action-classification-type';
 
 @Component({
   selector: 'app-note-list-card',

@@ -29,6 +29,11 @@ export const navigation = [
     icon: 'icon-star'
   },
   {
+    name: 'Communicate',
+    url: '/communicate',
+    icon: 'icon-star'
+  },
+  {
     name: 'Team',
     url: '/team',
     icon: 'icon-star'

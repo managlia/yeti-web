@@ -1,4 +1,4 @@
-<div id="search-component" class="animated fadeIn" xmlns:width="http://www.w3.org/1999/xhtml">
+<div id="search-component" class="animated fadeIn">
   <div class="row">
     <div class="col-9"><!-- first column -->
       <div *ngIf="entity">
@@ -151,14 +151,16 @@
                 <app-datespace [entity]="action"></app-datespace>
               </div>
               <div class="col-4">
-                <app-tag-card #tagsCard id="tagsCard"
-                              [associationSuccessful]="actionFlag"
-                              [associationFailure]="actionFailureFlag"
-                              [tags]="action.tags"
-                              (tagsUpdated)="updateTags($event)"></app-tag-card>
-                <app-attachment-card  [entityId]="action.actionId"
-                                      entityType="action"
-                ></app-attachment-card>
+                <div *ngIf="action.actionId">
+                  <app-tag-card #tagsCard id="tagsCard"
+                                [associationSuccessful]="actionFlag"
+                                [associationFailure]="actionFailureFlag"
+                                [tags]="action.tags"
+                                (tagsUpdated)="updateTags($event)"></app-tag-card>
+                  <app-attachment-card  [entityId]="action.actionId"
+                                        entityType="action"
+                  ></app-attachment-card>
+                </div>
 
 <div style="color:orangered;">
     {{ action.targetCompletionDate | date:'full' }}<br/>

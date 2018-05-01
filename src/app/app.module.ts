@@ -12,7 +12,6 @@ import { NgPipesModule } from 'ngx-pipes';
 import { ReactiveFormsModule } from '@angular/forms';  // <-- #1 import module
 import { NgxElectronModule } from 'ngx-electron';
 
-
 // Import containers
 import {
   FullLayoutComponent,
@@ -170,10 +169,12 @@ import { LoggerService } from './services/logger.service';
 import { ScopeTypeService } from './services/scope-type.service';
 import { TagService } from './services/tag.service';
 import { NoteService } from './services/note.service';
+import { AnnouncementService } from './services/announcement.service';
+import { CommAuditService } from './services/comm-audit.service';
+import { MemoService } from './services/memo.service';
 import { AttachmentService } from './services/attachment.service';
 
 import { ElectronService } from 'ngx-electron';
-
 
 const APP_COMPONENTS = [
   AppAsideComponent,
@@ -233,6 +234,10 @@ import { TeamCardComponent } from './components/team-card/team-card.component';
 import { TeamFilterCardComponent } from './components/team-filter-card/team-filter-card.component';
 import { SimpleSliderComponent } from './components/widgets/simple-slider/simple-slider.component';
 import { SimpleDateTimePickerComponent } from './components/widgets/simple-date-time-picker/simple-date-time-picker.component';
+import { CommunicationDetailsComponent } from './views/communication-details/communication-details.component';
+import { RecipientCardComponent } from './components/recipient-card/recipient-card.component';
+import { CommListCardComponent } from './components/comm-list-card/comm-list-card.component';
+import { RecipientListPipe } from './classes/pipes/recipient-list.pipe';
 
 @NgModule({
   imports: [
@@ -352,6 +357,10 @@ import { SimpleDateTimePickerComponent } from './components/widgets/simple-date-
     TeamFilterCardComponent,
     SimpleSliderComponent,
     SimpleDateTimePickerComponent,
+    CommunicationDetailsComponent,
+    RecipientCardComponent,
+    CommListCardComponent,
+    RecipientListPipe,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,
@@ -362,7 +371,8 @@ import { SimpleDateTimePickerComponent } from './components/widgets/simple-date-
     CompanyPhoneService, CompanyPhoneTypeService, ContactPhoneService, ContactPhoneTypeService,
     CompanyClassificationTypeService, CompanyAddressClassificationTypeService,
     ContactAddressClassificationTypeService, ContactClassificationTypeService, ContactTitleTypeService,
-    CampaignClassificationTypeService, ScopeTypeService, TagService, NoteService, AttachmentService, EntityService, CompanyOrContactService,
+    CampaignClassificationTypeService, ScopeTypeService, TagService, NoteService, AnnouncementService, CommAuditService, MemoService,
+    AttachmentService, EntityService, CompanyOrContactService,
     SmallChatterService, CampaignOrActionService, ActionContactService, DataStore, ElectronService,
     {
       provide: LocationStrategy,

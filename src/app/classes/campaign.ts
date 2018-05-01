@@ -30,6 +30,7 @@ export class Campaign {
 
   constructor() {
     this.active = true;
+    this.scopeType = new ScopeType();
     this.classificationType = new CampaignClassificationType();
     this.actions = [];
     this.attachments = [];

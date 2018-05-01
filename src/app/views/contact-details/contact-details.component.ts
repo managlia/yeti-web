@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import * as _ from 'lodash';
+import * as moment from 'moment-timezone';
 
 import {Action} from '../../classes/action';
 import {Campaign} from '../../classes/campaign';
@@ -63,9 +64,15 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
       contactEmailAddress: new FormControl(this.contact.contactEmailAddress, this.emailValidator()),
       description:  new FormControl(this.contact.description, [Validators.required]),
       contactTitleTypeId: new FormControl(this.contact.titleType.contactTitleTypeId),
-      dob:  new FormControl(this.contact.dob),
+      dob:  new FormControl(''),
       activeContact:  new FormControl(this.contact.active)
     });
+    this.onChanges();
+    if ( this.contact.dob ) {
+      this.entityFormGroup.patchValue({
+        'dob': new Date(this.contact.dob)
+      });
+    }
     this.entityLoaded = true;
   }
 
@@ -78,13 +85,54 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
   get dob() { return this.entityFormGroup.get('dob'); }
   get activeContact() { return this.entityFormGroup.get('activeContact'); }
 
-  copyFormToContact = () => {
+  onChanges = () => {
+    this.entityFormGroup.valueChanges.subscribe( val => {
+      // console.log('==================> ' + JSON.stringify(val));
+    });
+    this.contactFirstName.valueChanges.subscribe( val => {
+      console.log('start contactFirstName ' + this.contactFirstName);
+    });
+    this.contactLastName.valueChanges.subscribe( val => {
+      console.log('start contactLastName ' + this.contactLastName);
+    });
+    this.classificationTypeId.valueChanges.subscribe( val => {
+      console.log('start classificationTypeId ' + this.classificationTypeId);
+    });
+    this.contactEmailAddress.valueChanges.subscribe( val => {
+      console.log('start contactEmailAddress ' + this.contactEmailAddress);
+    });
+    this.description.valueChanges.subscribe( val => {
+      console.log('start description ' + this.description);
+    });
+    this.contactTitleTypeId.valueChanges.subscribe( val => {
+      console.log('start contactTitleTypeId ' + this.contactTitleTypeId);
+    });
+    this.dob.valueChanges.subscribe( val => {
+      console.log('start dob ' + this.dob);
+    });
+    this.activeContact.valueChanges.subscribe( val => {
+      console.log('start activeContact ' + this.activeContact);
+      if ( !val ) {
+          const deactiveDate = new Date();
+          this.contact.deactivationDate =
+            moment.tz( deactiveDate, this.userTimezone).format('YYYY-MM-DD HH:mm z');
+      } else {
+        this.contact.deactivationDate = null;
+      }
+    });
+  };
 
+  copyFormToContact = () => {
     this.contact.firstName = this.contactFirstName.value;
     this.contact.lastName = this.contactLastName.value;
     this.contact.description = this.description.value;
     this.contact.contactEmailAddress = this.contactEmailAddress.value;
     this.contact.dob = this.dob.value;
+    if ( this.dob.value ) {
+      const dobDate = new Date(this.dob.value);
+      this.contact.dob =
+        moment.tz( dobDate, 'Etc/UTC').format('YYYY-MM-DD HH:mm');
+    }
     this.contact.active = this.activeContact.value;
     this.contact.classificationType = this.classificationTypes.filter(
       e => e.classificationTypeId === this.classificationTypeId.value)[0];
@@ -117,8 +165,7 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
     if (contactId) {
       this.contactService.updateContact(this.contact).subscribe(result => {
         this.showAssocationSuccessful('contact');
-        // getting fresh data to make sure updates are working
-        this.getContact();
+        this.resetForm();
       });
     } else {
       if (this.entity && this.entityId) {
@@ -150,17 +197,18 @@ export class ContactDetailsComponent extends BaseViewComponent implements OnInit
     }
   }
 
-  loadTypes(): void {
-    this.contactClassificationTypeService.getContactClassificationTypeList()
-      .subscribe(contactTypes => this.classificationTypes = contactTypes);
-    this.contactAddressClassificationTypeService.getContactAddressClassificationTypeList()
-      .subscribe(addressTypes => this.addressClassificationTypes = addressTypes);
-    this.contactUrlTypeService.getUrlTypeList()
-      .subscribe(urlTypes => this.urlTypes = urlTypes);
-    this.contactPhoneTypeService.getPhoneTypeList()
-      .subscribe(phoneTypes => this.phoneTypes = phoneTypes);
-    this.contactTitleTypeService.getTitleTypeList()
-      .subscribe(titleTypes => this.titleTypes = titleTypes);
+  loadTypes = () => {
+    const p1 = this.contactClassificationTypeService.getContactClassificationTypeList();
+    const p2 = this.contactAddressClassificationTypeService.getContactAddressClassificationTypeList();
+    const p3 = this.contactUrlTypeService.getUrlTypeList();
+    const p4 = this.contactPhoneTypeService.getPhoneTypeList();
+    const p5 = this.contactTitleTypeService.getTitleTypeList();
+    // may want to wrap these in a monitor that identifies all complete
+    p1.subscribe(contactTypes => this.classificationTypes = contactTypes);
+    p2.subscribe(addressTypes => this.addressClassificationTypes = addressTypes);
+    p3.subscribe(urlTypes => this.urlTypes = urlTypes);
+    p4.subscribe(phoneTypes => this.phoneTypes = phoneTypes);
+    p5.subscribe(titleTypes => this.titleTypes = titleTypes);
   }
 
   onCompanyChosen(companyId: string) {

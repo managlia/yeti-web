@@ -1,7 +1,6 @@
 <div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
   <div class="row">
     <div class="col-9"><!-- first column -->
-
       <div *ngIf="entity">
         <div class="col-sm-12 col-md-12">
           <div class="card text-white bg-primary text-center">
@@ -41,11 +40,9 @@
               <button type="button" class="btn btn-warning" (click)="toggleNotesPosition()">Move Notes</button>
             </div>
           </div>
-
         </div>
         <div class="card-body">
           <form [formGroup]="entityFormGroup" novalidate>
-
 
             <div class="row">
               <div class="col-5">
@@ -71,6 +68,18 @@
                    ></textarea>
                 </mat-form-field>
 
+                <mat-form-field style="width:50%; padding-top:7px; padding-bottom:7px;">
+                  <input matInput
+                         placeholder="Target ccompletion date"
+                         [matDatepicker]="myDatepicker1"
+                         formControlName="targetCompletionDate"
+                  >
+                  <mat-datepicker-toggle matSuffix [for]="myDatepicker1"></mat-datepicker-toggle>
+                  <mat-datepicker #myDatepicker1></mat-datepicker>
+                </mat-form-field>
+
+
+
                 <app-simple-slider
                   aLabel="Importance"
                   [aValue]="campaign.importance"
@@ -83,13 +92,6 @@
                   (valueChanged)="updateDifficulty($event)"
                 ></app-simple-slider>
 
-
-                <app-simple-date-picker [theDate]="campaign.targetCompletionDate"
-                                        [keyPhrase]="targetStatement"></app-simple-date-picker>
-
-
-                <app-simple-date-picker [theDate]="campaign.actualCompletionDate"
-                                        [keyPhrase]="actualStatement"></app-simple-date-picker>
 
 
               </div>
@@ -138,27 +140,46 @@
                   </mat-error>
                 </mat-form-field>
 
-
-
-                <mat-radio-group name="activeCampaign" formControlName="activeCampaign">
+                <mat-radio-group name="activeCampaign" formControlName="activeCampaign" (change)="disableCompletionDate()">
                   <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
                   <mat-radio-button [value]="false"> Closed</mat-radio-button>
                 </mat-radio-group>
+
+                <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+                  <input matInput
+                         placeholder="Actual ccompletion date"
+                         [matDatepicker]="myDatepicker2"
+                         formControlName="actualCompletionDate"
+                  >
+                  <mat-datepicker-toggle matSuffix [for]="myDatepicker2"></mat-datepicker-toggle>
+                  <mat-datepicker #myDatepicker2></mat-datepicker>
+                </mat-form-field>
+
 
                 <app-datespace [entity]="campaign"></app-datespace>
 
               </div>
               <div class="col-4">
 
-                <app-tag-card
-                  [associationSuccessful]="campaignUpdated"
-                  [associationFailure]="campaignFailureUpdated"
-                  [tags]="campaign.tags"
-                  (tagsUpdated)="updateTags($event)"></app-tag-card>
+                <div *ngIf="campaign.campaignId">
+                  <app-tag-card
+                    [associationSuccessful]="campaignUpdated"
+                    [associationFailure]="campaignFailureUpdated"
+                    [tags]="campaign.tags"
+                    (tagsUpdated)="updateTags($event)"></app-tag-card>
 
-                <app-attachment-card  [entityId]="campaign.campaignId"
-                                      entityType="campaign"
-                ></app-attachment-card>
+                  <app-attachment-card  [entityId]="campaign.campaignId"
+                                        entityType="campaign"
+                  ></app-attachment-card>
+
+                </div>
+                <div style="color:orangered;">
+                  {{ campaign.targetCompletionDate | date:'full' }}<br/>
+                  {{ campaign.actualCompletionDate | date:'full' }}<br/>
+                  Importance: {{ campaign.importance }} <br/>
+                  Difficulty {{ campaign.difficulty }}
+                </div>
+
 
               </div>
             </div>

@@ -1,4 +1,5 @@
 <div *ngIf="entityLoaded" id="search-component" class="animated fadeIn">
+
   <div class="row">
     <div class="col-9">
       <div *ngIf="entity">
@@ -174,17 +175,18 @@
             <div class="col-4">
 
 
-              <app-tag-card
-                [associationSuccessful]="companyFlag"
-                [associationFailure]="companyFailureFlag"
-                [tags]="company.tags"
-                (tagsUpdated)="updateTags($event)"></app-tag-card>
+              <div *ngIf="company.companyId">
+                <app-tag-card
+                  [associationSuccessful]="companyFlag"
+                  [associationFailure]="companyFailureFlag"
+                  [tags]="company.tags"
+                  (tagsUpdated)="updateTags($event)"></app-tag-card>
 
 
-              <app-attachment-card [entityId]="company.companyId"
-                                   entityType="company"
-              ></app-attachment-card>
-
+                <app-attachment-card [entityId]="company.companyId"
+                                     entityType="company"
+                ></app-attachment-card>
+              </div>
 
             </div>
           </div>

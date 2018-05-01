@@ -8,7 +8,7 @@ import {Attachment} from '../classes/common/attachment';
 
 import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
-import {Note} from '../classes/note';
+import {Note} from '../classes/comms/note';
 
 @Injectable()
 export class AttachmentService extends BaseService {

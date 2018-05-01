@@ -4,7 +4,7 @@
   <form [formGroup]="pickerForm">
 
     <div class="row">
-      <div class="col-3" style="background-color: #4dbd74; padding-right:6px;">
+      <div class="col-3" style="padding-right:6px;">
         <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
           <input matInput [matDatepicker]="myDatepicker" placeholder="Target action date"
                  formControlName="formattedDate">
@@ -13,7 +13,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-2" style="background-color: #20a8d8; padding-left:6px; padding-right:6px;">
+      <div class="col-2" style="padding-left:6px; padding-right:6px;">
         <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
         <mat-select placeholder="Hour"
                     formControlName="startHour">
@@ -22,7 +22,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-2" style="background-color: #aad450; padding-left:6px; padding-right:6px;">
+      <div class="col-2" style="padding-left:6px; padding-right:6px;">
         <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
         <mat-select placeholder="Minute"
                     formControlName="startMinute">
@@ -31,7 +31,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-2" style="background-color: yellowgreen; padding-left:6px; padding-right:6px;">
+      <div class="col-2" style="padding-left:6px; padding-right:6px;">
         <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
           <mat-select placeholder="AM/PM"
                       formControlName="ampm">
@@ -41,7 +41,7 @@
       </div>
 
 
-      <div class="col-3" style="background-color: aqua; padding-left:6px;">
+      <div class="col-3" style="padding-left:6px;">
         <mat-form-field style="width:100%; padding-top:7px; padding-bottom:7px;">
           <mat-select placeholder="Zone"
                       formControlName="shortTz">
@@ -51,7 +51,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-6" style="background-color: pink;">
+      <div class="col-6">
         <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
         <mat-select placeholder="Planned  Duration"
                     formControlName="duration">
@@ -59,13 +59,12 @@
         </mat-select>
         </mat-form-field>
       </div>
-      <div class="col-6" style="background-color: peachpuff;">
-        &nbsp;
+      <div class="col-6">
       </div>
     </div>
     <div class="row">
-      <div class="col-12" style="background-color: lightgoldenrodyellow;">
-        {{ getActionTargetDescription() }}
+      <div class="col-12">
+        <h6>{{ getActionTargetDescription() }}</h6>
       </div>
     </div>
 

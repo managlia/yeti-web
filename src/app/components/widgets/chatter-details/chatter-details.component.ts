@@ -109,16 +109,23 @@ export class ChatterDetailsComponent implements OnInit, AfterViewInit {
       ((lat_max + lat_min) / 2.0),
       ((lng_max + lng_min) / 2.0)
     ));
-    this.map.fitBounds(new google.maps.LatLngBounds(
-      new google.maps.LatLng(lat_min, lng_min),
-      new google.maps.LatLng(lat_max, lng_max)
-    ));
+
+    if ( markers.length < 2 ) {
+      console.log('changing zoom!!!!!!!');
+      this.map.setZoom(13);
+    } else {
+      this.map.fitBounds(new google.maps.LatLngBounds(
+        new google.maps.LatLng(lat_min, lng_min),
+        new google.maps.LatLng(lat_max, lng_max)
+      ));
+    }
+
   }
 
   initMap = () => {
     const mapProp = {
-      center: new google.maps.LatLng(39.8283, 98.5795),
-      zoom: 12,
+      center: new google.maps.LatLng(39.8283, -98.5795),
+      zoom: 4,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);

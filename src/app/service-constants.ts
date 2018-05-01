@@ -52,6 +52,11 @@ export class ServiceConstants {
   public static TWITTER_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/twitter`;
   public static WEATHER_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/weather`;
 
+  public static COMMS_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetio/comms`;
+  public static MEMO_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/memos`;
+  public static ANNOUNCEMENT_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/announcements`;
+  public static COMM_AUDIT_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/commaudits`;
+
   public static NOTE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/notes`;
   public static FILE_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetix/files`;
   public static FILE_LIST_URL = `${ServiceConstants.DEV_NOTES_HOST}/yetio/files`;

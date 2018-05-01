@@ -22,6 +22,7 @@ export class Company {
   phones: Phone[];
 
   constructor() {
+    this.active = true;
     this.classificationType = new EntityClassificationType();
     this.addresses = [];
     this.attachments = [];

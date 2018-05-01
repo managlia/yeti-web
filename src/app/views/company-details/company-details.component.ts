@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import * as _ from 'lodash';
+import * as moment from 'moment-timezone';
 
 import {BaseViewComponent} from '../../components/base/base-view/base-view.component';
 import {Action} from '../../classes/action';
@@ -61,6 +62,7 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
       description:  new FormControl(this.company.description, [Validators.required]),
       activeCompany:  new FormControl(this.company.active)
     });
+    this.onChanges();
     this.entityLoaded = true;
   }
 
@@ -69,6 +71,34 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
   get externalId() { return this.entityFormGroup.get('externalId'); }
   get description() { return this.entityFormGroup.get('description'); }
   get activeCompany() { return this.entityFormGroup.get('activeCompany'); }
+
+  onChanges = () => {
+    this.entityFormGroup.valueChanges.subscribe( val => {
+      console.log('==================> ' + JSON.stringify(val));
+    });
+    this.companyName.valueChanges.subscribe( val => {
+      console.log('start companyName ' + this.companyName);
+    });
+    this.classificationTypeId.valueChanges.subscribe( val => {
+      console.log('start classificationTypeId ' + this.classificationTypeId);
+    });
+    this.externalId.valueChanges.subscribe( val => {
+      console.log('start externalId ' + this.externalId);
+    });
+    this.description.valueChanges.subscribe( val => {
+      console.log('start description ' + this.description);
+    });
+    this.activeCompany.valueChanges.subscribe( val => {
+      console.log('start activeCompany ' + this.activeCompany);
+      if ( !val ) {
+        const deactiveDate = new Date();
+        this.company.deactivationDate =
+          moment.tz( deactiveDate, this.userTimezone).format('YYYY-MM-DD HH:mm z');
+      } else {
+        this.company.deactivationDate = null;
+      }
+    });
+  };
 
   copyFormToCompany = () => {
     this.company.name = this.companyName.value;
@@ -135,16 +165,17 @@ export class CompanyDetailsComponent extends BaseViewComponent implements OnInit
     }
   }
 
-  loadTypes(): void {
-    this.companyClassificationTypeService.getCompanyClassificationTypeList()
-      .subscribe(companyTypes => this.classificationTypes = companyTypes);
-    this.companyAddressClassificationTypeService.getCompanyAddressClassificationTypeList()
-      .subscribe(addressTypes => this.addressClassificationTypes = addressTypes);
-    this.companyUrlTypeService.getUrlTypeList()
-      .subscribe(urlTypes => this.urlTypes = urlTypes);
-    this.companyPhoneTypeService.getPhoneTypeList()
-      .subscribe(phoneTypes => this.phoneTypes = phoneTypes);
-  }
+  loadTypes = () => {
+    const p1 = this.companyClassificationTypeService.getCompanyClassificationTypeList();
+    const p2 = this.companyAddressClassificationTypeService.getCompanyAddressClassificationTypeList();
+    const p3 = this.companyUrlTypeService.getUrlTypeList();
+    const p4 = this.companyPhoneTypeService.getPhoneTypeList();
+    // may want to wrap these in a monitor that identifies all complete
+    p1.subscribe(companyTypes => this.classificationTypes = companyTypes);
+    p2.subscribe(addressTypes => this.addressClassificationTypes = addressTypes);
+    p3.subscribe(urlTypes => this.urlTypes = urlTypes);
+    p4.subscribe(phoneTypes => this.phoneTypes = phoneTypes);
+  };
 
   onContactAssociatedToEntity(contact: Contact): void {
       this.companyService.addContactToCompany(this.company.companyId, contact).subscribe(

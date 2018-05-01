@@ -8,6 +8,7 @@ import {ActionDetailsComponent} from './views/action-details/action-details.comp
 import {EmailDetailsComponent} from './views/email-details/email-details.component';
 import {AttachmentDetailsComponent} from './views/attachment-details/attachment-details.component';
 import {TeamDetailsComponent} from './views/team-details/team-details.component';
+import {CommunicationDetailsComponent} from './views/communication-details/communication-details.component';
 
 // Import Containers
 import {
@@ -71,6 +72,14 @@ export const routes: Routes = [
       {
         path: 'contact/add/:entity/:entityId',
         component: ContactDetailsComponent
+      },
+      {
+        path: 'communicate',
+        component: CommunicationDetailsComponent
+      },
+      {
+        path: 'communicate/:type/:id',
+        component: CommunicationDetailsComponent
       },
       {
         path: 'team',

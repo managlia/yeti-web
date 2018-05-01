@@ -1,0 +1,45 @@
+<div class="animated fadeIn">
+  <div class="card" style="min-width:250px; margin-top:7px; margin-top:7px; padding-left:1px; padding-right:1px;">
+    <div class="card-header" [style.backgroundColor]="isDirtyColor()">
+      <strong>Recipients</strong>
+    </div>
+    <div class="card-body">
+
+      <div *ngIf="wholeRecipientList">
+          <form [formGroup]="recipientPicker" novalidate>
+
+
+              <mat-form-field width="100%">
+                <input type="text"
+                       placeholder="Recipient"
+                       matInput
+                       [formControl]="recipientSearch"
+                       [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete"
+                                          [displayWith]="displayNull"
+                                          (optionSelected)="add($event)">
+                        <mat-option *ngFor="let aRecipient of filteredOptions | async" [value]="aRecipient">
+                    {{ aRecipient.firstName }} {{ aRecipient.lastName }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              <mat-error *ngIf="flagAsInvalid">The individual is already in the recipient list.</mat-error>
+
+
+            <mat-form-field class="tag-chip-list" style="background-color: lightgreen; width:100%; padding-top:60px;">
+              <mat-chip-list #chipList>
+                <mat-chip *ngFor="let recipient of currentRecipients" [selectable]="selectable"
+                          [removable]="removable" (remove)="remove(recipient)">
+                  {{ recipient.firstName }} {{ recipient.lastName }}
+                  <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+              </mat-chip-list>
+            </mat-form-field>
+
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

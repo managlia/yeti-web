@@ -38,6 +38,9 @@ import {TeamService} from '../../../services/team.service';
 import {UrlType} from '../../../classes/types/url-type';
 import * as label from '../../labels';
 import {AttachmentService} from '../../../services/attachment.service';
+import {AnnouncementService} from '../../../services/announcement.service';
+import {MemoService} from '../../../services/memo.service';
+import {NoteService} from '../../../services/note.service';
 
 @Component({
   selector: 'app-base-view',
@@ -47,11 +50,14 @@ import {AttachmentService} from '../../../services/attachment.service';
 export class BaseViewComponent implements OnInit {
 
   resourceId = DataStore.userId;
+  userTimezone = DataStore.userTimezone;
+
   entityName = 'OverrideInTheViewDetails';
   entityFormGroup: FormGroup;
   entityLoaded = false;
   notesOnTop = false;
   typesPromise: any;
+  typesLoaded = false;
 
   public dirtyCardColor = 'deeppink';
   bgColor = 'black';
@@ -63,12 +69,14 @@ export class BaseViewComponent implements OnInit {
   campaignFlag = false;
   companyFlag = false;
   teamFlag = false;
+  communicationFlag = false;
 
   actionFailureFlag = false;
   companyFailureFlag = false;
   contactFailureFlag = false;
   campaignFailureFlag = false;
   teamFailureFlag = false;
+  communicationFailureFlag = false;
 
   addressIsDirty = false;
   urlsIsDirty = false;
@@ -117,7 +125,10 @@ export class BaseViewComponent implements OnInit {
     public route: ActivatedRoute,
     public router: Router,
     public scopeTypeService: ScopeTypeService,
-    public teamService: TeamService
+    public teamService: TeamService,
+    public announcementService: AnnouncementService,
+    public memoService: MemoService,
+    public noteService: NoteService
   ) {
   }
 
@@ -157,6 +168,8 @@ export class BaseViewComponent implements OnInit {
       this.teamFailureFlag = true;
     } else if (entity === 'company') {
       this.companyFailureFlag = true;
+    } else if (entity === 'communication') {
+      this.communicationFailureFlag = true;
     }
     this.waitAndReset(entity);
   }
@@ -172,6 +185,8 @@ export class BaseViewComponent implements OnInit {
       this.teamFlag = true;
     } else if (entity === 'action') {
       this.actionFlag = true;
+    } else if (entity === 'communication') {
+      this.communicationFlag = true;
     }
     this.resetTheDirty();
     this.waitAndReset(entity);
@@ -194,6 +209,9 @@ export class BaseViewComponent implements OnInit {
         } else if (entity === 'team') {
           this.teamFlag = false;
           this.teamFailureFlag = false;
+        } else if (entity === 'communication') {
+          this.communicationFlag = false;
+          this.communicationFailureFlag = false;
         }
       }
     );

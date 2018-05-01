@@ -2,6 +2,7 @@ import {Component, ViewChild, OnInit, AfterViewInit, QueryList, ViewChildren} fr
 import {FormControl, FormGroup, Validators, AbstractControl, ValidatorFn} from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
+import * as moment from 'moment-timezone';
 
 import {Action} from '../../classes/action';
 import {ActionClassificationOtherType} from '../../classes/types/action-classification-other-type';
@@ -44,9 +45,7 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
     this.entityFormGroup = new FormGroup( {});
     this.entityName = 'action';
     window.scrollTo(0, 0);
-
     this.createForm();
-
     this.getAction();
     this.loadTeams();
     this.loadTypes();
@@ -55,12 +54,10 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
   ngAfterViewInit() {
     this.entityFormGroup.addControl('pickerForm', this.simpleDateTimePicker.pickerForm);
     this.simpleDateTimePicker.pickerForm.setParent(this.entityFormGroup);
-
     this.sliders.toArray().map( slider => {
       this.entityFormGroup.addControl('pickerForm ' + slider.aLabel, slider.sliderForm);
       slider.sliderForm.setParent(this.entityFormGroup);
     });
-
   }
 
   resetForm = () => {
@@ -104,7 +101,11 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
     this.action.description = this.actionDescription.value;
     this.action.active = this.activeAction.value;
     this.action.teamId = this.teamId.value;
-    this.action.actualCompletionDate = this.actualCompletionDate.value;
+    if ( this.actualCompletionDate.value ) {
+      const completeDate = new Date(this.actualCompletionDate.value);
+      this.action.actualCompletionDate =
+        moment.tz( completeDate, 'Etc/UTC').format('YYYY-MM-DD HH:mm');
+    }
     this.action.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.action.classificationType = this.classificationTypes.filter(
@@ -164,9 +165,8 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
             'scopeTypeId': this.action.scopeType.scopeTypeId ?
               this.action.scopeType.scopeTypeId : 'PR',
 
-
             'activeAction': this.action.active,
-            'actualCompletionDate': this.action.actualCompletionDate,
+            'actualCompletionDate': new Date(this.action.actualCompletionDate),
             'teamId': this.action.teamId
             });
             this.disableOther();
@@ -174,6 +174,10 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
             this.disableCompletionDate();
         });
     } else {
+      this.entityFormGroup.patchValue({
+        'actionClassificationTypeId': 'GA',
+        'scopeTypeId': 'PR'
+      });
       this.entity = this.route.snapshot.paramMap.get('entity');
       this.entityId = this.route.snapshot.paramMap.get('entityId');
     }
@@ -219,18 +223,15 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
     }
   }
 
-  loadTypes(): void {
-      const p1 = this.actionClassificationTypeService.getActionClassificationTypeList();
-      p1.subscribe(results => this.classificationTypes = results);
-      const p2 = this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList();
-      p2.subscribe(results => this.classificationOtherTypes = results);
-      const p3 = this.scopeTypeService.getScopeTypeList();
-      p3.subscribe(results => this.scopeTypes = results);
-      this.typesPromise = Promise.all([p1.toPromise(), p1.toPromise(), p1.toPromise()]).then( result => {
-        console.log('all types loaded');
-        this.typesPromise = null;
-      });
-  }
+  loadTypes = () => {
+    const p1 = this.actionClassificationTypeService.getActionClassificationTypeList();
+    const p2 = this.actionClassificationOtherTypeService.getActionClassificationOtherTypeList();
+    const p3 = this.scopeTypeService.getScopeTypeList();
+    // may want to wrap these in a monitor that identifies all complete
+    p1.subscribe(results => this.classificationTypes = results);
+    p2.subscribe(results => this.classificationOtherTypes = results);
+    p3.subscribe(results => this.scopeTypes = results);
+  };
 
   onCompanyAssociatedToEntity(company: Company) {
     this.actionService.addActionToCompany(company, this.action.actionId).subscribe(

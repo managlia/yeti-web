@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
+import * as moment from 'moment-timezone';
 
 import {Campaign} from '../../classes/campaign';
-import {CampaignClassificationType} from '../../classes/types/campaign-classification-type';
 import {ScopeType} from '../../classes/types/scope-type';
 import {Company} from '../../classes/company';
 import {Contact} from '../../classes/contact';
@@ -49,11 +49,12 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   }
 
   createForm = () => {
-    if (!this.campaign.scopeType) {
-      this.campaign.scopeType = new ScopeType();
-      this.campaign.scopeType.scopeTypeId = 'SH';
+    if (!this.campaign.scopeType.scopeTypeId) {
+      this.campaign.scopeType.scopeTypeId = 'PA';
     }
-    if (!this.campaign.classificationType) { this.campaign.classificationType = new CampaignClassificationType(); }
+    if (!this.campaign.classificationType.campaignClassificationTypeId) {
+      this.campaign.classificationType.campaignClassificationTypeId = '1';
+    }
     this.entityFormGroup = new FormGroup({
       campaignName: new FormControl(this.campaign.name, [Validators.required]),
       campaignDescription: new FormControl(this.campaign.description, [Validators.required]),
@@ -62,8 +63,17 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
       scopeTypeId: new FormControl(this.campaign.scopeType.scopeTypeId, [Validators.required]),
       activeCampaign: new FormControl(this.campaign.active),
       teamId: new FormControl(this.campaign.teamId, [Validators.required]),
+      targetCompletionDate: new FormControl(new Date(this.campaign.targetCompletionDate), [Validators.required]),
+      actualCompletionDate: new FormControl('', [Validators.required])
     });
+    this.onChanges();
+    if ( this.campaign.actualCompletionDate ) {
+      this.entityFormGroup.patchValue({
+        'actualCompletionDate' : new Date(this.campaign.actualCompletionDate)
+     });
+    }
     this.disableTeam();
+    this.disableCompletionDate();
     this.entityLoaded = true;
   };
 
@@ -73,12 +83,54 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   get scopeTypeId() { return this.entityFormGroup.get('scopeTypeId'); }
   get activeCampaign() { return this.entityFormGroup.get('activeCampaign'); }
   get teamId() { return this.entityFormGroup.get('teamId'); }
+  get targetCompletionDate() { return this.entityFormGroup.get('targetCompletionDate'); }
+  get actualCompletionDate() { return this.entityFormGroup.get('actualCompletionDate'); }
+
+  onChanges = () => {
+    this.entityFormGroup.valueChanges.subscribe( val => {
+      console.log('==================> ' + JSON.stringify(val));
+    });
+    this.campaignName.valueChanges.subscribe( val => {
+      console.log('start campaignName ' + this.campaignName);
+    });
+    this.campaignDescription.valueChanges.subscribe( val => {
+      console.log('start campaignDescription ' + this.campaignDescription);
+    });
+    this.campaignClassificationTypeId.valueChanges.subscribe( val => {
+      console.log('start campaignClassificationTypeId ' + this.campaignClassificationTypeId);
+    });
+    this.scopeTypeId.valueChanges.subscribe( val => {
+      console.log('start scopeTypeId ' + this.scopeTypeId);
+    });
+    this.activeCampaign.valueChanges.subscribe( val => {
+      console.log('start activeCampaign ' + this.activeCampaign);
+    });
+    this.teamId.valueChanges.subscribe( val => {
+      console.log('start teamId ' + this.teamId);
+    });
+    this.targetCompletionDate.valueChanges.subscribe( val => {
+      console.log('start targetCompletionDate ' + this.targetCompletionDate);
+    });
+    this.actualCompletionDate.valueChanges.subscribe( val => {
+      console.log('start actualCompletionDate ' + this.actualCompletionDate);
+    });
+  };
 
   copyFormToCampaign = () => {
     this.campaign.name = this.campaignName.value;
     this.campaign.description = this.campaignDescription.value;
     this.campaign.active = this.activeCampaign.value;
     this.campaign.teamId = this.teamId.value;
+    if ( this.targetCompletionDate.value ) {
+      const completeDate = new Date(this.targetCompletionDate.value);
+      this.campaign.targetCompletionDate =
+        moment.tz( completeDate, 'Etc/UTC').format('YYYY-MM-DD HH:mm');
+    }
+    if ( this.actualCompletionDate.value ) {
+      const completeDate = new Date(this.actualCompletionDate.value);
+      this.campaign.actualCompletionDate =
+        moment.tz( completeDate, 'Etc/UTC').format('YYYY-MM-DD HH:mm');
+    }
     this.campaign.scopeType = this.scopeTypes.filter(
       e => e.scopeTypeId === this.scopeTypeId.value)[0];
     this.campaign.classificationType = this.classificationTypes.filter(
@@ -92,6 +144,16 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
       this.teamId.disable();
     } else {
       this.teamId.enable();
+    }
+  };
+
+  disableCompletionDate = () => {
+    const disableCompletionDate = this.activeCampaign.value;
+    if ( disableCompletionDate ) {
+      this.actualCompletionDate.setValue(null );
+      this.actualCompletionDate.disable();
+    } else {
+      this.actualCompletionDate.enable();
     }
   };
 
@@ -153,10 +215,11 @@ export class CampaignDetailsComponent extends BaseViewComponent implements OnIni
   }
 
   loadTypes(): void {
-    this.campaignClassificationTypeService.getCampaignClassificationTypeList()
-      .subscribe(results => this.classificationTypes = results);
-    this.scopeTypeService.getScopeTypeList()
-      .subscribe(results => this.scopeTypes = results);
+    const p1 = this.campaignClassificationTypeService.getCampaignClassificationTypeList();
+    const p2 = this.scopeTypeService.getScopeTypeList();
+    // may want to wrap these in a monitor that identifies all complete
+    p1.subscribe(results => this.classificationTypes = results);
+    p2.subscribe(results => this.scopeTypes = results);
   }
 
   onCompanyAssociatedToEntity(company: Company) {

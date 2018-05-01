@@ -1,0 +1,150 @@
+<div *ngIf="this.dataSource.data">
+  <div id="noteCard" class="animated fadeIn">
+    <div class="card">
+      <div class="card-header">
+        <strong>Announcements and Memos</strong>
+      </div>
+      <div class="card-body">
+        <div *ngIf="viewNoteForm; then showNoteForm; else showNoteFilter"></div>
+        <ng-template #showNoteForm>
+          <form [formGroup]="noteFormGroup" novalidate>
+            <div class="row">
+              <div class="col-4">
+                <mat-form-field style="width:99%; padding-top:7px; padding-bottom:7px;">
+                  <input matInput formControlName="noteDescription" placeholder="Enter subject" tabindex="1" autofocus>
+                  <mat-error *ngIf="noteDescription.hasError('required')">
+                    Please enter a subject before saving.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-8">
+                <mat-form-field style="width:99%; padding-top:7px; padding-bottom:7px; vertical-align: bottom">
+                      <textarea matInput
+                                formControlName="noteValue"
+                                placeholder="Enter notes" matTextareaAutosize
+                                matAutosizeMinRows="10"
+                                matAutosizeMaxRows="25"  tabindex="2"></textarea>
+                  <mat-error *ngIf="noteValue.hasError('required')">
+                    Please enter some notes before saving.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row" style="margin-bottom:40px;">
+              <div class="col-6" style="text-align: left">
+                <button type="button" class="btn btn-secondary btn-sm" (click)="resetForm()" tabindex="-1">Cancel</button>
+              </div>
+              <div class="col-6" style="text-align: right">
+                <div (mouseenter)="possiblyTriggerErrorMessages()"
+                ><button type="button" class="btn btn-primary btn-sm" (click)="addNote()"  tabindex="3"
+                         [disabled]="noteFormGroup.invalid">Submit</button></div>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+        <ng-template #showNoteFilter>
+          <div class="row">
+            <div class="col-4">
+              <mat-form-field style="width:75%;">
+                <input matInput [(ngModel)]="textFilter" (keyup)="applyFilters()" placeholder="Filter">
+              </mat-form-field>
+            </div>
+            <div class="col-3">
+              <mat-checkbox [(ngModel)]="showAnnouncements" (change)="applyFilters()"> Company announcements </mat-checkbox><br/>
+              <mat-checkbox [(ngModel)]="showMemos" (change)="applyFilters()"> Memos to & from me </mat-checkbox>
+            </div>
+            <div class="col-3">
+              <mat-checkbox [(ngModel)]="showPinned" (change)="sortTheDataSource()"> Pinned first </mat-checkbox><br/>
+              <mat-checkbox [(ngModel)]="includeReadItems" (change)="applyFilters()"> Unread only </mat-checkbox>
+            </div>
+            <div class="col-2">
+              <button type="button" class="btn btn-primary btn-sm" (click)="showNewNoteForm()">Add Note</button>
+            </div>
+          </div>
+        </ng-template>
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <!-- Description Column -->
+          <ng-container matColumnDef="createDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Subject /<br/>Date </mat-header-cell>
+            <mat-cell *matCellDef="let note">
+              <div [className]="highlightClass(note)">
+                <b>Re:</b> {{note.description}}<br/>
+                <b>Date:</b> {{note.createDate | date:'shortDate' }} @ {{note.createDate | date:'shortTime' }}<br/>
+                <div style="padding-top:12px; padding-bottom:12px;">
+                  <div *ngIf="!note.audit?.haveRead">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="noteItemRead(note)">Mark Read</button>
+                  </div>
+                </div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <!-- Description Column -->
+          <ng-container matColumnDef="creatorDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> From /<br/>To </mat-header-cell>
+            <mat-cell *matCellDef="let note">
+              <div [className]="highlightClass(note)">
+              <b>From:</b>
+                <span *ngIf="note.creatorDetails">
+                  {{note.creatorDetails.firstName }}  {{note.creatorDetails.lastName }}
+                </span>
+              <br/>
+              <b>To:</b>
+
+
+
+                <div *ngIf="note.recipients; then showRecipients; else showAll"></div>
+                <ng-template #showRecipients>
+                  {{ note.recipientDetails  | recipientList }}
+                </ng-template>
+                <ng-template #showAll>
+                  All
+                </ng-template>
+
+              <div *ngIf="note.type === 'memo'">
+                <div style="padding-top:12px; padding-bottom:12px;">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="acknowledge()">Reply</button>
+                </div>
+              </div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <!-- Description Column -->
+          <ng-container matColumnDef="value">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Message </mat-header-cell>
+            <mat-cell *matCellDef="let note">
+
+              <div [className]="highlightClass(note)">
+                {{note.priority}} : {{note.value}}
+              </div>
+
+            </mat-cell>
+          </ng-container>
+          <!-- Type Column -->
+          <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef style="text-align:center;">Pin to<br/>top</mat-header-cell>
+            <mat-cell *matCellDef="let note">
+              <!--{{note.type}}-->
+
+              <div *ngIf="isPinned(note); then showUnpinButton; else showPinButton"></div>
+              <ng-template #showUnpinButton>
+                <button type="button" class="btn btn-primary btn-sm" (click)="pinNote(note, false)">Unpin</button>
+              </ng-template>
+              <ng-template #showPinButton>
+                <button type="button" class="btn btn-primary btn-sm" (click)="pinNote(note, true)">Pin</button>
+              </ng-template>
+
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let note; columns: displayedColumns;"></mat-row>
+
+        </mat-table>
+        <mat-paginator [length]="100"
+                       [pageSize]="1"
+                       [pageSizeOptions]="[2, 4, 8, 25, 100]">
+        </mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,3 +2,5 @@
 >Added: {{ entity.createDate | date:'short' }}</div>
 <div *ngIf="entity.lastModifiedDate" style="text-align:center; width:100%; color: deeppink;"
 >Last update: {{ entity.lastModifiedDate | date:'short' }}</div>
+<div *ngIf="entity.deactivationDate" style="text-align:center; width:100%; color: deeppink;"
+>Deactivation: {{ entity.deactivationDate | date:'short' }}</div>

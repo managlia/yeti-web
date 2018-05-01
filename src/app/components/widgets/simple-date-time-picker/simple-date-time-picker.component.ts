@@ -4,9 +4,6 @@ import * as moment from 'moment-timezone';
 import * as countriesAndTimezones from 'countries-and-timezones';
 import {DataStore} from '../../../classes/data-store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {ActionClassificationOtherType} from '../../../classes/types/action-classification-other-type';
-import {ActionClassificationType} from '../../../classes/types/action-classification-type';
-import {ScopeType} from '../../../classes/types/scope-type';
 
 @Component({
   selector: 'app-simple-date-time-picker',
@@ -75,18 +72,15 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
 
     if ( changes.action ) {
       const seed = this.parseStart();
+      console.log('xxxx' );
+      console.log('xxxx' );
+      console.log('xxxx ' + JSON.stringify(seed) );
+      console.log('xxxx', this.pickerForm );
+      console.log('xxxx' );
+      console.log('xxxx' );
+
 
       if ( this.pickerForm ) {
-
-        console.log('xxxx' );
-        console.log('xxxx' );
-        console.log('xxxx ' + JSON.stringify(seed) );
-        console.log('xxxx', this.pickerForm );
-        console.log('xxxx' );
-        console.log('xxxx' );
-
-
-
         this.pickerForm.patchValue( {
           'formattedDate': seed.formattedDate,
           'startHour': seed.startHour,
@@ -95,13 +89,14 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
           'shortTz': seed.shortTz,
           'duration': seed.duration
         });
-        this.onChanges();
       }
     }
   }
 
   ngOnInit() {
-    this.createForm({});
+    const seed = this.parseStart();
+    this.createForm(seed);
+    this.onChanges();
     this.copyFormToAction();
   }
 
@@ -129,16 +124,19 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
   get duration() { return this.pickerForm.get('duration'); }
 
   parseStart(): any {
-
     const justTheDate = this.action.targetCompletionDate ? new Date(this.action.targetCompletionDate) : new Date();
     this.startMoment = moment.tz(justTheDate, this.userTimezone);
     const baseMinutes = this.startMoment.get('minutes') / 15;
     const startMinutes = _.floor(baseMinutes, 0) * 15;
+
     if ((this.startMoment.get('hours') !== 23 || this.startMoment.get('minutes') !== 59)) {
       this.startMoment.minutes(startMinutes);
+      this.endMoment = this.action.targetCompletionDateEnd ? moment.tz(this.action.targetCompletionDateEnd, this.userTimezone) :
+        this.startMoment.clone().add('minutes', 60)
+    } else {
+      this.endMoment = this.startMoment.clone();
     }
-    const justTheEndDate = this.action.targetCompletionDateEnd ? new Date(this.action.targetCompletionDateEnd) : justTheDate;
-    this.endMoment = moment.tz(justTheEndDate, this.userTimezone);
+
     const shortzones = countriesAndTimezones.getTimezonesForCountry('US').map( el => {
       const shortened =  {
         shortValue: moment.tz([this.startMoment.get('year'), this.startMoment.get('month')], el.name).format('z'),
@@ -154,7 +152,6 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
     }
     console.log('start moment ----> ', this.startMoment);
     console.log('end   moment ----> ', this.endMoment);
-
 
     return  {
       formattedDate: new Date(this.startMoment.format('YYYY-MM-DD hh:mm z')),
@@ -283,19 +280,19 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
   };
 
   getActionTargetDescription = () => {
-    if ( moment(this.action.targetCompletionDate).get('hours') === 23 &&
-      moment(this.action.targetCompletionDate).get('minutes') === 59 ) {
-      return 'Target date is ' + moment(this.action.targetCompletionDate).format('L')
-    } if ( moment(this.action.targetCompletionDate).isSame(this.action.targetCompletionDateEnd) ) {
-      return 'Target date & time: ' + moment(this.action.targetCompletionDate).format('LLL');
+    const mommentTCD = moment(new Date(this.action.targetCompletionDate));
+    const mommentTCDE = moment(new Date(this.action.targetCompletionDateEnd));
+    const shortDate = mommentTCD.format('L');
+    const lessShortDate = mommentTCD.format('LLL');
+    const lessShortDateEnd = mommentTCDE.format('LLL');
+
+    if ( mommentTCD.get('hours') === 23 && mommentTCD.get('minutes') === 59 ) {
+      return 'Target date is ' + shortDate
+    } if ( mommentTCD.isSame(mommentTCDE) ) {
+      return 'Target date & time: ' + lessShortDate;
     } else {
-      return 'Action start: '
-        + moment(this.action.targetCompletionDate).format('LLL')
-        + ' and end: '
-        + moment(this.action.targetCompletionDateEnd).format('LLL');
+      return 'Action: ' + lessShortDate + ' to ' + lessShortDateEnd;
     }
+
   };
-
-
-
 }

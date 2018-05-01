@@ -34,6 +34,19 @@ export class AttachmentCardComponent extends CardComponent implements OnInit, Af
       entityId: this.entityId,
       uploaderId: this.resourceId
     };
+
+    console.log('payload');
+    console.log('payload');
+    console.log('payload');
+    console.log('payload');
+    console.log('payload ----' + JSON.stringify(payload));
+    console.log('payload');
+    console.log('payload');
+    console.log('payload');
+
+
+
+
     myDropzone.on( 'sending', (file, xhr, data) => {
       console.log('sending');
       data.append( 'payload', JSON.stringify(payload) );

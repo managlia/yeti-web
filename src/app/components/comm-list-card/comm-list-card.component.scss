@@ -1,0 +1,40 @@
+.mat-column-createDate {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  flex: 0 0 20%;
+  align-self: flex-start;
+  text-align: left;
+}
+.mat-column-creatorDescription {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  flex: 0 0 20%;
+  align-self: flex-start;
+  text-align: left;
+}
+.mat-column-value {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  align-self: flex-start;
+  flex: 0 0 55%;
+}
+.mat-column-type {
+  text-align: right;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  flex: 0 0 5%;
+  align-self: flex-start;
+}
+
+.is_read {
+  font-weight: normal;
+}
+
+.is_unread {
+  color: #cb2027;
+  font-weight: bold;
+}
+
+.is_pinned {
+  color: blueviolet;
+}

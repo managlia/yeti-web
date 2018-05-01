@@ -30,12 +30,8 @@
                   </div>
                 </div>
 
-
-
                 <div *ngIf="searchEntityLoaded()">
-
                   <div class="card card-accent-primary">
-
                     <div *ngIf="(companyLoaded && this.loadedCompany)">
                       <div class="card-header">
                         <strong>{{label.dashboard.company}}</strong>
@@ -61,30 +57,16 @@
                   </div>
                 </div>
 
-
-
-
-
-
                 <app-team-filter-card
                   (filterUpdated)="updateFilters($event)"
                 ></app-team-filter-card>
 
-
-
-
-
-
-
-
               </div>
-              <div class="col-8" style="background-color: #00bf8f">
+              <div class="col-8">
+                <app-comm-list-card></app-comm-list-card>
               </div>
             </div>
           </form>
-
-
-
 
           <div class="row" *ngIf="fatFilters">
             <div *ngIf="searchEntityLoaded(); then actionAndCampaign; else actionOnly"></div>
@@ -109,8 +91,6 @@
               </div>
             </ng-template>
           </div>
-
-
 
         </div>
       </div>

@@ -34,7 +34,8 @@ export class CompanyOrContactService extends BaseService {
     if (!term.trim()) {
       return of([]);
     }
-    return this.http.get<CompanyOrContact[]>(`${this.companyOrContactUrl}/?${key}=${term}&hostonly=${hostOnly}`)
+    return this.http.get<CompanyOrContact[]>(`${this.companyOrContactUrl}/?${key}=${term}&hostonly=${hostOnly}`, {
+      headers: BaseService.headers})
       .pipe(
         tap(_ => this.logger.debug(`${this.S}${this.getFilterStatement(this.cd)}${key} === "${term}"`)),
         catchError(this.handleError<any>(`${this.E}${this.getFilterStatement(this.cd)}${key} === "${term}"`))

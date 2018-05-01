@@ -3,59 +3,60 @@ import { Observable } from 'rxjs/Observable';
 import { HttpResponse } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 
-import {Note} from '../classes/comms/note';
+import {Memo} from '../classes/comms/memo';
 
 import {BaseService} from './base.service';
 import {ServiceConstants} from '../service-constants';
 
 @Injectable()
-export class NoteService extends BaseService {
+export class MemoService extends BaseService {
 
-  noteUrl = ServiceConstants.NOTE_URL;
+  memoUrl = ServiceConstants.MEMO_URL;
+  commsUrl = ServiceConstants.COMMS_URL;
 
-  cd = 'note'; // 'componentDescription'
+  cd = 'memo'; // 'componentDescription'
 
   getOneEmailStatement = (cd: string) => `${cd} one EMAIL ${this.whoseId} `;
 
-  getNoteList(): Observable<Note[]> {
+  getMemoList(): Observable<Memo[]> {
     this.logger.debug(`${this.P}${this.getAllStatement(this.cd)}`);
-    return this.http.get<Note[]>(this.noteUrl, {
+    return this.http.get<Memo[]>(this.commsUrl, {
       headers: BaseService.headers} )
       .pipe(
-        tap(notes => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
+        tap(memos => this.logger.debug(`${this.S}${this.getAllStatement(this.cd)}`)),
         catchError(this.handleError(`${this.E}${this.getAllStatement(this.cd)}`, []))
       );
   }
 
-  getNoteListForEntity( entityType: string, entityId: string ): Observable<Note[]> {
-    return this.getNoteListByFilter(entityType, entityId);
+  getMemoListForEntity( entityType: string, entityId: string ): Observable<Memo[]> {
+    return this.getMemoListByFilter(entityType, entityId);
   }
 
-  getNoteListByFilter(entityType: string, entityId: string): Observable<Note[]> {
+  getMemoListByFilter(entityType: string, entityId: string): Observable<Memo[]> {
     this.logger.debug(`${this.P}${this.getAllFilterStatement(this.cd)} ${entityId}`);
-    const url = `${this.noteUrl}?entityType=${entityType}&entityId=${entityId}`;
-    return this.http.get<Note[]>(url, {
+    const url = `${this.memoUrl}?entityType=${entityType}&entityId=${entityId}`;
+    return this.http.get<Memo[]>(url, {
       headers: BaseService.headers} )
       .pipe(
-        tap(notes => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${entityId}`)),
+        tap(memos => this.logger.debug(`${this.S}${this.getAllFilterStatement(this.cd)} ${entityId}`)),
         catchError(this.handleError(`${this.E}${this.getAllFilterStatement(this.cd)} ${entityId}`, []))
       );
   }
 
-  getNote(id: string): Observable<Note> {
+  getMemo(id: string): Observable<Memo> {
     this.logger.debug(`${this.P}${this.getOneStatement(this.cd)} ${id}`);
-    const url = `${this.noteUrl}/${id}`;
-    return this.http.get<Note>(url, {
+    const url = `${this.memoUrl}/${id}`;
+    return this.http.get<Memo>(url, {
       headers: BaseService.headers} )
       .pipe(
         tap(result => this.logger.debug(`${this.S}${this.getOneStatement(this.cd)}${id}`)),
-        catchError(this.handleError<Note>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
+        catchError(this.handleError<Memo>(`${this.E}${this.getOneStatement(this.cd)} ${id}`))
       );
   }
 
-  addNote(note: Note): Observable<HttpResponse<any>> {
+  addMemo(memo: Memo): Observable<HttpResponse<any>> {
     this.logger.debug(`${this.P}${this.postStatement(this.cd)}`);
-    return this.http.post(this.noteUrl, note, {
+    return this.http.post(this.memoUrl, memo, {
       headers: BaseService.headers,
       responseType: BaseService.responseTypeValue,
       observe: BaseService.observeValue} )
@@ -65,11 +66,11 @@ export class NoteService extends BaseService {
       );
   }
 
-  updateNote(note: Note): Observable<HttpResponse<any>> {
-    const id = note.noteId;
+  updateMemo(memo: Memo): Observable<HttpResponse<any>> {
+    const id = memo.memoId;
     this.logger.debug(`${this.P}${this.putStatement(this.cd)} ${id}`);
-    const url = `${this.noteUrl}/${note.noteId}`;
-    return this.http.put(url, note, {
+    const url = `${this.memoUrl}/${memo.memoId}`;
+    return this.http.put(url, memo, {
       headers: BaseService.headers,
       responseType: BaseService.responseTypeValue,
       observe: BaseService.observeValue} )
@@ -79,9 +80,9 @@ export class NoteService extends BaseService {
       );
   }
 
-  deleteNote(id: string): Observable<HttpResponse<any>> {
+  deleteMemo(id: string): Observable<HttpResponse<any>> {
     this.logger.debug(`${this.P}${this.deleteStatement(this.cd)} ${id}`);
-    const url = `${this.noteUrl}/${id}`;
+    const url = `${this.memoUrl}/${id}`;
     return this.http.delete(url, {
       headers: BaseService.headers,
       responseType: BaseService.responseTypeValue,
@@ -92,8 +93,8 @@ export class NoteService extends BaseService {
       );
   }
 
-  closeNote(id: string): Observable<any> {
-    // TODO: implement patch for the close note
+  closeMemo(id: string): Observable<any> {
+    // TODO: implement patch for the close memo
     this.logger.debug(`TODO:${this.patchStatement(this.cd)}`);
     return null;
   }
