@@ -66,20 +66,8 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges( changes: SimpleChanges) {
-
-    console.log('xxxxxxxxx', changes);
-
-
     if ( changes.action ) {
       const seed = this.parseStart();
-      console.log('xxxx' );
-      console.log('xxxx' );
-      console.log('xxxx ' + JSON.stringify(seed) );
-      console.log('xxxx', this.pickerForm );
-      console.log('xxxx' );
-      console.log('xxxx' );
-
-
       if ( this.pickerForm ) {
         this.pickerForm.patchValue( {
           'formattedDate': seed.formattedDate,
@@ -97,7 +85,7 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
     const seed = this.parseStart();
     this.createForm(seed);
     this.onChanges();
-    this.copyFormToAction();
+    // this.copyFormToAction();
   }
 
   resetForm = () => {
@@ -150,9 +138,6 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
     if (possibleZones && possibleZones.length > 0) {
       defaultShortTz = possibleZones[0];
     }
-    console.log('start moment ----> ', this.startMoment);
-    console.log('end   moment ----> ', this.endMoment);
-
     return  {
       formattedDate: new Date(this.startMoment.format('YYYY-MM-DD hh:mm z')),
       startHour: this.startMoment.get('hours') > 12 ? this.startMoment.get('hours') - 12 : this.startMoment.get('hours'),
@@ -165,9 +150,9 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
   }
 
   onChanges = () => {
-    this.pickerForm.valueChanges.subscribe( val => {
-      console.log('==================> ' + JSON.stringify(val));
-    });
+    // this.pickerForm.valueChanges.subscribe( val => {
+    //   console.log('==================> ' + JSON.stringify(val));
+    // });
     this.formattedDate.valueChanges.subscribe( val => {
         console.log('start moment ' + this.startMoment.format());
         this.dateChanged(moment(val));
@@ -275,8 +260,6 @@ export class SimpleDateTimePickerComponent implements OnInit, OnChanges {
     this.endMoment = this.startMoment.clone().add('minutes', this.duration.value);
     this.action.targetCompletionDate = this.startMoment.tz(this.userTimezone).format('YYYY-MM-DD HH:mm z');
     this.action.targetCompletionDateEnd = this.endMoment.tz(this.userTimezone).format('YYYY-MM-DD HH:mm z');
-    console.log('now::: start moment::: ' + this.startMoment.format());
-    console.log('now::: end moment::: ' + this.endMoment.format());
   };
 
   getActionTargetDescription = () => {

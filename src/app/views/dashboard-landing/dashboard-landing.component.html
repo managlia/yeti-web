@@ -63,7 +63,18 @@
 
               </div>
               <div class="col-8">
-                <app-comm-list-card></app-comm-list-card>
+<div *ngIf="showCommCard">
+                <app-comm-card
+                  (dataChanged)="commDataChanged($event)"
+                  (commCanceled)="handleCommCancel($event)"
+                  [replyToComm]="replyToComm"
+                ></app-comm-card>
+</div>
+                <app-comm-list-card
+                  [refreshData]="refreshCommData"
+                  (triggerReply)="triggerReply($event)"
+                ></app-comm-list-card>
+
               </div>
             </div>
           </form>

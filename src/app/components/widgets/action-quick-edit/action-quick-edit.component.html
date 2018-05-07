@@ -1,109 +1,77 @@
 <div class="modal-header">
   <div class="row" style="width:100%;">
-    <div class="col-6">
+    <div class="col-4">
       <h4 class="modal-title">Action quick edit</h4>
     </div>
-    <div class="col-6" style="text-align: right;">
-      <app-datespace [entity]="action"></app-datespace>
+    <div class="col-8" style="text-align: right;">
     </div>
   </div>
-
 </div>
 <div class="modal-body">
-  <div *ngIf="action" id="quick-action-edit" class="animated fadeIn">
 
-    <div class="row" style="padding-top:10px;">
-      <div class="col-6">
+  <form [formGroup]="quickFormGroup" novalidate>
 
-        <mat-form-field style="width:100%">
-          <input matInput [(ngModel)]="action.name" placeholder="Action Name">
-        </mat-form-field>
-
-      </div>
-      <div class="col-6">
-
-        <mat-form-field style="width:100%">
-          <mat-select placeholder="Scope" [(ngModel)]="localScopeTypeId">
-            <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
-              {{ scopeType.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-    </div>
-    <div class="row" style="padding-top:10px;">
-      <div class="col-6">
-
-        <mat-form-field style="width:100%;">
-          <mat-select placeholder="Action Type"
-                      (change)="updateTheOther(localClassificationTypeId)"
-                      #typeSelect [(ngModel)]="localClassificationTypeId">
-            <mat-option *ngFor="let classificationType of classificationTypes"
-                        [value]="classificationType.actionClassificationTypeId">
-              {{ classificationType.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-      <div class="col-6">
-
-            <mat-form-field style="width:100%;">
-              <mat-select placeholder="Other Type"
-                          [(disabled)]="isDisabledOtherActive"
-                          [(ngModel)]="localClassificationOtherTypeId">
-                <mat-option *ngFor="let classificationOtherType of classificationOtherTypes"
-                            [value]="classificationOtherType.actionClassificationOtherTypeId">
-                  {{ classificationOtherType.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12" style="padding-top:10px;">
-
-        <mat-form-field style="width:100%">
-               <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
-                         matAutosizeMinRows="8"
-                         matAutosizeMaxRows="8" [(ngModel)]="action.description"></textarea>
-        </mat-form-field>
-
-      </div>
-    </div>
-    <div class="row" style="padding-top:10px;">
-      <div class="col-6">
-
-        <div *ngIf="action.deleteable">
-          <mat-checkbox id="deleteAction" [(ngModel)]="shouldDelete"> Delete this Action </mat-checkbox><br/>
+    <div *ngIf="action" id="quick-action-edit" class="animated fadeIn">
+      <div class="row" style="padding-top:10px;">
+        <div class="col-6">
+          <mat-form-field style="width:100%">
+            <input matInput formControlName="actionName" placeholder="Action Name">
+          </mat-form-field>
         </div>
-
+        <div class="col-6">
+        </div>
       </div>
-      <div class="col-6">
+      <div class="row">
+        <div class="col-12" style="padding-top:10px;">
+          <mat-form-field style="width:95%">
+                 <textarea matInput placeholder="Action Description (field will autosize as needed)" matTextareaAutosize
+                           matAutosizeMinRows="8"
+                           matAutosizeMaxRows="8" formControlName="actionDescription"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
 
-          <mat-radio-group name="activeAction" [(ngModel)]="action.active">
+      <div class="row">
+        <div class="col-12" style="padding-top:10px;">
+          <app-simple-date-time-picker
+            [action]="action"
+          ></app-simple-date-time-picker>
+        </div>
+      </div>
+      <div class="row" style="padding-top:10px;">
+        <div class="col-6">
+          <div *ngIf="action.deleteable">
+            <mat-checkbox id="deleteAction" formControlName="shouldDelete"> Delete this Action</mat-checkbox>
+            <br/>
+          </div>
+        </div>
+        <div class="col-6">
+          <mat-radio-group name="activeAction" formControlName="activeAction" (change)="disableCompletionDate()">
             <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
             <mat-radio-button [value]="false"> Closed</mat-radio-button>
           </mat-radio-group>
-
+          <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+            <input matInput
+                   placeholder="Actual ccompletion date"
+                   [matDatepicker]="myDatepicker"
+                   formControlName="actualCompletionDate"
+            >
+            <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+            <mat-datepicker #myDatepicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row" style="padding-top:30px;">
+        <div class="col-3">
+          <button type="button" class="btn btn-secondary" (click)="routeToAction()">Action Full Edit</button>
+        </div>
+        <div class="col-9" align="right">
+          <button type="button" class="btn btn-warning" (click)="reset()">Undo changes and close</button>
+          <button type="button" class="btn btn-primary" (click)="closeAndKeep()" [disabled]="unreadyToSave()">Keep changes and close</button>
+        </div>
       </div>
     </div>
-    <div class="row" style="padding-top:100px;">
-      <div class="col-3">
 
-                &nbsp;
-        <button type="button" class="btn btn-secondary" (click)="routeToAction()">Action Full Edit</button>
+  </form>
 
-      </div>
-      <div class="col-9" align="right">
-
-        <button type="button" class="btn btn-warning" (click)="closeAndUndo()">Undo changes and close</button>
-        &nbsp;
-        <button type="button" class="btn btn-primary" (click)="closeAndKeep()">Keep changes and close</button>
-
-      </div>
-    </div>
-  </div>
 </div>

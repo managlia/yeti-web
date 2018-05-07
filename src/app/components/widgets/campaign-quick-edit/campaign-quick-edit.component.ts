@@ -1,12 +1,12 @@
-import {Component, Inject, OnInit, ViewChild, ComponentRef} from '@angular/core';
+import {Component, Inject, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { Router } from '@angular/router';
-import {MAT_DIALOG_DATA, MatDialogRef, MatSelect} from '@angular/material';
-import * as _ from 'lodash';
+import * as moment from 'moment-timezone';
 
 import {Campaign} from '../../../classes/campaign';
-import {CampaignClassificationType} from '../../../classes/types/campaign-classification-type';
-import {ScopeType} from '../../../classes/types/scope-type';
 import {CampaignService} from '../../../services/campaign.service';
+import {DataStore} from '../../../classes/data-store';
 
 @Component({
   selector: 'app-campaign-quick-edit',
@@ -15,18 +15,10 @@ import {CampaignService} from '../../../services/campaign.service';
 })
 export class CampaignQuickEditComponent implements OnInit {
 
-  @ViewChild('scopeSelect', {read: MatSelect}) scopeSelect: ComponentRef<MatSelect>;
-  @ViewChild('typeSelect', {read: MatSelect}) typeSelect: ComponentRef<MatSelect>;
-
-  localScopeTypeId: string = null;
-  localClassificationTypeId: string = null;
+  resourceId = DataStore.userId;
+  quickFormGroup: FormGroup;
 
   campaign: Campaign;
-  originalData: any;
-  shouldDelete = false;
-
-  classificationTypes: CampaignClassificationType[];
-  scopeTypes: ScopeType[];
 
   constructor(
     public dialogRef: MatDialogRef<CampaignQuickEditComponent>,
@@ -34,87 +26,82 @@ export class CampaignQuickEditComponent implements OnInit {
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.originalData = data;
-    this.campaign = _.cloneDeep(data.campaign);
-    this.classificationTypes = data.classificationTypes;
-    this.scopeTypes = data.scopeTypes;
+    this.campaign = data.campaign;
   }
 
   ngOnInit() {
-    this.setLocalTypesFromCampaign();
+    this.quickFormGroup = new FormGroup( {});
+    this.createForm();
   }
 
-  setLocalTypesFromCampaign = () => {
-    this.localScopeTypeId
-      = this.campaign.scopeType ? this.campaign.scopeType.scopeTypeId : null;
-    this.localClassificationTypeId
-      = this.campaign.classificationType ? this.campaign.classificationType.campaignClassificationTypeId : null;
+  createForm = () => {
+    this.quickFormGroup.addControl( 'campaignName', new FormControl(this.campaign.name, [Validators.required]) );
+    this.quickFormGroup.addControl( 'campaignDescription', new FormControl(this.campaign.description, [Validators.required]), );
+    this.quickFormGroup.addControl( 'activeCampaign', new FormControl(this.campaign.active) );
+    this.quickFormGroup.addControl( 'actualCompletionDate', new FormControl(this.campaign.actualCompletionDate, [Validators.required]) );
+    this.quickFormGroup.addControl( 'shouldDelete', new FormControl(false ) );
+    this.disableCompletionDate();
   };
 
+  get campaignName() { return this.quickFormGroup.get('campaignName'); }
+  get campaignDescription() { return this.quickFormGroup.get('campaignDescription'); }
+  get activeCampaign() { return this.quickFormGroup.get('activeCampaign'); }
+  get actualCompletionDate() { return this.quickFormGroup.get('actualCompletionDate'); }
+  get shouldDelete() { return this.quickFormGroup.get('shouldDelete'); }
 
-  setCampaignTypesFromLocal = () => {
-    this.campaign.scopeType = this.localScopeTypeId ?
-      this.scopeTypes.filter(e => e.scopeTypeId === this.localScopeTypeId )[0] : null;
-
-    this.campaign.classificationType = this.localClassificationTypeId ?
-      this.classificationTypes.filter(e => e.campaignClassificationTypeId === this.localClassificationTypeId)[0] : null;
-
+  copyFormToCampaign = () => {
+    this.campaign.name = this.campaignName.value;
+    this.campaign.description = this.campaignDescription.value;
+    this.campaign.active = this.activeCampaign.value;
+    if ( this.actualCompletionDate.value ) {
+      const completeDate = new Date(this.actualCompletionDate.value);
+      this.campaign.actualCompletionDate =
+        moment.tz( completeDate, 'Etc/UTC').format('YYYY-MM-DD HH:mm');
+    }
   };
 
-  onNoClick(): void {
+  disableCompletionDate = () => {
+    const disableCompletionDate = this.activeCampaign.value;
+    if ( disableCompletionDate ) {
+      this.actualCompletionDate.setValue(null );
+      this.actualCompletionDate.disable();
+    } else {
+      this.actualCompletionDate.enable();
+    }
+  };
+
+  reset = () => {
     this.dialogRef.close();
-  }
-
-  updateClassificationType = (classificationType: CampaignClassificationType) => {
-    this.campaign.classificationType = classificationType;
   };
-
-  closeAndUndo(event): void {
-    this.dialogRef.close();
-  }
 
   closeAndKeep(event): void {
-    console.log('should delete ???? ' , this.shouldDelete);
-    if (this.shouldDelete) {
-      this.deleteCampaign();
+    console.log( 'should delete:::: ' + this.shouldDelete.value );
+    if ( this.shouldDelete.value ) {
+      this.campaignService.deleteCampaign(this.campaign.campaignId).subscribe(feedback => {
+        console.log('campaign deleted. We could close now');
+        this.dialogRef.close('successfully deleted');
+      });
     } else {
-      this.updateCampaignAndClose();
+      this.copyFormToCampaign();
+      this.campaignService.updateCampaign(this.campaign).subscribe(feedback => {
+        console.log('campaign updated. We could close now');
+        this.dialogRef.close('successfully updated');
+      });
     }
   }
 
-  updateCampaignAndClose() {
-    this.setCampaignTypesFromLocal();
-    this.campaignService.updateCampaign(this.campaign).subscribe(result => {
-        const foundIndex = this.originalData.dataSource.data.findIndex(e => e === this.originalData.campaign);
-        this.originalData.dataSource.data.splice(foundIndex, 1, this.campaign);
-        this.originalData.dataSource.data = this.originalData.dataSource.data;
-        this.dialogRef.close();
-      },
-      error => {
-        console.log('error', error);
-        // TODO: Show error alert in modal
-      });
-  }
-
-  deleteCampaign( ) {
-    console.log('DELETING ' , this.originalData.campaign.campaignId);
-    this.campaignService.deleteCampaign(this.originalData.campaign.campaignId)
-      .subscribe(result => {
-          console.log( 'before', this.originalData.dataSource.data.length );
-          this.originalData.dataSource.data = this.originalData.dataSource.data.filter(e => e !== this.originalData.campaign );
-          this.originalData.dataSource = this.originalData.dataSource;
-          console.log( 'after', this.originalData.dataSource.data.length );
-          this.dialogRef.close();
-        },
-        error => {
-          console.log('error', error);
-          // TODO: Show delete error alert in modal
-        });
+  onNoClick(): void {
+    this.dialogRef.close('no change');
   }
 
   routeToCampaign(): void {
     this.router.navigateByUrl( `/campaign/${this.campaign.campaignId}` );
     this.dialogRef.close();
   }
+
+  unreadyToSave(): boolean {
+    return !(this.quickFormGroup.dirty && this.quickFormGroup.valid);
+  }
+
 
 }

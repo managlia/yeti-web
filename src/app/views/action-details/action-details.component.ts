@@ -144,7 +144,6 @@ export class ActionDetailsComponent extends BaseViewComponent implements OnInit,
     }
   };
 
-
   getAction(): void {
     this.actionId = this.route.snapshot.paramMap.get('id');
     if (this.actionId) {

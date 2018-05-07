@@ -1,0 +1,78 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8">
+        <strong>Interoffice communication</strong>
+      </div>
+      <div class="col-4" style="text-align: right">
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <form [formGroup]="entityFormGroup" novalidate>
+
+      <div class="row">
+        <div class="col-3" style="padding-top:7px; padding-bottom:7px">
+
+
+          <div class="card" style="width:90%;">
+            <div class="card-header">
+              <strong>Communication Type:</strong>
+            </div>
+            <div class="card-body">
+              <mat-radio-group name="communicationType"  formControlName="communicationType">
+                <mat-radio-button value="announcement"> Company-wide </mat-radio-button><br/>
+                <mat-radio-button value="memo"> Memo to folks </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-5" style="padding-top:7px; padding-bottom:7px;">
+
+          <mat-form-field style="width:90%;">
+            <input matInput formControlName="communicationSubject" #commSubject
+                   placeholder="Subject">
+            <mat-error *ngIf="communicationSubject.hasError('required')">
+              Subject is required.
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field style="width:90%;">
+                           <textarea matInput #commBody
+                                     placeholder="Communication body"
+                                     matTextareaAutosize matAutosizeMinRows="10"
+                                     matAutosizeMaxRows="15" formControlName="communicationBody"
+                           ></textarea>
+            <mat-error *ngIf="communicationBody.hasError('required')">
+              Communication body is required.
+            </mat-error>
+          </mat-form-field>
+
+
+        </div>
+        <div class="col-4" style="padding-top:7px; padding-bottom:7px">
+          <div *ngIf="isMemo()">
+            <app-recipient-card
+              [currentRecipients]="currentRecipients"
+              (contactListModified)="updateContactList"
+            ></app-recipient-card>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="row">
+      <div class="col-6" style="text-align:left">
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+      </div>
+      <div class="col-6" style="text-align:right">
+        <button type="button" class="btn btn-warning" (click)="addUpdateCommunication()" [disabled]="unreadyToSave()">
+          Click to send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

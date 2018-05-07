@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, OnInit, AfterViewInit, ViewChild, OnChanges, SimpleChanges, EventEmitter, Output} from '@angular/core';
 import { MatPaginator, MatSort, MatSortable, MatTableDataSource } from '@angular/material';
 import * as moment from 'moment-timezone';
 import * as _ from 'lodash';
@@ -19,9 +19,11 @@ import {Announcement} from '../../classes/comms/announcement';
   templateUrl: './comm-list-card.component.html',
   styleUrls: ['./comm-list-card.component.scss']
 })
-export class CommListCardComponent implements OnInit, AfterViewInit {
+export class CommListCardComponent implements OnInit, AfterViewInit, OnChanges {
 
-  @Input() resourceId: string;
+  @Output() triggerReply = new EventEmitter<any>();
+  @Input() refreshData = false;
+  @Input() commCanceled = false;
   notes: Note[] = [ new Note() ];
   viewNoteForm = false;
   noteFormGroup: FormGroup;
@@ -39,11 +41,18 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
   textFilter = '';
 
   constructor(
-    public announcementService: AnnouncementService,
     public memoService: MemoService,
     public noteService: NoteService,
     public commAuditService: CommAuditService
   ) {
+  }
+
+  ngOnChanges( changes: SimpleChanges) {
+    console.log('list learned that ')
+    if ( changes.refreshData && changes.refreshData.currentValue ) {
+      this.getNotesList();
+      this.refreshData = false;
+    }
   }
 
   ngAfterViewInit() {
@@ -87,11 +96,6 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
   createFilter(): (data: any, filter: string) => boolean {
     const filterFunction = function (data, filter): boolean {
       const searchTerms = JSON.parse(filter);
-
-
-      console.log('applying data: ' + JSON.stringify(data));
-      console.log('applying filter: ' + filter);
-
       return (
         (data.value.toString().toLowerCase().indexOf(searchTerms.general) !== -1
         || data.description.toString().toLowerCase().indexOf(searchTerms.general) !== -1))
@@ -134,7 +138,7 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
     const note = new Note();
     note.value = this.noteValue.value;
     note.description = this.noteDescription.value;
-    note.creatorId = this.resourceId;
+    note.creatorId = DataStore.userId;
     this.noteService.addNote(note)
       .subscribe(e => {
         this.viewNoteForm = false;
@@ -159,7 +163,6 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
   showNewNoteForm = () => {
     this.createForm();
     this.viewNoteForm = true;
-    console.log('todo: display a form to enter data.');
   };
 
   getNotesList = () => {
@@ -168,10 +171,6 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
       p1.subscribe(e => {
           this.dataSource.data = _.union(e, this.dataSource.data);
       });
-      // const p2 = this.announcementService.getAnnouncementList();
-      // p2.subscribe(e => {
-      //   this.dataSource.data = _.union(e, this.dataSource.data);
-      // });
       Promise.all([p1.toPromise()]).then( result => {
         this.sortTheDataSource();
       });
@@ -199,12 +198,12 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
     } else {
       return 'is_unread';
     }
-  }
+  };
 
   noteItemRead = (note) => {
     this.updateAudit(note, false).subscribe( e => {
       note = e;
-      this.highlightClass(note);
+      this.getNotesList();
     });
   };
 
@@ -212,19 +211,18 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
     if ( !note.audit || !note.audit.haveRead ) {
       this.noteItemRead(note);
     }
-    // todo: trigger reply
+    this.triggerReply.emit(note);
   };
 
   pinNote = (note, pinIt: boolean) => {
     this.updateAudit(note, pinIt).subscribe( e => {
       console.log('what is returned', e);
-      this.highlightClass(note);
-      this.sortTheDataSource();
+      this.getNotesList();
     });
   };
 
   updateAudit = (note, markPinned) => {
-    if( !note.audit ) {
+    if ( !note.audit ) {
       note.audit = new CommAudit();
     }
     note.audit.userId = DataStore.userId;
@@ -240,6 +238,5 @@ export class CommListCardComponent implements OnInit, AfterViewInit {
 
     return this.commAuditService.updateAudit(note.audit);
   };
-
 }
 

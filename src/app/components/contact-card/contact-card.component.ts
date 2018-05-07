@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnChanges} from '@angular/core';
 import * as _ from 'lodash';
 
 import { Contact } from '../../classes/contact';
@@ -11,13 +11,22 @@ import {Observable} from 'rxjs/Observable';
   styleUrls: ['./contact-card.component.css']
 })
 
-export class ContactCardComponent extends CardComponent implements OnInit {
+export class ContactCardComponent extends CardComponent implements OnInit, OnChanges {
 
   @Output() onContactFlaggedForRemoval = new EventEmitter<string>();
   @Output() onContactAssociatedToEntity = new EventEmitter<Contact>();
   @Input() hostOnly = false;
 
   ngOnInit() {
+    // this.loadByEntity();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('------------------------>>>>>>>>>>> I could do something about the changes!', changes);
+    this.loadByEntity();
+  }
+
+  loadByEntity = () => {
     if (this.companyId) {
       this.getContactsByCustomerId();
     } else if (this.actionId) {

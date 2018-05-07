@@ -55,10 +55,9 @@
             </div>
             <div class="col-3">
               <mat-checkbox [(ngModel)]="showPinned" (change)="sortTheDataSource()"> Pinned first </mat-checkbox><br/>
-              <mat-checkbox [(ngModel)]="includeReadItems" (change)="applyFilters()"> Unread only </mat-checkbox>
+              <mat-checkbox [(ngModel)]="includeReadItems" (change)="applyFilters()"> Include read </mat-checkbox>
             </div>
             <div class="col-2">
-              <button type="button" class="btn btn-primary btn-sm" (click)="showNewNoteForm()">Add Note</button>
             </div>
           </div>
         </ng-template>
@@ -102,7 +101,7 @@
 
               <div *ngIf="note.type === 'memo'">
                 <div style="padding-top:12px; padding-bottom:12px;">
-                  <button type="button" class="btn btn-primary btn-sm" (click)="acknowledge()">Reply</button>
+                  <button type="button" class="btn btn-primary btn-sm" (click)="replyToNote(note)">Reply to all</button>
                 </div>
               </div>
               </div>
@@ -114,7 +113,7 @@
             <mat-cell *matCellDef="let note">
 
               <div [className]="highlightClass(note)">
-                {{note.priority}} : {{note.value}}
+                {{note.value}}
               </div>
 
             </mat-cell>
@@ -141,7 +140,7 @@
 
         </mat-table>
         <mat-paginator [length]="100"
-                       [pageSize]="1"
+                       [pageSize]="2"
                        [pageSizeOptions]="[2, 4, 8, 25, 100]">
         </mat-paginator>
       </div>

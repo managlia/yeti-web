@@ -67,6 +67,18 @@
                 ></app-simple-date-time-picker>
 
 
+                <div style="padding-top:10px;">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addNewEntity()">Add to my calendar</button>
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addNewEntity()">Send invite to myself and all contacts</button>
+                </div>
+                <div style="padding-top:10px;">
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addNewEntity()">Schedule a reminder for me</button>
+                  <button type="button" class="btn btn-primary btn-sm" (click)="addNewEntity()">Create reminders for all (including me)</button>
+                </div>
+
+
+
+
                 <app-simple-slider
                   aLabel="Importance"
                   [aValue]="action.importance"
@@ -197,7 +209,7 @@
     </div>
     <div class="col-3"><!-- third column -->
       <!--beneath main content area-->
-      <div *ngIf="actionId">
+      <div *ngIf="action?.actionId">
         <app-campaign-card [actionId]="action.actionId"
                            [associationSuccessful]="campaignFlag"
                            [associationFailure]="campaignFailureFlag"

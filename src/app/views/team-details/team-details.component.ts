@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnChanges, SimpleChanges} from '@angular/core';
 import {FormControl, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 
@@ -11,16 +11,29 @@ import {Contact} from '../../classes/contact';
   templateUrl: './team-details.component.html',
   styleUrls: ['./team-details.component.scss']
 })
-export class TeamDetailsComponent extends BaseViewComponent implements OnInit {
+export class TeamDetailsComponent extends BaseViewComponent implements OnInit, OnChanges {
 
   team: Team;
+
   ngOnInit() {
+    console.log('dfm dfm dfm in the init');
     this.entityName = 'team';
     window.scrollTo(0, 0);
-    this.getTeam();
+//    this.getTeam();
+
+    this.route.params.subscribe( a => {
+      console.log('a param change ', a );
+      this.resetTheDirty();
+      this.getTeam();
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('something changed: ', changes);
   }
 
   resetForm = () => {
+    console.log('resetting');
     this.entityFormGroup.reset();
     this.resetTheDirty();
     this.getTeam();

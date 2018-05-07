@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, OnInit, OnChanges, AfterViewInit, ViewChild, SimpleChanges} from '@angular/core';
 import { MatPaginator, MatSort, MatSortable, MatTableDataSource } from '@angular/material';
 
 import { NoteService } from '../../services/note.service';
@@ -10,7 +10,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
   templateUrl: './note-list-card.component.html',
   styleUrls: ['./note-list-card.component.scss']
 })
-export class NoteListCardComponent implements OnInit, AfterViewInit {
+export class NoteListCardComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() entityType: string;
   @Input() entityId: string;
@@ -32,6 +32,11 @@ export class NoteListCardComponent implements OnInit, AfterViewInit {
   ) {
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('------------------------>>>>>>>>>>> I could do something about the changes!', changes);
+    this.getNotesList();
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -42,7 +47,6 @@ export class NoteListCardComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = JSON.stringify({
       general: ''
     });
-    this.getNotesList();
   }
 
   createForm = () => {

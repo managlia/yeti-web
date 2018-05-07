@@ -217,10 +217,6 @@
                          (onActionAssociatedToEntity)="onActionAssociatedToEntity($event)"
                          (onActionFlaggedForRemoval)="onActionFlaggedForRemoval($event)"
         ></app-action-card>
-      </div>
-
-      <!--beneath main content area-->
-      <div *ngIf="campaign?.campaignId">
         <app-company-card [campaignId]="campaign.campaignId"
                           [associationSuccessful]="companyFlag"
                           (onCompanyAssociatedToEntity)="onCompanyAssociatedToEntity($event)"

@@ -234,16 +234,6 @@ export class BaseViewComponent implements OnInit {
   readyToSave(): boolean {
     const cardChanged = this.addressIsDirty || this.urlsIsDirty || this.phonesIsDirty
       || this.tagsIsDirty || this.attachmentsIsDirty || this.entityFormGroup.dirty;
-    // console.log( '                   ==>>>> ' );
-    // console.log( 'addressIsDirty     ==>>>> ', this.addressIsDirty );
-    // console.log( 'urlsIsDirty        ==>>>> ', this.urlsIsDirty );
-    // console.log( 'phonesIsDirty      ==>>>> ', this.phonesIsDirty );
-    // console.log( 'tagsIsDirty        ==>>>> ', this.tagsIsDirty );
-    // console.log( 'attachmentsIsDirty ==>>>> ', this.attachmentsIsDirty );
-    // console.log( 'readyToSave        ==>>>> ', (cardChanged && this.entityFormGroup.valid) );
-    // console.log( 'cardChanged        ==>>>> ', (cardChanged) );
-    // console.log( 'formGroup valid    ==>>>> ', (this.entityFormGroup.valid) );
-    // console.log( '                   ==>>>> ' );
     return (cardChanged && this.entityFormGroup.valid);
   }
 

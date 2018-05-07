@@ -11,43 +11,19 @@
 
 </div>
 <div class="modal-body">
+  <form [formGroup]="quickFormGroup" novalidate>
   <div *ngIf="campaign" id="quick-campaign-edit" class="animated fadeIn">
 
     <div class="row" style="padding-top:10px;">
       <div class="col-6">
 
         <mat-form-field style="width:100%">
-          <input matInput [(ngModel)]="campaign.name" placeholder="Campaign Name">
+          <input matInput formControlName="campaignName" placeholder="Campaign Name">
         </mat-form-field>
 
       </div>
       <div class="col-6">
 
-        <mat-form-field style="width:100%">
-          <mat-select placeholder="Scope" [(ngModel)]="localScopeTypeId">
-            <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
-              {{ scopeType.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-    </div>
-    <div class="row" style="padding-top:10px;">
-      <div class="col-6">
-
-        <mat-form-field style="width:100%;">
-          <mat-select placeholder="Campaign Type"
-                      #typeSelect [(ngModel)]="localClassificationTypeId">
-            <mat-option *ngFor="let classificationType of classificationTypes"
-                        [value]="classificationType.campaignClassificationTypeId">
-              {{ classificationType.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-      <div class="col-6">
       </div>
     </div>
     <div class="row">
@@ -56,7 +32,7 @@
         <mat-form-field style="width:100%">
                <textarea matInput placeholder="Campaign Description (field will autosize as needed)" matTextareaAutosize
                          matAutosizeMinRows="8"
-                         matAutosizeMaxRows="8" [(ngModel)]="campaign.description"></textarea>
+                         matAutosizeMaxRows="8" formControlName="campaignDescription"></textarea>
         </mat-form-field>
 
       </div>
@@ -65,16 +41,26 @@
       <div class="col-6">
 
         <div *ngIf="campaign.deleteable">
-          <mat-checkbox id="deleteCampaign" [(ngModel)]="shouldDelete"> Delete this Campaign </mat-checkbox><br/>
+          <mat-checkbox id="deleteCampaign" formControlName="shouldDelete"> Delete this Campaign </mat-checkbox><br/>
         </div>
 
       </div>
       <div class="col-6">
 
-        <mat-radio-group name="activeCampaign" [(ngModel)]="campaign.active">
+        <mat-radio-group name="activeCampaign" formControlName="activeCampaign" (change)="disableCompletionDate()">
           <mat-radio-button [value]="true"> Active</mat-radio-button> &nbsp;
           <mat-radio-button [value]="false"> Closed</mat-radio-button>
         </mat-radio-group>
+
+        <mat-form-field style="width:90%; padding-top:7px; padding-bottom:7px;">
+          <input matInput
+                 placeholder="Actual ccompletion date"
+                 [matDatepicker]="myDatepicker"
+                 formControlName="actualCompletionDate"
+          >
+          <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
+          <mat-datepicker #myDatepicker></mat-datepicker>
+        </mat-form-field>
 
       </div>
     </div>
@@ -87,11 +73,12 @@
       </div>
       <div class="col-9" align="right">
 
-        <button type="button" class="btn btn-warning" (click)="closeAndUndo()">Undo changes and close</button>
+        <button type="button" class="btn btn-warning" (click)="reset()">Undo changes and close</button>
         &nbsp;
         <button type="button" class="btn btn-primary" (click)="closeAndKeep()">Keep changes and close</button>
 
       </div>
     </div>
   </div>
+  </form>
 </div>

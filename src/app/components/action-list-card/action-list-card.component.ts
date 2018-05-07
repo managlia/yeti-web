@@ -77,6 +77,10 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
       scopeStatus: 'all',
       typeStatus: 'all'
     });
+    this.loadActions();
+  }
+
+   loadActions = () => {
     this.fullEdit = false;
     this.displayedColumns = this.shortList;
     if (this.companyId) {
@@ -101,8 +105,7 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
     }
     this.teamService.getTeamListByContact( DataStore.userId )
       .subscribe(teams => this.teams = teams);
-  }
-
+  };
 
   ngOnChanges(changes: SimpleChanges) {
     if ( changes.fatFilters  ) {
@@ -131,8 +134,20 @@ export class ActionListCardComponent implements OnInit, AfterViewInit, OnChanges
     };
     this.actionQuickEditService.openDialog(data)
       .subscribe(result => {
-        console.log('Does anything need to be done here????');
+        console.log('RESULT::: ' + result);
+        if( result ) {
+          this.dataSource.data = [];
+          this.loadActions();
+        }
       });
+  }
+
+  highlightClass = (action: Action) => {
+    if (action.active) {
+      return 'is_open';
+    } else {
+      return 'is_closed';
+    }
   }
 
   applyFilters() {

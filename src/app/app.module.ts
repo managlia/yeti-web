@@ -238,6 +238,7 @@ import { CommunicationDetailsComponent } from './views/communication-details/com
 import { RecipientCardComponent } from './components/recipient-card/recipient-card.component';
 import { CommListCardComponent } from './components/comm-list-card/comm-list-card.component';
 import { RecipientListPipe } from './classes/pipes/recipient-list.pipe';
+import { CommCardComponent } from './components/comm-card/comm-card.component';
 
 @NgModule({
   imports: [
@@ -361,6 +362,7 @@ import { RecipientListPipe } from './classes/pipes/recipient-list.pipe';
     RecipientCardComponent,
     CommListCardComponent,
     RecipientListPipe,
+    CommCardComponent,
   ],
   providers: [
     AddressService, DateTimeService, TaggingService, UrlService, PhoneService,

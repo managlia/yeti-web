@@ -58,6 +58,8 @@ export class TeamCardComponent extends CardComponent implements OnInit {
   }
 
   onSelectedTeam($event, teamId): void {
-    this.router.navigateByUrl( `/team/${teamId}` );
+    // this.router.navigateByUrl( `/team/${teamId}` );
+    this.router.navigated = false;
+    this.router.navigate(['team', teamId], {skipLocationChange: false});
   }
 }

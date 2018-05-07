@@ -25,19 +25,19 @@
               <!-- Name Column -->
               <ng-container matColumnDef="createDate">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Create Date </mat-header-cell>
-                <mat-cell *matCellDef="let action"> {{action.createDate | date:'shortDate'}} </mat-cell>
+                <mat-cell *matCellDef="let action"><div [className]="highlightClass(action)"> {{action.createDate | date:'shortDate'}} </div></mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="targetCloseDate">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Target Close Date </mat-header-cell>
-                <mat-cell *matCellDef="let action"> {{action.targetCompletionDate | date:'shortDate'}} </mat-cell>
+                <mat-cell *matCellDef="let action"><div [className]="highlightClass(action)"> {{action.targetCompletionDate | date:'shortDate'}} </div></mat-cell>
               </ng-container>
 
 
               <!-- Basic column: Name Column -->
               <ng-container matColumnDef="name">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>{{label.action.column.name}}</mat-header-cell>
-                <mat-cell *matCellDef="let action"> {{action.name}}</mat-cell>
+                <mat-cell *matCellDef="let action"><div [className]="highlightClass(action)"> {{action.name}} </div></mat-cell>
               </ng-container>
 
               <!-- Basic column: Description Column -->
@@ -61,11 +61,12 @@
 
                 </mat-header-cell>
                 <mat-cell *matCellDef="let action">
-
-                  {{action.classificationType?.name}}
-                  <div *ngIf="action.classificationType?.name === 'Other'">
-                    <div *ngIf="action.classificationOtherType">
-                     - {{action.classificationOtherType?.name}}
+                  <div [className]="highlightClass(action)">
+                    {{action.classificationType?.name}}
+                    <div *ngIf="action.classificationType?.name === 'Other'">
+                      <div *ngIf="action.classificationOtherType">
+                       - {{action.classificationOtherType?.name}}
+                      </div>
                     </div>
                   </div>
                 </mat-cell>
@@ -106,11 +107,11 @@
                                 (selectionChange)="applyFilters()">
                       <mat-option value="all">All Scopes</mat-option>
                       <mat-option *ngFor="let scopeType of scopeTypes" [value]="scopeType.scopeTypeId">
-                        {{ scopeType.name }}
+                         {{ scopeType.name }}
                       </mat-option>
                     </mat-select>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let action"> {{action.scopeType?.name}}</mat-cell>
+                  <mat-cell *matCellDef="let action"><div [className]="highlightClass(action)"> {{action.scopeType?.name}} </div></mat-cell>
                 </ng-container>
 
 
@@ -125,7 +126,7 @@
                       <mat-option value="all">All</mat-option>
                     </mat-select>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let action"> {{action.active | activeConversion}}</mat-cell>
+                  <mat-cell *matCellDef="let action"><div [className]="highlightClass(action)"> {{action.active | activeConversion}} </div></mat-cell>
                 </ng-container>
 
               </div>

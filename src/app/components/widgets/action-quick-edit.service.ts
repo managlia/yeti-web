@@ -16,7 +16,7 @@ export class ActionQuickEditService {
     console.log('data', data);
     const dialogRef = this.dialog.open(ActionQuickEditComponent, {
       width: '800px',
-      height: '650px',
+      height: '735px',
       data: data
     });
     return dialogRef.afterClosed();

@@ -25,18 +25,18 @@
                   <!-- Name Column -->
                   <ng-container matColumnDef="createDate">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Create Date </mat-header-cell>
-                    <mat-cell *matCellDef="let campaign"> {{campaign.createDate | date:'shortDate'}} </mat-cell>
+                    <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.createDate | date:'shortDate'}} </div></mat-cell>
                   </ng-container>
 
                   <ng-container matColumnDef="targetCloseDate">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Target Close Date </mat-header-cell>
-                    <mat-cell *matCellDef="let campaign"> {{campaign.targetCompletionDate | date:'shortDate'}} </mat-cell>
+                    <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.targetCompletionDate | date:'shortDate'}} </div></mat-cell>
                   </ng-container>
 
                   <!-- Name Column -->
                   <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{label.campaign.column.name}} </mat-header-cell>
-                    <mat-cell *matCellDef="let campaign"> {{campaign.name}} </mat-cell>
+                    <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.name}} </div></mat-cell>
                   </ng-container>
 
                   <!-- description Column -->
@@ -57,7 +57,7 @@
                         </mat-option>
                       </mat-select>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let campaign"> {{campaign.classificationType.name}} </mat-cell>
+                    <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.classificationType.name}} </div></mat-cell>
                   </ng-container>
 
                   <!-- Scope Column -->
@@ -72,7 +72,7 @@
                         </mat-option>
                       </mat-select>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let campaign"> {{campaign.scopeType?.name}}</mat-cell>
+                    <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.scopeType?.name}} </div></mat-cell>
                   </ng-container>
 
 
@@ -88,7 +88,7 @@
                       <mat-option value="all">All</mat-option>
                     </mat-select>
                   </mat-header-cell>
-                  <mat-cell *matCellDef="let campaign"> {{campaign.active | activeConversion}}</mat-cell>
+                  <mat-cell *matCellDef="let campaign"><div [className]="highlightClass(campaign)"> {{campaign.active | activeConversion}} </div></mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let campaign; columns: displayedColumns;"

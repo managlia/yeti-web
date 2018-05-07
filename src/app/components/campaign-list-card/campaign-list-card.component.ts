@@ -13,6 +13,7 @@ import {CampaignQuickEditService} from '../widgets/campaign-quick-edit.service';
 import * as label from '../labels';
 import {TeamService} from '../../services/team.service';
 import {DataStore} from '../../classes/data-store';
+import {Action} from '../../classes/action';
 
 @Component({
   selector: 'app-campaign-list-card',
@@ -65,6 +66,10 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
       scopeStatus: 'all',
       typeStatus: 'all'
     });
+    this.loadCampaigns();
+  }
+
+  loadCampaigns = () => {
     if (this.companyId) {
       this.campaignService.getCampaignListByCompany(this.companyId)
         .subscribe(campaigns => this.dataSource.data = campaigns);
@@ -78,8 +83,7 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
     this.teamService.getTeamListByContact( this.resourceId )
       .subscribe(teams => this.teams = teams);
 
-
-  }
+  };
 
   ngOnChanges(changes: SimpleChanges) {
     if ( changes.fatFilters  ) {
@@ -107,8 +111,20 @@ export class CampaignListCardComponent implements OnInit, AfterViewInit, OnChang
     };
     this.campaignQuickEditService.openDialog(data)
       .subscribe(result => {
-        console.log('Does anything need to be done here????');
+        if ( result ) {
+          this.dataSource.data = [];
+          this.loadCampaigns();
+        }
+
       });
+  }
+
+  highlightClass = (campaign: Campaign) => {
+    if (campaign.active) {
+      return 'is_open';
+    } else {
+      return 'is_closed';
+    }
   }
 
   applyFilters() {

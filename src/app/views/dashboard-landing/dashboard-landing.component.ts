@@ -14,6 +14,11 @@ import { CompanyOrContact } from '../../classes/common/company-or-contact';
 })
 export class DashboardLandingComponent extends BaseViewComponent implements OnInit {
 
+  showCommCard = false;
+  refreshCommData = false;
+  replyToComm: any;
+  commCanceled = false;
+
   myControl: FormControl;
   results$: Observable<CompanyOrContact[]>;
   private searchTerms = new Subject<string>();
@@ -99,5 +104,31 @@ export class DashboardLandingComponent extends BaseViewComponent implements OnIn
 
   updateFilters = (updatedFilters: any) => {
     this.fatFilters = updatedFilters;
+  }
+
+  commDataChanged(hasChanged: boolean) {
+    console.log('the dashboard knows that data has changed::: ' + hasChanged);
+    if (hasChanged) {
+      this.refreshCommData = true;
+      this.showCommCard = false;
+    }
+  }
+
+  triggerReply(oa: any) {
+    this.showCommCard = true;
+    if ( oa ) {
+      this.replyToComm = oa;
+      this.refreshCommData = false;
+    }
+  }
+
+  handleCommCancel(hasCanceled) {
+    if ( hasCanceled ) {
+      this.refreshCommData = false;
+      this.showCommCard = false;
+      this.replyToComm = null;
+      this.commCanceled = true;
+      this.commCanceled = false;
+    }
   }
 }

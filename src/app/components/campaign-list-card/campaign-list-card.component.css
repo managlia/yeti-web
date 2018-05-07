@@ -21,3 +21,13 @@
   flex: 0 0 13%;
   text-align: center;
 }
+
+.is_open {
+  color: darkorchid;
+  font-weight: bold;
+}
+
+.is_closed {
+  color: orchid;
+  font-weight: lighter;
+}
